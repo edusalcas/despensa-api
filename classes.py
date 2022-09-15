@@ -13,7 +13,13 @@ class Aliment:
         the type of the aliment of AlimentType
     """
     name: str
-    tags: str = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
+
+    def __eq__(self, other):
+        """Overrides the default implementation"""
+        if isinstance(other, Aliment):
+            return self.name == other.name
+        return False
 
 
 @dataclass

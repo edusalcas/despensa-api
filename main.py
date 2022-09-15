@@ -1,7 +1,9 @@
 from classes import *
-from input_console import ConsoleInput
+import controller
+from view_console import ConsoleView
 
-def main_maual():
+
+def main_manual():
     ingredients = []
     aliments = {
         'olive oil': Aliment("Olive oil", ["Oil"]),
@@ -12,7 +14,7 @@ def main_maual():
 
     ingredients.append(Ingredient(aliments['olive oil'], 1, 'spoon', True))
     ingredients.append(Ingredient(aliments['garlic'], 2, 'cloves'))
-    ingredients.append(Ingredient(aliments['onion'], 1/2, ''))
+    ingredients.append(Ingredient(aliments['onion'], 1 / 2, ''))
     ingredients.append(Ingredient(aliments['ginger'], 2.5, 'cm'))
 
     steps = [
@@ -29,13 +31,15 @@ def main_maual():
         "pan naan y pan pita. Guarda las sobras en la nevera en un recipiente hermético durante unos 5-7 días.",
     ]
 
-    curry_de_garbanzos = Recipe("Curry de garbanzos", 4, ingredients, steps, category='Main', tags=['Vegana', "India"], time=30)
+    curry_de_garbanzos = Recipe("Curry de garbanzos", 4, ingredients, steps, category='Main', tags=['Vegana', "India"],
+                                time=30)
 
     print(curry_de_garbanzos)
 
+
 def main():
-    ci = ConsoleInput()
-    ci.run()
+    controller.get_unique_instance().start()
+
 
 
 if __name__ == "__main__":
