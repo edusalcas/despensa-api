@@ -55,6 +55,8 @@ class Recipe:
         the type of the aliment of AlimentType
     steps : list[str]
         the type of the aliment of AlimentType
+    category : str
+        the category of the recipe (f.e. main, breakfast...)
     tags : list[str]
         the type of the aliment of AlimentType
     time : int
