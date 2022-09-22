@@ -38,6 +38,7 @@ def main_manual():
 
 
 def main():
+    controller.get_unique_instance().init_catalogs()
     controller.get_unique_instance().start()
 
 

@@ -1,26 +1,25 @@
 from classes import Aliment, Ingredient, Recipe
 import view_console
-from typing import List
+import sqlite_connector as sqlite
 
+from typing import List, Any
 
-class Singleton(type):
-    """Class type for singleton classes"""
-
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
+from singleton import Singleton
 
 
 class Controller(metaclass=Singleton):
     """Class controller for separate the UI and the functionality"""
-    __aliments_catalog = []
-    __recipes_catalog = []
+    __aliments_catalog: list[Aliment] = []
+    __recipes_catalog: list[Recipe] = []
 
     def __init__(self):
+        # Create the view
         self.view = view_console.ConsoleView()
+
+    def init_catalogs(self):
+        # Recuperate the catalogs from the database
+        self.__aliments_catalog = sqlite.get_unique_instance().get_all_aliments()
+        self.__recipes_catalog = sqlite.get_unique_instance().get_all_recipes()
 
     def start(self):
         """Start the UI"""
@@ -37,6 +36,7 @@ class Controller(metaclass=Singleton):
         if aliment in self.__aliments_catalog:  # Aliment already exists
             return False
 
+        sqlite.get_unique_instance().add_aliment(aliment)
         self.__aliments_catalog.append(aliment)
         return True
 
@@ -62,7 +62,7 @@ class Controller(metaclass=Singleton):
         :param optional: If the ingredient is optional or not
         :return: Returns an ingredient if aliment exists, else None
         """
-        aliment = self.get_aliment(aliments_name)
+        aliment = self.get_aliment_by_name(aliments_name)
         if aliment is None:
             return None
 
@@ -92,14 +92,14 @@ class Controller(metaclass=Singleton):
 
         :param recipe: Recipe to insert in catalog
         """
-
+        sqlite.get_unique_instance().add_recipe_and_ingredients(recipe)
         self.__recipes_catalog.append(recipe)
 
     #####################################
     #              Getters              #
     #####################################
 
-    def get_aliment(self, aliment_name: str) -> Aliment or None:
+    def get_aliment_by_name(self, aliment_name: str) -> Aliment or None:
         """Get the aliment from a name if exists
 
         :param aliment_name: The name of the aliment
@@ -107,6 +107,18 @@ class Controller(metaclass=Singleton):
         """
         for aliment in self.__aliments_catalog:
             if aliment.name == aliment_name.lower():
+                return aliment
+
+        return None
+
+    def get_aliment_by_id(self, aliment_id: int) -> Aliment or None:
+        """Get the aliment from a database id if exists
+
+        :param aliment_id: The id of the aliment in the db
+        :return: The aliment if it exists, else None
+        """
+        for aliment in self.__aliments_catalog:
+            if aliment.bd_id == aliment_id:
                 return aliment
 
         return None

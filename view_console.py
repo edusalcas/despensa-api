@@ -101,8 +101,8 @@ class ConsoleView():
 
     def run(self):
         print("Press:")
-        print("\t1. Insert recipe.")
-        print("\t2. Insert aliment.")
+        print("\t1. Create recipe.")
+        print("\t2. Create aliment.")
         print("\t3. List aliments.")
         print("\t4. List recipes.")
 

@@ -15,6 +15,15 @@ class Aliment:
     name: str
     tags: list[str] = field(default_factory=list)
 
+    bd_id: int = 0
+
+    def set_bd_id(self, bd_id: int):
+        """Set the id of the aliment in the database
+
+        :param bd_id: id of the aliment in the database
+        """
+        self.bd_id = bd_id
+
     def __eq__(self, other):
         """Overrides the default implementation"""
         if isinstance(other, Aliment):
@@ -39,6 +48,15 @@ class Ingredient:
     quantity: float
     quantity_type: str
     optional: bool = False
+
+    bd_id: int = 0
+
+    def set_bd_id(self, bd_id: int):
+        """Set the id of the ingredient in the database
+
+        :param bd_id: id of the ingredient in the database
+        """
+        self.bd_id = bd_id
 
 
 @dataclass
@@ -69,3 +87,12 @@ class Recipe:
     category: str
     tags: list[str] = field(default_factory=list)
     time: int = None
+
+    bd_id: int = 0
+
+    def set_bd_id(self, bd_id):
+        """Set the id of the recipe in the database
+
+        :param bd_id: id of the recipe in the database
+        """
+        self.bd_id = bd_id
