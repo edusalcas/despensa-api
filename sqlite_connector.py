@@ -3,13 +3,28 @@ import controller
 
 from classes import Aliment, Ingredient, Recipe
 from singleton import Singleton
+from typing import Callable, Any
 
 
-def clean_connection(func):
-    def inner(self, *args, **kwargs):
-        con = sqlite3.connect(self.db_path)
-        res = func(self, con, *args, **kwargs)
-        con.close()
+def clean_connection(func: Callable) -> Callable:
+    """This function will serve as a decorator for the class methods in SQLiteConnector. It opens a connection with
+    the database and then close it when the job is done
+
+    :param func: The function to decorate
+    :return: The function decorated
+    """
+    def inner(sqlite_ref, *args, **kwargs):
+        """ Inner method that ensures to open and close the connection with the database while the job in the
+        function is done
+
+        :param sqlite_ref: Reference to a SQLiteConnector object
+        :param args: list of arguments
+        :param kwargs: dict of arguments
+        :return: Returns the value the outer function returns
+        """
+        sqlite_ref.con = sqlite3.connect(sqlite_ref.db_path)
+        res = func(sqlite_ref, *args, **kwargs)
+        sqlite_ref.con.close()
 
         return res
 
@@ -17,30 +32,40 @@ def clean_connection(func):
 
 
 class SQLiteConnector(metaclass=Singleton):
-
+    """Clase que implementa la funcionalidad para establecer conexión con una base de datos SQLite y realizar
+    operaciones sobre la misma"""
     def __init__(self, database_path):
-        self.db_path = database_path
+        self.con = None
+        self.db_path: str = database_path
 
+    # region Add functions
     @clean_connection
-    def add_aliment(self, con: sqlite3.Connection, aliment: Aliment):
+    def add_aliment(self, aliment: Aliment):
+        """Add an aliment to the database
+
+        :param aliment: Aliment to insert in the database
+        """
         name = aliment.name
         tags = ' '.join(aliment.tags)
 
-        cur = con.cursor()
+        cur = self.con.cursor()
         sql = f"INSERT INTO aliment (name, tags) VALUES ('{name}', '{tags}');"
         cur.execute(sql)
 
         aliment.set_bd_id(cur.lastrowid)
-        con.commit()
+        self.con.commit()
 
-    @clean_connection
-    def add_ingredient(self, con: sqlite3.Connection, ingredient: Ingredient):
+    def __add_ingredient(self, ingredient: Ingredient):
+        """Insert an ingredient in the database
+
+        :param ingredient: Ingredient to insert
+        """
         aliment_id = ingredient.aliment.bd_id
         quantity = ingredient.quantity
         quantity_type = ingredient.quantity_type
         optional = ingredient.optional
 
-        cur = con.cursor()
+        cur = self.con.cursor()
         sql = f"""
             INSERT INTO ingredient (aliment_id, quantity, quantity_type, optional) 
                 VALUES ({aliment_id}, {quantity}, '{quantity_type}', {optional});
@@ -48,17 +73,13 @@ class SQLiteConnector(metaclass=Singleton):
         cur.execute(sql)
 
         ingredient.set_bd_id(cur.lastrowid)
-        con.commit()
+        self.con.commit()
 
-    def add_recipe_and_ingredients(self, recipe: Recipe):
-        for ingredient in recipe.ingredients:
-            self.add_ingredient(ingredient)
+    def __add_recipe(self, recipe: Recipe):
+        """Insert a recipe in the database
 
-        self.add_recipe(recipe)
-        self.add_recipe_ingredients(recipe)
-
-    @clean_connection
-    def add_recipe(self, con: sqlite3.Connection, recipe: Recipe):
+        :param recipe: The recipe to insert
+        """
         name = recipe.name
         num_people = recipe.num_people
         steps = '\n'.join(recipe.steps)
@@ -66,7 +87,7 @@ class SQLiteConnector(metaclass=Singleton):
         tags = ' '.join(recipe.tags)
         time = recipe.time
 
-        cur = con.cursor()
+        cur = self.con.cursor()
         sql = f"""
             INSERT INTO recipe (name, num_people, steps, category, tags, time)
                 VALUES ('{name}', {num_people}, '{steps}', '{category}', '{tags}', {time});
@@ -74,30 +95,46 @@ class SQLiteConnector(metaclass=Singleton):
         cur.execute(sql)
 
         recipe.set_bd_id(cur.lastrowid)
-        con.commit()
+        self.con.commit()
 
-    @clean_connection
-    def add_recipe_ingredients(self, con: sqlite3.Connection, recipe: Recipe):
+    def __add_recipe_ingredients(self, recipe: Recipe):
+        """Insert the ingredients of a recipe in the database
+
+        :param recipe: The recipe with the ingredients to insert
+        """
         recipe_id = recipe.bd_id
         data = [(recipe_id, ingredient.bd_id) for ingredient in recipe.ingredients]
 
-        cur = con.cursor()
+        cur = self.con.cursor()
 
         sql = "INSERT INTO recipe_ingredient (recipe_id, ingredient_id) VALUES (?, ?) "
         cur.executemany(sql, data)
 
-        con.commit()
+        self.con.commit()
+
+    @clean_connection
+    def add_recipe_and_ingredients(self, recipe: Recipe):
+        """Insert in the database a recipe and its ingredients
+
+        :param recipe: Recipe to insert with its recipe
+        """
+        for ingredient in recipe.ingredients:
+            self.__add_ingredient(ingredient=ingredient)
+
+        self.__add_recipe(recipe=recipe)
+        self.__add_recipe_ingredients(recipe=recipe)
+
+    # endregion
+
+    # region DB to object functions
 
     @staticmethod
     def db_to_aliment(aliment_raw: list) -> Aliment:
-        bd_id = aliment_raw[0]
-        name = aliment_raw[1]
-        tags = aliment_raw[2].split(' ')
+        """Transform an aliment from the database to an aliment object
 
-        return Aliment(name, tags, bd_id)
-
-    @staticmethod
-    def db_to_aliment(aliment_raw: list) -> Aliment:
+        :param aliment_raw: List of attributes of the aliment
+        :return: The aliment object
+        """
         bd_id = aliment_raw[0]
         name = aliment_raw[1]
         tags = aliment_raw[2].split(' ')
@@ -106,6 +143,11 @@ class SQLiteConnector(metaclass=Singleton):
 
     @staticmethod
     def db_to_ingredient(ingredient_raw: list) -> Ingredient:
+        """Transform an ingredient from the database to an ingredient object
+
+        :param ingredient_raw: List of attributes of the ingredient
+        :return: The ingredient object
+        """
         bd_id = int(ingredient_raw[0])
         aliment_id = int(ingredient_raw[1])
         aliment = controller.get_unique_instance().get_aliment_by_id(aliment_id)
@@ -116,6 +158,11 @@ class SQLiteConnector(metaclass=Singleton):
         return Ingredient(aliment, quantity, quantity_type, optional, bd_id)
 
     def db_to_recipe(self, recipe_raw: list) -> Recipe:
+        """Transform a recipe from the database to a recipe object
+
+        :param recipe_raw: List of attributes of the recipe
+        :return: The recipe object
+        """
         bd_id = recipe_raw[0]
         name = recipe_raw[1]
         num_people = recipe_raw[2]
@@ -128,10 +175,16 @@ class SQLiteConnector(metaclass=Singleton):
 
         return Recipe(name, num_people, ingredients, steps, category, tags, time, bd_id)
 
+    # endregion
+
     # region Get Catalogs
     @clean_connection
-    def get_all_aliments(self, con: sqlite3.Connection):
-        cur = con.cursor()
+    def get_all_aliments(self) -> list[Aliment]:
+        """Get a list of all aliments in the database
+
+        :return: The list of all aliments
+        """
+        cur = self.con.cursor()
         sql = "SELECT * FROM aliment"
         res = cur.execute(sql)
         aliments_raw = res.fetchall()
@@ -140,8 +193,12 @@ class SQLiteConnector(metaclass=Singleton):
         return aliments
 
     @clean_connection
-    def get_all_recipes(self, con: sqlite3.Connection):
-        cur = con.cursor()
+    def get_all_recipes(self) -> list[Recipe]:
+        """Get a list of all recipes in the database
+
+        :return: The list of all recipes in the database
+        """
+        cur = self.con.cursor()
 
         sql = """
             SELECT 
@@ -176,6 +233,10 @@ unique_instance = None
 
 
 def get_unique_instance() -> SQLiteConnector:
+    """This function ensures there is only one instance of the SQLiteConnector class
+
+    :return: The unique instance of the SQLiteConnector
+    """
     global unique_instance
 
     if unique_instance is None:

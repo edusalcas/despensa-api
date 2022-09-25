@@ -2,7 +2,7 @@ from classes import Aliment, Ingredient, Recipe
 import view_console
 import sqlite_connector as sqlite
 
-from typing import List, Any
+from typing import List
 
 from singleton import Singleton
 
@@ -17,6 +17,7 @@ class Controller(metaclass=Singleton):
         self.view = view_console.ConsoleView()
 
     def init_catalogs(self):
+        """Init the catalogs from the database"""
         # Recuperate the catalogs from the database
         self.__aliments_catalog = sqlite.get_unique_instance().get_all_aliments()
         self.__recipes_catalog = sqlite.get_unique_instance().get_all_recipes()
@@ -142,6 +143,10 @@ unique_instance = None
 
 
 def get_unique_instance() -> Controller:
+    """This function ensures there is only one instance of the Controller class
+
+    :return: The unique instance of the Controller
+    """
     global unique_instance
 
     if unique_instance is None:
