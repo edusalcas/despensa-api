@@ -1,6 +1,5 @@
 from classes import *
 import controller
-from view_console import ConsoleView
 
 
 def main_manual():

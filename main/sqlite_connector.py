@@ -1,9 +1,10 @@
-import sqlite3
-import controller
+from main import controller
+from main.classes import Aliment, Ingredient, Recipe
+from main.singleton import Singleton
 
-from classes import Aliment, Ingredient, Recipe
-from singleton import Singleton
-from typing import Callable, Any
+import sqlite3
+
+from typing import Callable
 
 
 def clean_connection(func: Callable) -> Callable:

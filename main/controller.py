@@ -1,10 +1,11 @@
-from classes import Aliment, Ingredient, Recipe
-import view_console
-import sqlite_connector as sqlite
+from main.classes import Aliment, Ingredient, Recipe
+from main import view_console
+from main.singleton import Singleton
+
+import main.sqlite_connector as sqlite
 
 from typing import List
 
-from singleton import Singleton
 
 
 class Controller(metaclass=Singleton):

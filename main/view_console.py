@@ -1,6 +1,8 @@
+from main import controller
+from main.classes import Ingredient
+
 import os
-import controller
-from classes import Ingredient
+
 
 
 def clear_console():

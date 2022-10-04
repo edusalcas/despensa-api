@@ -1,20 +1,7 @@
 from dataclasses import dataclass, field
 
 
-@dataclass
-class Aliment:
-    """Class which represents an aliment
-
-     Attributes
-    ----------
-    name : str
-        the name of the aliment
-    type : AlimentType
-        the type of the aliment of AlimentType
-    """
-    name: str
-    tags: list[str] = field(default_factory=list)
-
+class BDInstance():
     bd_id: int = 0
 
     def set_bd_id(self, bd_id: int):
@@ -24,6 +11,24 @@ class Aliment:
         """
         self.bd_id = bd_id
 
+@dataclass
+class Aliment(BDInstance):
+    """Class which represents an aliment
+
+     Attributes
+    ----------
+    name : str
+        the name of the aliment
+    tags : list[str]
+        list of tags for the aliment
+    """
+    name: str
+    tags: list[str] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.name = self.name.lower().strip()
+        self.tags = [" ".join(tag.lower().split()) for tag in self.tags]
+
     def __eq__(self, other):
         """Overrides the default implementation"""
         if isinstance(other, Aliment):
@@ -32,7 +37,7 @@ class Aliment:
 
 
 @dataclass
-class Ingredient:
+class Ingredient(BDInstance):
     """Class which represents an ingredient: an aliment for a recipe with a quantity
 
      Attributes
@@ -46,21 +51,12 @@ class Ingredient:
     """
     aliment: Aliment
     quantity: float
-    quantity_type: str
+    quantity_type: str = ''
     optional: bool = False
-
-    bd_id: int = 0
-
-    def set_bd_id(self, bd_id: int):
-        """Set the id of the ingredient in the database
-
-        :param bd_id: id of the ingredient in the database
-        """
-        self.bd_id = bd_id
 
 
 @dataclass
-class Recipe:
+class Recipe(BDInstance):
     """Class which represents a recipe
 
      Attributes
@@ -88,11 +84,8 @@ class Recipe:
     tags: list[str] = field(default_factory=list)
     time: int = None
 
-    bd_id: int = 0
-
-    def set_bd_id(self, bd_id):
-        """Set the id of the recipe in the database
-
-        :param bd_id: id of the recipe in the database
-        """
-        self.bd_id = bd_id
+    def __post_init__(self):
+        self.name = " ".join(self.name.split())
+        self.steps = [" ".join(step.split()) for step in self.steps]
+        self.category = " ".join(self.category.lower().split())
+        self.tags = [" ".join(tag.lower().split()) for tag in self.tags]

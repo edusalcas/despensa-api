@@ -1,1 +1,3 @@
-/database/despensa.sqlite
+/main/database/despensa.sqlite
+*.xml
+/.idea/despensa-api.iml
