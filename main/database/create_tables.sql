@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS aliment;
 CREATE TABLE aliment
 (
     aliment_id INTEGER NOT NULL
@@ -7,6 +8,7 @@ CREATE TABLE aliment
     tags VARCHAR(512)
 );
 
+DROP TABLE IF EXISTS ingredient;
 CREATE TABLE ingredient
 (
     ingredient_id INTEGER NOT NULL
@@ -21,7 +23,8 @@ CREATE TABLE ingredient
     optional BOOLEAN
 );
 
-create table recipe
+DROP TABLE IF EXISTS recipe;
+CREATE TABLE recipe
 (
     recipe_id  integer      not null
         constraint recipe_pk
@@ -34,7 +37,8 @@ create table recipe
     time       integer
 );
 
-create table recipe_ingredient
+DROP TABLE IF EXISTS recipe_ingredient;
+CREATE TABLE recipe_ingredient
 (
     recipe_id     integer not null
         constraint recipe_ingredient_recipe_id_fk

@@ -4,7 +4,13 @@ from main.singleton import Singleton
 
 import sqlite3
 
-from typing import Callable
+from typing import Callable, List
+
+
+class AlimentTable():
+    ID: int = 0
+    NAME: int = 1
+    TAGS: int = 2
 
 
 def clean_connection(func: Callable) -> Callable:
@@ -14,6 +20,7 @@ def clean_connection(func: Callable) -> Callable:
     :param func: The function to decorate
     :return: The function decorated
     """
+
     def inner(sqlite_ref, *args, **kwargs):
         """ Inner method that ensures to open and close the connection with the database while the job in the
         function is done
@@ -35,6 +42,7 @@ def clean_connection(func: Callable) -> Callable:
 class SQLiteConnector(metaclass=Singleton):
     """Clase que implementa la funcionalidad para establecer conexión con una base de datos SQLite y realizar
     operaciones sobre la misma"""
+
     def __init__(self, database_path):
         self.con = None
         self.db_path: str = database_path
@@ -136,9 +144,9 @@ class SQLiteConnector(metaclass=Singleton):
         :param aliment_raw: List of attributes of the aliment
         :return: The aliment object
         """
-        bd_id = aliment_raw[0]
-        name = aliment_raw[1]
-        tags = aliment_raw[2].split(' ')
+        bd_id = aliment_raw[AlimentTable.ID]
+        name = aliment_raw[AlimentTable.NAME]
+        tags = aliment_raw[AlimentTable.TAGS].split(' ')
 
         return Aliment(name, tags, bd_id)
 
@@ -229,11 +237,32 @@ class SQLiteConnector(metaclass=Singleton):
 
     # endregion
 
+    @clean_connection
+    def execute(self, sql: str):
+        """Execute a sql command
+
+        :param sql: Command to execute
+        """
+        cur = self.con.cursor()
+        cur.execute(sql)
+        self.con.commit()
+
+    @clean_connection
+    def query(self, sql: str) -> List[str]:
+        """Query to the database
+
+        :param sql: Query
+        :return: The list of results
+        """
+        cur = self.con.cursor()
+        res = cur.execute(sql)
+        return res.fetchall()
+
 
 unique_instance = None
 
 
-def get_unique_instance() -> SQLiteConnector:
+def get_unique_instance(database_path: str = 'database/despensa.sqlite') -> SQLiteConnector:
     """This function ensures there is only one instance of the SQLiteConnector class
 
     :return: The unique instance of the SQLiteConnector
@@ -241,5 +270,5 @@ def get_unique_instance() -> SQLiteConnector:
     global unique_instance
 
     if unique_instance is None:
-        unique_instance = SQLiteConnector('database/despensa.sqlite')
+        unique_instance = SQLiteConnector(database_path)
     return unique_instance
