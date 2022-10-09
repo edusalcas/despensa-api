@@ -4,14 +4,15 @@ from dataclasses import dataclass, field
 class BDInstance():
 
     def __init__(self):
-        self.bd_id = None
+        self.db_id = None
 
-    def set_bd_id(self, bd_id: int):
+    def set_db_id(self, db_id: int):
         """Set the id of the aliment in the database
 
-        :param bd_id: id of the aliment in the database
+        :param db_id: id of the aliment in the database
         """
-        self.bd_id = bd_id
+        self.db_id = db_id
+
 
 @dataclass
 class Aliment(BDInstance):
@@ -26,7 +27,7 @@ class Aliment(BDInstance):
     """
     name: str
     tags: list[str] = field(default_factory=list)
-    bd_id: int = 0
+    db_id: int = 0
 
     def __post_init__(self):
         self.name = self.name.lower().strip()
@@ -56,7 +57,7 @@ class Ingredient(BDInstance):
     quantity: float
     quantity_type: str = ''
     optional: bool = False
-    bd_id: int = 0
+    db_id: int = 0
 
 
 @dataclass
@@ -87,7 +88,7 @@ class Recipe(BDInstance):
     category: str
     tags: list[str] = field(default_factory=list)
     time: int = None
-    bd_id: int = 0
+    db_id: int = 0
 
     def __post_init__(self):
         self.name = " ".join(self.name.split())

@@ -7,10 +7,28 @@ import sqlite3
 from typing import Callable, List
 
 
-class AlimentTable():
+class AlimentTable:
     ID: int = 0
     NAME: int = 1
     TAGS: int = 2
+
+
+class RecipeTable:
+    ID: int = 0
+    NAME: int = 1
+    NUM_PEOPLE: int = 2
+    STEPS: int = 3
+    CATEGORY: int = 4
+    TAGS: int = 5
+    TIME: int = 6
+
+
+class IngredientTable:
+    ID: int = 0
+    ALIMENT_ID = 1
+    QUANTITY = 2
+    QUANTITY_TYPE = 3
+    OPTIONAL = 4
 
 
 def clean_connection(func: Callable) -> Callable:
@@ -30,9 +48,16 @@ def clean_connection(func: Callable) -> Callable:
         :param kwargs: dict of arguments
         :return: Returns the value the outer function returns
         """
-        sqlite_ref.con = sqlite3.connect(sqlite_ref.db_path)
+        close_connection = False
+        if sqlite_ref.con is None:  # Create the connection if it is not already created
+            sqlite_ref.con = sqlite3.connect(sqlite_ref.db_path)
+            close_connection = True
+
         res = func(sqlite_ref, *args, **kwargs)
-        sqlite_ref.con.close()
+
+        if close_connection:  # If the creation has been created in this function call, close it
+            sqlite_ref.con.close()
+            sqlite_ref.con = None
 
         return res
 
@@ -44,10 +69,10 @@ class SQLiteConnector(metaclass=Singleton):
     operaciones sobre la misma"""
 
     def __init__(self, database_path):
-        self.con = None
+        self.con: sqlite3.Connection = None
         self.db_path: str = database_path
 
-    # region Add functions
+    # region Add Objects to Database
     @clean_connection
     def add_aliment(self, aliment: Aliment):
         """Add an aliment to the database
@@ -61,15 +86,16 @@ class SQLiteConnector(metaclass=Singleton):
         sql = f"INSERT INTO aliment (name, tags) VALUES ('{name}', '{tags}');"
         cur.execute(sql)
 
-        aliment.set_bd_id(cur.lastrowid)
+        aliment.set_db_id(cur.lastrowid)
         self.con.commit()
 
-    def __add_ingredient(self, ingredient: Ingredient):
+    @clean_connection
+    def add_ingredient(self, ingredient: Ingredient):
         """Insert an ingredient in the database
 
         :param ingredient: Ingredient to insert
         """
-        aliment_id = ingredient.aliment.bd_id
+        aliment_id = ingredient.aliment.db_id
         quantity = ingredient.quantity
         quantity_type = ingredient.quantity_type
         optional = ingredient.optional
@@ -81,7 +107,7 @@ class SQLiteConnector(metaclass=Singleton):
         """
         cur.execute(sql)
 
-        ingredient.set_bd_id(cur.lastrowid)
+        ingredient.set_db_id(cur.lastrowid)
         self.con.commit()
 
     def __add_recipe(self, recipe: Recipe):
@@ -103,7 +129,7 @@ class SQLiteConnector(metaclass=Singleton):
         """
         cur.execute(sql)
 
-        recipe.set_bd_id(cur.lastrowid)
+        recipe.set_db_id(cur.lastrowid)
         self.con.commit()
 
     def __add_recipe_ingredients(self, recipe: Recipe):
@@ -111,8 +137,8 @@ class SQLiteConnector(metaclass=Singleton):
 
         :param recipe: The recipe with the ingredients to insert
         """
-        recipe_id = recipe.bd_id
-        data = [(recipe_id, ingredient.bd_id) for ingredient in recipe.ingredients]
+        recipe_id = recipe.db_id
+        data = [(recipe_id, ingredient.db_id) for ingredient in recipe.ingredients]
 
         cur = self.con.cursor()
 
@@ -128,7 +154,7 @@ class SQLiteConnector(metaclass=Singleton):
         :param recipe: Recipe to insert with its recipe
         """
         for ingredient in recipe.ingredients:
-            self.__add_ingredient(ingredient=ingredient)
+            self.add_ingredient(ingredient=ingredient)
 
         self.__add_recipe(recipe=recipe)
         self.__add_recipe_ingredients(recipe=recipe)
@@ -150,39 +176,67 @@ class SQLiteConnector(metaclass=Singleton):
 
         return Aliment(name, tags, bd_id)
 
-    @staticmethod
-    def db_to_ingredient(ingredient_raw: list) -> Ingredient:
+    def db_to_ingredient(self, ingredient_raw: list) -> Ingredient:
         """Transform an ingredient from the database to an ingredient object
 
         :param ingredient_raw: List of attributes of the ingredient
         :return: The ingredient object
         """
-        bd_id = int(ingredient_raw[0])
-        aliment_id = int(ingredient_raw[1])
-        aliment = controller.get_unique_instance().get_aliment_by_id(aliment_id)
-        quantity = float(ingredient_raw[2])
-        quantity_type = ingredient_raw[3]
-        optional = ingredient_raw[4]
+        bd_id = int(ingredient_raw[IngredientTable.ID])
+        aliment = self.get_aliment_by_id(int(ingredient_raw[IngredientTable.ALIMENT_ID]))
+        quantity = float(ingredient_raw[IngredientTable.QUANTITY])
+        quantity_type = ingredient_raw[IngredientTable.QUANTITY_TYPE]
+        optional = ingredient_raw[IngredientTable.OPTIONAL]
 
         return Ingredient(aliment, quantity, quantity_type, optional, bd_id)
 
-    def db_to_recipe(self, recipe_raw: list) -> Recipe:
+    def db_to_recipe(self, recipe_raw: list, ingredients_ids: list) -> Recipe:
         """Transform a recipe from the database to a recipe object
 
         :param recipe_raw: List of attributes of the recipe
+        :param ingredients_ids:
         :return: The recipe object
         """
-        bd_id = recipe_raw[0]
-        name = recipe_raw[1]
-        num_people = recipe_raw[2]
-        steps = recipe_raw[3].split('\n')
-        category = recipe_raw[4]
-        tags = recipe_raw[5].split(' ')
-        time = recipe_raw[6]
-        ingredients_raw = [ingredient_raw.split(',') for ingredient_raw in recipe_raw[7].split(';')]
-        ingredients = list(map(self.db_to_ingredient, ingredients_raw))
+        bd_id = recipe_raw[RecipeTable.ID]
+        name = recipe_raw[RecipeTable.NAME]
+        num_people = recipe_raw[RecipeTable.NUM_PEOPLE]
+        steps = recipe_raw[RecipeTable.STEPS].split('\n')
+        category = recipe_raw[RecipeTable.CATEGORY]
+        tags = recipe_raw[RecipeTable.TAGS].split(' ')
+        time = recipe_raw[RecipeTable.TIME]
+        ingredients = list(map(self.get_ingredient_by_id, ingredients_ids))
 
         return Recipe(name, num_people, ingredients, steps, category, tags, time, bd_id)
+
+    # endregion
+
+    # region Get Objects
+    @clean_connection
+    def get_aliment_by_id(self, aliment_id: int) -> Aliment:
+        cur = self.con.cursor()
+        aliment_raw = cur.execute(f"SELECT * FROM aliment WHERE aliment_id = {aliment_id}").fetchone()
+        aliment = self.db_to_aliment(aliment_raw)
+
+        return aliment
+
+    @clean_connection
+    def get_ingredient_by_id(self, ingredient_id: int) -> Ingredient:
+        cur = self.con.cursor()
+        ingredient_raw = cur.execute(f"SELECT * FROM ingredient WHERE ingredient_id = {ingredient_id}").fetchone()
+        ingredient = self.db_to_ingredient(ingredient_raw)
+
+        return ingredient
+
+    @clean_connection
+    def get_recipe_by_id(self, recipe_id: int) -> Recipe:
+        cur = self.con.cursor()
+        recipe_raw = cur.execute(f"SELECT * FROM recipe WHERE recipe_id = {recipe_id}").fetchone()
+        ingredients_ids = cur.execute(f"""SELECT ingredient_id FROM recipe_ingredient WHERE recipe_id = {recipe_id}""")\
+                             .fetchall()
+        ingredients_ids = [ingredient_tuple[0] for ingredient_tuple in ingredients_ids]
+        recipe = self.db_to_recipe(recipe_raw, ingredients_ids)
+
+        return recipe
 
     # endregion
 
@@ -194,8 +248,7 @@ class SQLiteConnector(metaclass=Singleton):
         :return: The list of all aliments
         """
         cur = self.con.cursor()
-        sql = "SELECT * FROM aliment"
-        res = cur.execute(sql)
+        res = cur.execute("SELECT * FROM aliment")
         aliments_raw = res.fetchall()
 
         aliments = list(map(self.db_to_aliment, aliments_raw))
@@ -208,31 +261,12 @@ class SQLiteConnector(metaclass=Singleton):
         :return: The list of all recipes in the database
         """
         cur = self.con.cursor()
+        res = cur.execute("SELECT recipe_id FROM recipe")
 
-        sql = """
-            SELECT 
-                recipe.*,
-                group_concat(ingredient_id || ',' || aliment_id || ',' || quantity || ',' || quantity_type || ',' || optional, ';')
-            FROM 
-                recipe
-                INNER JOIN recipe_ingredient USING(recipe_id)
-                INNER JOIN ingredient USING(ingredient_id)
-            GROUP BY
-                recipe_id,
-                name,
-                num_people,
-                steps,
-                category,
-                tags,
-                time
-        """
-        res = cur.execute(sql)
+        recipes_ids = [row[0] for row in res.fetchall()]
 
-        recipes_raw = res.fetchall()
+        recipes = list(map(self.get_recipe_by_id, recipes_ids))
 
-        recipes = list(map(self.db_to_recipe, recipes_raw))
-
-        print(recipes)
         return recipes
 
     # endregion
