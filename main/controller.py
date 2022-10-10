@@ -12,6 +12,7 @@ class Controller(metaclass=Singleton):
     """Class controller for separate the UI and the functionality"""
     __aliments_catalog: list[Aliment] = []
     __recipes_catalog: list[Recipe] = []
+    __pantry: list[Aliment] = []
 
     def __init__(self):
         # Create the view
@@ -22,6 +23,7 @@ class Controller(metaclass=Singleton):
         # Recuperate the catalogs from the database
         self.__aliments_catalog = sqlite.get_unique_instance().get_all_aliments()
         self.__recipes_catalog = sqlite.get_unique_instance().get_all_recipes()
+        self.__pantry = sqlite.get_unique_instance().get_pantry()
 
     def start(self):
         """Start the UI"""
@@ -41,6 +43,23 @@ class Controller(metaclass=Singleton):
         sqlite.get_unique_instance().add_aliment(aliment)
         self.__aliments_catalog.append(aliment)
         return True
+
+    def insert_aliment_in_pantry(self, name: str) -> int:
+        for aliment in self.__aliments_catalog:
+            if aliment.name == name.lower().strip():
+                if aliment not in self.__pantry:
+                    self.__pantry.append(aliment)
+                    sqlite.get_unique_instance().add_ingredient_to_pantry(aliment)
+                    return 0
+
+        return -1
+
+    def remove_aliment_in_pantry(self, name: str) -> None:
+        for aliment in self.__pantry:
+            if aliment.name == name.lower().strip():
+                self.__pantry.remove(aliment)
+                sqlite.get_unique_instance().remove_ingredient_from_pantry(aliment)
+                return
 
     def update_aliment(self, name: str, tags: List[str]):
         """Update an aliment

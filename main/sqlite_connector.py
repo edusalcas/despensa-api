@@ -110,6 +110,22 @@ class SQLiteConnector(metaclass=Singleton):
         ingredient.set_db_id(cur.lastrowid)
         self.con.commit()
 
+    @clean_connection
+    def add_ingredient_to_pantry(self, ingredient: Ingredient):
+        cur = self.con.cursor()
+        sql = f"""
+            INSERT INTO pantry (aliment_id) 
+                VALUES ({ingredient.db_id});
+        """
+        cur.execute(sql)
+        self.con.commit()
+
+    @clean_connection
+    def remove_ingredient_from_pantry(self, ingredient: Ingredient):
+        cur = self.con.cursor()
+        cur.execute(f"DELETE FROM pantry WHERE aliment_id = {ingredient.db_id};")
+        self.con.commit()
+
     def __add_recipe(self, recipe: Recipe):
         """Insert a recipe in the database
 
@@ -268,6 +284,16 @@ class SQLiteConnector(metaclass=Singleton):
         recipes = list(map(self.get_recipe_by_id, recipes_ids))
 
         return recipes
+
+    @clean_connection
+    def get_pantry(self) -> list[Aliment]:
+        cur = self.con.cursor()
+        res = cur.execute("SELECT aliment.* FROM pantry INNER JOIN aliment USING(aliment_id)")
+        aliments_raw = res.fetchall()
+
+        pantry = list(map(self.db_to_aliment, aliments_raw))
+        return pantry
+
 
     # endregion
 

@@ -50,3 +50,12 @@ CREATE TABLE recipe_ingredient
             on update cascade on delete cascade
 );
 
+DROP TABLE IF EXISTS pantry;
+CREATE TABLE pantry
+(
+    aliment_id INTEGER NOT NULL
+        constraint ingredient_aliment_id_fk
+            references aliment
+            on update cascade on delete cascade
+)
+
