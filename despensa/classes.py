@@ -1,7 +1,9 @@
 from dataclasses import dataclass, field
+from typing import List
 
 
-class BDInstance():
+class BDInstance:
+    """Class with implements the db_id for objects who will be in database"""
 
     def __init__(self):
         self.db_id = None
@@ -35,9 +37,22 @@ class Aliment(BDInstance):
 
     def __eq__(self, other):
         """Overrides the default implementation"""
-        if isinstance(other, Aliment):
+        if isinstance(other, type(self)):
             return self.name == other.name
         return False
+
+    def __hash__(self):
+        return hash(self.name)
+
+    def __lt__(self, other):
+        return self.name < other.name
+
+    def simple_str(self) -> str:
+        """Returns a simplified str of the aliment
+
+        :return: Simple description of the aliment
+        """
+        return f"{self.name.title()}: {', '.join(map(str.title, self.tags))}"
 
 
 @dataclass
@@ -59,6 +74,14 @@ class Ingredient(BDInstance):
     optional: bool = False
     db_id: int = 0
 
+    def simple_str(self) -> str:
+        """Returns a simplified str of the ingredient
+
+        :return: Simple description of the ingredient
+        """
+        return f"{self.aliment.name.title()}: {self.quantity} {self.quantity_type}" + \
+               (" (Optional)" if self.optional else "")
+
 
 @dataclass
 class Recipe(BDInstance):
@@ -75,7 +98,7 @@ class Recipe(BDInstance):
     steps : list[str]
         the type of the aliment of AlimentType
     category : str
-        the category of the recipe (f.e. main, breakfast...)
+        the category of the recipe (f.e. despensa, breakfast...)
     tags : list[str]
         the type of the aliment of AlimentType
     time : int
@@ -95,3 +118,32 @@ class Recipe(BDInstance):
         self.steps = [" ".join(step.split()) for step in self.steps]
         self.category = " ".join(self.category.lower().split())
         self.tags = [" ".join(tag.lower().split()) for tag in self.tags]
+
+    def __str__(self) -> str:
+        ingredients = '\n\t\t'.join([i.simple_str() for i in self.ingredients])
+        recipe_str = f"""\
+    Recipe name: {self.name}
+        Category: {self.category.title()}
+        Tags: {', '.join(map(str.title, self.tags))}
+        Number of people: {self.num_people}
+        Estimated time: {self.time}
+
+        Ingredients: 
+                {ingredients}
+        """
+
+        return recipe_str
+
+    def simple_str(self) -> str:
+        """Returns a simplified str of the recipe
+
+        :return: Simple description of the recipe
+        """
+        return f"{self.name} ({self.category.title()}): {', '.join(map(str.title, self.tags))}"
+
+    def get_not_optional_aliments(self) -> List[Aliment]:
+        """Get the not optional aliments from the recipe
+
+        :return: Return a list with the non-optional aliments
+        """
+        return [ingredient.aliment for ingredient in self.ingredients if not ingredient.optional]

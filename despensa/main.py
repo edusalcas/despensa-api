@@ -1,5 +1,5 @@
-from classes import *
-import controller
+from despensa.classes import *
+import despensa.controller as controller
 
 
 def main_manual():

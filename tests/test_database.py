@@ -1,10 +1,11 @@
 import pytest
 import os
 
-from main.sqlite_connector import get_unique_instance, SQLiteConnector, AlimentTable, RecipeTable, IngredientTable
-from main.classes import Aliment, Ingredient, Recipe
+from despensa.classes import Aliment, Ingredient, Recipe
+from despensa.sqlite_connector import get_unique_instance, SQLiteConnector
 
-PATH_TEST_DB: str = "database/despensa_test.sqlite"
+PATH_TEST_DB: str = "tests/database/despensa_test.sqlite"
+
 
 @pytest.fixture
 def sample_aliment() -> Aliment:
@@ -29,7 +30,7 @@ def sample_recipe(sample_ingredient) -> Recipe:
 def sqlite_con():
     sqlite_con = get_unique_instance(database_path=PATH_TEST_DB)
 
-    with open('../main/database/create_tables.sql', 'r') as create_tables_sql_file:
+    with open('despensa/database/create_tables.sql', 'r') as create_tables_sql_file:
         create_tables_sql_commands = create_tables_sql_file.read().split(';')
         for command in create_tables_sql_commands:
             sqlite_con.execute(command)
@@ -37,7 +38,7 @@ def sqlite_con():
     yield sqlite_con
     if os.path.exists(PATH_TEST_DB):
         os.remove(PATH_TEST_DB)
-    
+
 
 class TestSQLiteConnectorAliment:
     def test_aliment_to_sqlite(self, sqlite_con: SQLiteConnector, sample_aliment: Aliment):
@@ -57,6 +58,35 @@ class TestSQLiteConnectorAliment:
         db_aliments = sqlite_con.get_all_aliments()
 
         assert [al0, al1, al2] == db_aliments
+
+    def test_add_aliment_to_pantry(self, sqlite_con: SQLiteConnector):
+        al0 = Aliment(name='onion', tags=['vegetable', 'favorite'])
+        al1 = Aliment(name='chicken', tags=['meat'])
+
+        sqlite_con.add_aliment(al0)
+        sqlite_con.add_aliment(al1)
+
+        sqlite_con.add_ingredient_to_pantry(al0)
+        sqlite_con.add_ingredient_to_pantry(al1)
+
+        pantry = sqlite_con.get_pantry()
+
+        assert [al0, al1] == pantry
+
+    def test_remove_aliment_from_pantry(self, sqlite_con: SQLiteConnector):
+        al0 = Aliment(name='onion', tags=['vegetable', 'favorite'])
+        al1 = Aliment(name='chicken', tags=['meat'])
+
+        sqlite_con.add_aliment(al0)
+        sqlite_con.add_aliment(al1)
+
+        sqlite_con.add_ingredient_to_pantry(al0)
+        sqlite_con.add_ingredient_to_pantry(al1)
+
+        sqlite_con.remove_ingredient_from_pantry(al0)
+        pantry = sqlite_con.get_pantry()
+
+        assert [al1] == pantry
 
 
 class TestSQLiteConnectionIngredient:
@@ -87,7 +117,7 @@ class TestSQLiteConnectorRecipe:
             ingredients=[Ingredient(al0, 10, 'gr'), Ingredient(al2, 1, 'spoon')],
             steps=['Step 1', 'Step 2'],
             tags=['tag1', 'tag2'],
-            category='main',
+            category='despensa',
             time=10
         )
         re1 = Recipe(
@@ -109,4 +139,3 @@ class TestSQLiteConnectorRecipe:
         db_recipes = sqlite_con.get_all_recipes()
 
         assert db_recipes == [re0, re1]
-

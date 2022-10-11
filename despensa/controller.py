@@ -1,11 +1,10 @@
-from main.classes import Aliment, Ingredient, Recipe
-from main import view_console
-from main.singleton import Singleton
+from despensa.classes import Aliment, Ingredient, Recipe
+import despensa.view_console as view_console
+from despensa.singleton import Singleton
 
-import main.sqlite_connector as sqlite
+import despensa.sqlite_connector as sqlite
 
 from typing import List
-
 
 
 class Controller(metaclass=Singleton):
@@ -29,7 +28,7 @@ class Controller(metaclass=Singleton):
         """Start the UI"""
         self.view.run()
 
-    def insert_aliment(self, name: str, tags: List[str]) -> bool:
+    def create_aliment(self, name: str, tags: List[str]) -> bool:
         """Insert an aliment, if it already exists, returns False
 
         :param name: Name of the aliment
@@ -45,6 +44,11 @@ class Controller(metaclass=Singleton):
         return True
 
     def insert_aliment_in_pantry(self, name: str) -> int:
+        """Inserts an already existing aliment into the pantry
+
+        :param name: Name of the existing aliment
+        :return: -1 if aliment does not exist 0 otherwise
+        """
         for aliment in self.__aliments_catalog:
             if aliment.name == name.lower().strip():
                 if aliment not in self.__pantry:
@@ -55,6 +59,10 @@ class Controller(metaclass=Singleton):
         return -1
 
     def remove_aliment_in_pantry(self, name: str) -> None:
+        """Remove an aliment from pantry
+
+        :param name: Aliment's name
+        """
         for aliment in self.__pantry:
             if aliment.name == name.lower().strip():
                 self.__pantry.remove(aliment)
@@ -116,6 +124,15 @@ class Controller(metaclass=Singleton):
         sqlite.get_unique_instance().add_recipe_and_ingredients(recipe)
         self.__recipes_catalog.append(recipe)
 
+    def get_recipes_from_pantry(self) -> List[Recipe]:
+        """Get the recipes which are doable with aliments in pantry
+
+        :return: Return the doable recipes with aliments in pantry
+        """
+        return [recipe for recipe in self.__recipes_catalog
+                if set(recipe.get_not_optional_aliments()) <= set(self.__pantry)]
+
+
     #####################################
     #              Getters              #
     #####################################
@@ -139,7 +156,7 @@ class Controller(metaclass=Singleton):
         :return: The aliment if it exists, else None
         """
         for aliment in self.__aliments_catalog:
-            if aliment.bd_id == aliment_id:
+            if aliment.db_id == aliment_id:
                 return aliment
 
         return None
@@ -157,6 +174,13 @@ class Controller(metaclass=Singleton):
         :return: Returns the list of recipes
         """
         return self.__recipes_catalog
+
+    def get_pantry(self) -> List[Aliment]:
+        """ Get the list of aliments in the pantry
+
+        :return: Returns the list of aliments in the pantry
+        """
+        return self.__pantry
 
 
 unique_instance = None

@@ -1,6 +1,5 @@
-from main import controller
-from main.classes import Aliment, Ingredient, Recipe
-from main.singleton import Singleton
+from despensa.classes import Aliment, Ingredient, Recipe
+from despensa.singleton import Singleton
 
 import sqlite3
 
@@ -8,12 +7,23 @@ from typing import Callable, List
 
 
 class AlimentTable:
+    """Aliment's attributes positions when read from DB"""
     ID: int = 0
     NAME: int = 1
     TAGS: int = 2
 
 
+class IngredientTable:
+    """Ingredient's attributes positions when read from DB"""
+    ID: int = 0
+    ALIMENT_ID = 1
+    QUANTITY = 2
+    QUANTITY_TYPE = 3
+    OPTIONAL = 4
+
+
 class RecipeTable:
+    """Recipe's attributes positions when read from DB"""
     ID: int = 0
     NAME: int = 1
     NUM_PEOPLE: int = 2
@@ -21,14 +31,6 @@ class RecipeTable:
     CATEGORY: int = 4
     TAGS: int = 5
     TIME: int = 6
-
-
-class IngredientTable:
-    ID: int = 0
-    ALIMENT_ID = 1
-    QUANTITY = 2
-    QUANTITY_TYPE = 3
-    OPTIONAL = 4
 
 
 def clean_connection(func: Callable) -> Callable:
@@ -112,6 +114,10 @@ class SQLiteConnector(metaclass=Singleton):
 
     @clean_connection
     def add_ingredient_to_pantry(self, ingredient: Ingredient):
+        """Inserts an aliment into pantry
+
+        :param ingredient: Ingredient to insert in pantry
+        """
         cur = self.con.cursor()
         sql = f"""
             INSERT INTO pantry (aliment_id) 
@@ -122,6 +128,10 @@ class SQLiteConnector(metaclass=Singleton):
 
     @clean_connection
     def remove_ingredient_from_pantry(self, ingredient: Ingredient):
+        """Removes an aliment from pantry
+
+        :param ingredient: Ingredient to remove from pantry
+        """
         cur = self.con.cursor()
         cur.execute(f"DELETE FROM pantry WHERE aliment_id = {ingredient.db_id};")
         self.con.commit()
@@ -229,6 +239,11 @@ class SQLiteConnector(metaclass=Singleton):
     # region Get Objects
     @clean_connection
     def get_aliment_by_id(self, aliment_id: int) -> Aliment:
+        """Get an aliment by id
+
+        :param aliment_id: id of the aliment
+        :return: The aliment
+        """
         cur = self.con.cursor()
         aliment_raw = cur.execute(f"SELECT * FROM aliment WHERE aliment_id = {aliment_id}").fetchone()
         aliment = self.db_to_aliment(aliment_raw)
@@ -237,6 +252,11 @@ class SQLiteConnector(metaclass=Singleton):
 
     @clean_connection
     def get_ingredient_by_id(self, ingredient_id: int) -> Ingredient:
+        """Get an ingredient by id
+
+        :param ingredient_id:  id of the ingredient
+        :return: The ingredient
+        """
         cur = self.con.cursor()
         ingredient_raw = cur.execute(f"SELECT * FROM ingredient WHERE ingredient_id = {ingredient_id}").fetchone()
         ingredient = self.db_to_ingredient(ingredient_raw)
@@ -245,10 +265,15 @@ class SQLiteConnector(metaclass=Singleton):
 
     @clean_connection
     def get_recipe_by_id(self, recipe_id: int) -> Recipe:
+        """Get a recipe by id
+
+        :param recipe_id: id of the recipe
+        :return: The recipe
+        """
         cur = self.con.cursor()
         recipe_raw = cur.execute(f"SELECT * FROM recipe WHERE recipe_id = {recipe_id}").fetchone()
-        ingredients_ids = cur.execute(f"""SELECT ingredient_id FROM recipe_ingredient WHERE recipe_id = {recipe_id}""")\
-                             .fetchall()
+        ingredients_ids = cur.execute(f"""SELECT ingredient_id FROM recipe_ingredient WHERE recipe_id = {recipe_id}""") \
+            .fetchall()
         ingredients_ids = [ingredient_tuple[0] for ingredient_tuple in ingredients_ids]
         recipe = self.db_to_recipe(recipe_raw, ingredients_ids)
 
@@ -287,13 +312,16 @@ class SQLiteConnector(metaclass=Singleton):
 
     @clean_connection
     def get_pantry(self) -> list[Aliment]:
+        """Get the list of aliments in the pantry
+
+        :return: List of aliments in the pantry
+        """
         cur = self.con.cursor()
         res = cur.execute("SELECT aliment.* FROM pantry INNER JOIN aliment USING(aliment_id)")
         aliments_raw = res.fetchall()
 
         pantry = list(map(self.db_to_aliment, aliments_raw))
         return pantry
-
 
     # endregion
 
@@ -322,7 +350,7 @@ class SQLiteConnector(metaclass=Singleton):
 unique_instance = None
 
 
-def get_unique_instance(database_path: str = 'database/despensa.sqlite') -> SQLiteConnector:
+def get_unique_instance(database_path: str = 'despensa/database/despensa.sqlite') -> SQLiteConnector:
     """This function ensures there is only one instance of the SQLiteConnector class
 
     :return: The unique instance of the SQLiteConnector
