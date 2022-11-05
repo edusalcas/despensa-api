@@ -12,6 +12,7 @@ class Controller(metaclass=Singleton):
     __aliments_catalog: list[Aliment] = []
     __recipes_catalog: list[Recipe] = []
     __pantry: list[Aliment] = []
+    __shopping_list: list[str] = []
 
     def __init__(self):
         # Create the view
@@ -23,6 +24,7 @@ class Controller(metaclass=Singleton):
         self.__aliments_catalog = sqlite.get_unique_instance().get_all_aliments()
         self.__recipes_catalog = sqlite.get_unique_instance().get_all_recipes()
         self.__pantry = sqlite.get_unique_instance().get_pantry()
+        self.__shopping_list = sqlite.get_unique_instance().get_shopping_list()
 
     def start(self):
         """Start the UI"""
@@ -132,6 +134,13 @@ class Controller(metaclass=Singleton):
         return [recipe for recipe in self.__recipes_catalog
                 if set(recipe.get_not_optional_aliments()) <= set(self.__pantry)]
 
+    def insert_item_in_shopping_list(self, item: str):
+        """Add an item to the shopping list
+
+        :param item: item to insert in the shopping list
+        """
+        sqlite.get_unique_instance().insert_item_in_shopping_list(item)
+        self.__shopping_list.append(item)
 
     #####################################
     #              Getters              #
@@ -182,6 +191,12 @@ class Controller(metaclass=Singleton):
         """
         return self.__pantry
 
+    def get_shopping_list(self) -> List[str]:
+        """ Get the shopping list
+
+        :return: Returns the shopping list
+        """
+        return self.__shopping_list
 
 unique_instance = None
 

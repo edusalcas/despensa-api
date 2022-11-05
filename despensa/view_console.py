@@ -8,6 +8,7 @@ from despensa.classes import Ingredient
 
 import os
 
+
 def clear_console():
     os.system('cls')
 
@@ -17,7 +18,6 @@ def bool_y_n(condition: str):
 
 
 class ConsoleView:
-
     @dataclass
     class Option:
         info: str
@@ -114,7 +114,21 @@ class ConsoleView:
     def list_recipes_catalog(self):
         recipes = controller.get_unique_instance().get_recipes_catalog()
         print('\n'.join([r.simple_str() for r in recipes]))
-        input()
+        recipe_name = input('\nRecipe to inspect:')
+
+        for recipe in recipes:
+            if recipe.name.lower() == recipe_name.lower():
+                print(recipe)
+                print("""
+    Press:
+        1. Edit
+        2. Remove
+        3. Add aliments to shopping list
+        
+        q. Exit
+                """)
+
+                input()  # TODO: Add options functionality
 
     def list_aliments_catalog(self):
         aliments = controller.get_unique_instance().get_aliments_catalog()
@@ -126,6 +140,15 @@ class ConsoleView:
         print('\n'.join([str(r) for r in recipes]))
         input()
 
+    def insert_item_in_shopping_list(self):
+        item = input("Item's name: ")
+        controller.get_unique_instance().insert_item_in_shopping_list(item)
+
+    def get_shopping_list(self):
+        shopping_list = controller.get_unique_instance().get_shopping_list()
+        print('\n'.join([str(r) for r in shopping_list]))
+        input()
+
     __LIST_ALIMENT: int = 1
     __LIST_RECIPES: int = 2
     __CREATE_RECIPE: int = 3
@@ -134,6 +157,8 @@ class ConsoleView:
     __INSERT_ALIMENT_PANTRY: int = 6
     __REMOVE_ALIMENT_PANTRY: int = 7
     __GET_RECIPES_PANTRY: int = 8
+    __INSERT_ALIMENT_SHOPPING_LIST: int = 9
+    __GET_SHOPPING_LIST: int = 10
     __EXIT: str = 'q'
 
     __DICT_OPTIONS: dict[int, Option] = {
@@ -145,6 +170,8 @@ class ConsoleView:
         __INSERT_ALIMENT_PANTRY: Option('Insert aliment in pantry', insert_aliment_in_pantry),
         __REMOVE_ALIMENT_PANTRY: Option('Remove aliment from pantry', remove_aliment_in_pantry),
         __GET_RECIPES_PANTRY: Option('Get doable recipes with pantry', get_recipes_from_pantry),
+        __INSERT_ALIMENT_SHOPPING_LIST: Option('Insert aliment to the shopping list', insert_item_in_shopping_list),
+        __GET_SHOPPING_LIST: Option('Get shopping list', get_shopping_list),
     }
 
     def print_options(self):

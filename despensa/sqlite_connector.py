@@ -185,6 +185,18 @@ class SQLiteConnector(metaclass=Singleton):
         self.__add_recipe(recipe=recipe)
         self.__add_recipe_ingredients(recipe=recipe)
 
+    @clean_connection
+    def insert_item_in_shopping_list(self, item: str):
+        """Insert item to shopping list table
+
+        :param item: item to insert
+        """
+        cur = self.con.cursor()
+        sql = f"INSERT INTO shopping_list (item) VALUES ('{item}')"
+        cur.execute(sql)
+
+        self.con.commit()
+
     # endregion
 
     # region DB to object functions
@@ -323,6 +335,19 @@ class SQLiteConnector(metaclass=Singleton):
         pantry = list(map(self.db_to_aliment, aliments_raw))
         return pantry
 
+    @clean_connection
+    def get_shopping_list(self) -> list[str]:
+        """Get the list of aliments in the pantry
+
+        :return: List of aliments in the pantry
+        """
+        cur = self.con.cursor()
+        res = cur.execute("SELECT * FROM shopping_list")
+        items_raw = res.fetchall()
+        items = [i[0] for i in items_raw]
+
+        return items
+
     # endregion
 
     @clean_connection
@@ -345,7 +370,6 @@ class SQLiteConnector(metaclass=Singleton):
         cur = self.con.cursor()
         res = cur.execute(sql)
         return res.fetchall()
-
 
 unique_instance = None
 

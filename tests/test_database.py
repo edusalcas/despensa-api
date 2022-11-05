@@ -139,3 +139,11 @@ class TestSQLiteConnectorRecipe:
         db_recipes = sqlite_con.get_all_recipes()
 
         assert db_recipes == [re0, re1]
+
+
+class TestSQLiteConnectorShoppingList:
+    def test_add_item_to_shopping_list(self, sqlite_con: SQLiteConnector):
+        sqlite_con.insert_item_in_shopping_list("Oranges")
+        sqlite_con.insert_item_in_shopping_list("Onion")
+
+        assert sqlite_con.get_shopping_list() == ['Oranges', 'Onion']

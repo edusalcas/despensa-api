@@ -6,7 +6,8 @@ CREATE TABLE aliment
             PRIMARY KEY autoincrement,
     name VARCHAR(64),
     tags VARCHAR(512)
-);
+)
+;
 
 DROP TABLE IF EXISTS ingredient;
 CREATE TABLE ingredient
@@ -21,7 +22,8 @@ CREATE TABLE ingredient
     quantity FLOAT,
     quantity_type VARCHAR(64),
     optional BOOLEAN
-);
+)
+;
 
 DROP TABLE IF EXISTS recipe;
 CREATE TABLE recipe
@@ -35,7 +37,8 @@ CREATE TABLE recipe
     category   VARCHAR(64)  not null,
     tags       VARCHAR(256),
     time       integer
-);
+)
+;
 
 DROP TABLE IF EXISTS recipe_ingredient;
 CREATE TABLE recipe_ingredient
@@ -48,7 +51,8 @@ CREATE TABLE recipe_ingredient
         constraint recipe_ingredient_ingredient_id_fk
             references ingredient
             on update cascade on delete cascade
-);
+)
+;
 
 DROP TABLE IF EXISTS pantry;
 CREATE TABLE pantry
@@ -58,4 +62,11 @@ CREATE TABLE pantry
             references aliment
             on update cascade on delete cascade
 )
+;
 
+DROP TABLE IF EXISTS shopping_list;
+CREATE TABLE shopping_list
+(
+    item VARCHAR(256) NOT NULL
+)
+;
