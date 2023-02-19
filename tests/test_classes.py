@@ -1,4 +1,7 @@
 from despensa.classes import Aliment, Ingredient, Recipe
+from environment import Environment
+
+Environment().working_is_test()
 
 
 class TestAliment:

@@ -1,4 +1,5 @@
-CREATE TABLE IF NOT EXISTS aliment
+DROP TABLE IF EXISTS aliment;
+CREATE TABLE aliment
 (
     aliment_id INTEGER NOT NULL
         constraint table_name_pk
@@ -8,7 +9,8 @@ CREATE TABLE IF NOT EXISTS aliment
 )
 ;
 
-CREATE TABLE IF NOT EXISTS ingredient
+DROP TABLE IF EXISTS ingredient;
+CREATE TABLE ingredient
 (
     ingredient_id INTEGER NOT NULL
         constraint ingredient_pk
@@ -23,7 +25,8 @@ CREATE TABLE IF NOT EXISTS ingredient
 )
 ;
 
-CREATE TABLE IF NOT EXISTS recipe
+DROP TABLE IF EXISTS recipe;
+CREATE TABLE recipe
 (
     recipe_id  integer      not null
         constraint recipe_pk
@@ -37,7 +40,8 @@ CREATE TABLE IF NOT EXISTS recipe
 )
 ;
 
-CREATE TABLE IF NOT EXISTS recipe_ingredient
+DROP TABLE IF EXISTS recipe_ingredient;
+CREATE TABLE recipe_ingredient
 (
     recipe_id     integer not null
         constraint recipe_ingredient_recipe_id_fk
@@ -50,7 +54,8 @@ CREATE TABLE IF NOT EXISTS recipe_ingredient
 )
 ;
 
-CREATE TABLE IF NOT EXISTS pantry
+DROP TABLE IF EXISTS pantry;
+CREATE TABLE pantry
 (
     aliment_id INTEGER NOT NULL
         constraint ingredient_aliment_id_fk
@@ -59,7 +64,8 @@ CREATE TABLE IF NOT EXISTS pantry
 )
 ;
 
-CREATE TABLE IF NOT EXISTS shopping_list
+DROP TABLE IF EXISTS shopping_list;
+CREATE TABLE shopping_list
 (
     item VARCHAR(256) NOT NULL
 )

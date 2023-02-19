@@ -2,10 +2,11 @@ import pytest
 import os
 
 from despensa.classes import Aliment, Ingredient, Recipe
-from despensa.sqlite_connector import get_unique_instance, SQLiteConnector
+from despensa.sqlite_connector import SQLiteConnector
+from environment import Environment
+from definitions import MAIN_DIR
 
-PATH_TEST_DB: str = "tests/database/despensa_test.sqlite"
-
+Environment().working_is_test()
 
 @pytest.fixture
 def sample_aliment() -> Aliment:
@@ -28,16 +29,11 @@ def sample_recipe(sample_ingredient) -> Recipe:
 
 @pytest.fixture
 def sqlite_con():
-    sqlite_con = get_unique_instance(database_path=PATH_TEST_DB)
-
-    with open('despensa/database/create_tables.sql', 'r') as create_tables_sql_file:
-        create_tables_sql_commands = create_tables_sql_file.read().split(';')
-        for command in create_tables_sql_commands:
-            sqlite_con.execute(command)
+    sqlite_con = SQLiteConnector()
 
     yield sqlite_con
-    if os.path.exists(PATH_TEST_DB):
-        os.remove(PATH_TEST_DB)
+    if os.path.exists(sqlite_con.db_path):
+        os.remove(sqlite_con.db_path)
 
 
 class TestSQLiteConnectorAliment:

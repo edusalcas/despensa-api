@@ -1,6 +1,9 @@
 from despensa.classes import Aliment, Ingredient, Recipe
-from despensa.singleton import Singleton
+from despensa.singleton_meta import SingletonMeta
+from definitions import SQLITE_DB, MAIN_DIR
+from environment import Environment
 
+import os
 import sqlite3
 
 from typing import Callable, List
@@ -66,13 +69,26 @@ def clean_connection(func: Callable) -> Callable:
     return inner
 
 
-class SQLiteConnector(metaclass=Singleton):
+class SQLiteConnector(metaclass=SingletonMeta):
     """Clase que implementa la funcionalidad para establecer conexión con una base de datos SQLite y realizar
     operaciones sobre la misma"""
 
-    def __init__(self, database_path):
+    def __init__(self):
         self.con: sqlite3.Connection = None
-        self.db_path: str = database_path
+
+        self.db_path: str = self.get_db_path()
+        self.create_tables_if_needed()
+
+    def get_db_path(self) -> str:
+        return os.path.join(Environment().get_working_dir(), SQLITE_DB)
+
+    def create_tables_if_needed(self) -> None:
+        sql_path = os.path.join(MAIN_DIR, 'database/create_tables.sql')
+
+        with open(sql_path, 'r') as create_tables_sql_file:
+            create_tables_sql_commands = create_tables_sql_file.read().split(';')
+            for command in create_tables_sql_commands:
+                self.execute(command)
 
     # region Add Objects to Database
     @clean_connection
@@ -370,17 +386,3 @@ class SQLiteConnector(metaclass=Singleton):
         cur = self.con.cursor()
         res = cur.execute(sql)
         return res.fetchall()
-
-unique_instance = None
-
-
-def get_unique_instance(database_path: str = 'despensa/database/despensa.sqlite') -> SQLiteConnector:
-    """This function ensures there is only one instance of the SQLiteConnector class
-
-    :return: The unique instance of the SQLiteConnector
-    """
-    global unique_instance
-
-    if unique_instance is None:
-        unique_instance = SQLiteConnector(database_path)
-    return unique_instance

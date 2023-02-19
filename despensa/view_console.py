@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable, List
 
-import despensa.controller as controller
+import despensa.controller as cnt
 from despensa.classes import Ingredient
 
 import os
@@ -18,6 +18,9 @@ def bool_y_n(condition: str):
 
 
 class ConsoleView:
+
+    controller = cnt.Controller()
+
     @dataclass
     class Option:
         info: str
@@ -33,10 +36,10 @@ class ConsoleView:
             print(e)
             return
 
-        if not controller.get_unique_instance().create_aliment(name, tags):
+        if not self.controller.create_aliment(name, tags):
             override = input("An aliment with the same name already exists, do you want to override it? (Y/N): ")
             if bool_y_n(override):
-                controller.get_unique_instance().update_aliment(name, tags)
+                self.controller.update_aliment(name, tags)
 
     def create_ingredients(self) -> List[Ingredient]:
         ingredients = []
@@ -46,7 +49,7 @@ class ConsoleView:
             quantity_type = input("\tQuantity's type: ")
             optional = bool_y_n(input("\tIs optional? (Y/N): "))
 
-            ingredient = controller.get_unique_instance().create_ingredient(aliments_name, quantity, quantity_type,
+            ingredient = self.controller.create_ingredient(aliments_name, quantity, quantity_type,
                                                                             optional)
             if ingredient is None:
                 print(f'\tAliment does not exists, insert it first.')
@@ -83,7 +86,7 @@ class ConsoleView:
         print("7. Insert steps:")
         steps = self.get_steps()
 
-        recipe = controller.get_unique_instance().create_recipe(recipe_name, num_people, ingredients, steps, category,
+        recipe = self.controller.create_recipe(recipe_name, num_people, ingredients, steps, category,
                                                                 tags, time)
 
         clear_console()
@@ -91,20 +94,20 @@ class ConsoleView:
         print(recipe)
         res = input("\nIs it okay?")
         if bool_y_n(res):
-            controller.get_unique_instance().insert_recipe(recipe)
+            self.controller.insert_recipe(recipe)
 
     def insert_aliment_in_pantry(self):
         name = input("Aliment's name: ")
-        if controller.get_unique_instance().insert_aliment_in_pantry(name) == -1:
+        if self.controller.insert_aliment_in_pantry(name) == -1:
             input(f"Error: Aliment '{name}' does not exists. Please, create it before trying to insert it into the "
                   f"pantry.")
 
     def remove_aliment_in_pantry(self):
         name = input("Aliment's name: ")
-        controller.get_unique_instance().remove_aliment_in_pantry(name)
+        self.controller.remove_aliment_in_pantry(name)
 
     def list_pantry(self):
-        pantry = controller.get_unique_instance().get_pantry()
+        pantry = self.controller.get_pantry()
         if pantry:
             print('\n'.join([a.simple_str() for a in pantry]))
         else:
@@ -112,7 +115,7 @@ class ConsoleView:
         input()
 
     def list_recipes_catalog(self):
-        recipes = controller.get_unique_instance().get_recipes_catalog()
+        recipes = self.controller.get_recipes_catalog()
         print('\n'.join([r.simple_str() for r in recipes]))
         recipe_name = input('\nRecipe to inspect:')
 
@@ -131,21 +134,21 @@ class ConsoleView:
                 input()  # TODO: Add options functionality
 
     def list_aliments_catalog(self):
-        aliments = controller.get_unique_instance().get_aliments_catalog()
+        aliments = self.controller.get_aliments_catalog()
         print('\n'.join([a.simple_str() for a in aliments]))
         input()
 
     def get_recipes_from_pantry(self):
-        recipes = controller.get_unique_instance().get_recipes_from_pantry()
+        recipes = self.controller.get_recipes_from_pantry()
         print('\n'.join([str(r) for r in recipes]))
         input()
 
     def insert_item_in_shopping_list(self):
         item = input("Item's name: ")
-        controller.get_unique_instance().insert_item_in_shopping_list(item)
+        self.controller.insert_item_in_shopping_list(item)
 
     def get_shopping_list(self):
-        shopping_list = controller.get_unique_instance().get_shopping_list()
+        shopping_list = self.controller.get_shopping_list()
         print('\n'.join([str(r) for r in shopping_list]))
         input()
 

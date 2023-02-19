@@ -1,13 +1,12 @@
 from despensa.classes import Aliment, Ingredient, Recipe
-import despensa.view_console as view_console
-from despensa.singleton import Singleton
+from despensa.singleton_meta import SingletonMeta
 
-import despensa.sqlite_connector as sqlite
+from despensa.sqlite_connector import SQLiteConnector
 
 from typing import List
 
 
-class Controller(metaclass=Singleton):
+class Controller(metaclass=SingletonMeta):
     """Class controller for separate the UI and the functionality"""
     __aliments_catalog: list[Aliment] = []
     __recipes_catalog: list[Recipe] = []
@@ -15,20 +14,15 @@ class Controller(metaclass=Singleton):
     __shopping_list: list[str] = []
 
     def __init__(self):
-        # Create the view
-        self.view = view_console.ConsoleView()
+        self.init_catalogs()
 
     def init_catalogs(self):
         """Init the catalogs from the database"""
         # Recuperate the catalogs from the database
-        self.__aliments_catalog = sqlite.get_unique_instance().get_all_aliments()
-        self.__recipes_catalog = sqlite.get_unique_instance().get_all_recipes()
-        self.__pantry = sqlite.get_unique_instance().get_pantry()
-        self.__shopping_list = sqlite.get_unique_instance().get_shopping_list()
-
-    def start(self):
-        """Start the UI"""
-        self.view.run()
+        self.__aliments_catalog = SQLiteConnector().get_all_aliments()
+        self.__recipes_catalog = SQLiteConnector().get_all_recipes()
+        self.__pantry = SQLiteConnector().get_pantry()
+        self.__shopping_list = SQLiteConnector().get_shopping_list()
 
     def create_aliment(self, name: str, tags: List[str]) -> bool:
         """Insert an aliment, if it already exists, returns False
@@ -41,7 +35,7 @@ class Controller(metaclass=Singleton):
         if aliment in self.__aliments_catalog:  # Aliment already exists
             return False
 
-        sqlite.get_unique_instance().add_aliment(aliment)
+        SQLiteConnector().add_aliment(aliment)
         self.__aliments_catalog.append(aliment)
         return True
 
@@ -55,7 +49,7 @@ class Controller(metaclass=Singleton):
             if aliment.name == name.lower().strip():
                 if aliment not in self.__pantry:
                     self.__pantry.append(aliment)
-                    sqlite.get_unique_instance().add_ingredient_to_pantry(aliment)
+                    SQLiteConnector().add_ingredient_to_pantry(aliment)
                     return 0
 
         return -1
@@ -68,7 +62,7 @@ class Controller(metaclass=Singleton):
         for aliment in self.__pantry:
             if aliment.name == name.lower().strip():
                 self.__pantry.remove(aliment)
-                sqlite.get_unique_instance().remove_ingredient_from_pantry(aliment)
+                SQLiteConnector().remove_ingredient_from_pantry(aliment)
                 return
 
     def update_aliment(self, name: str, tags: List[str]):
@@ -123,7 +117,7 @@ class Controller(metaclass=Singleton):
 
         :param recipe: Recipe to insert in catalog
         """
-        sqlite.get_unique_instance().add_recipe_and_ingredients(recipe)
+        SQLiteConnector().add_recipe_and_ingredients(recipe)
         self.__recipes_catalog.append(recipe)
 
     def get_recipes_from_pantry(self) -> List[Recipe]:
@@ -139,7 +133,7 @@ class Controller(metaclass=Singleton):
 
         :param item: item to insert in the shopping list
         """
-        sqlite.get_unique_instance().insert_item_in_shopping_list(item)
+        SQLiteConnector().insert_item_in_shopping_list(item)
         self.__shopping_list.append(item)
 
     #####################################
@@ -175,39 +169,25 @@ class Controller(metaclass=Singleton):
 
         :return: Returns the list of aliments
         """
-        return self.__aliments_catalog
+        return self.__aliments_catalog.copy()
 
     def get_recipes_catalog(self) -> List[Recipe]:
         """ Get the list of recipes
 
         :return: Returns the list of recipes
         """
-        return self.__recipes_catalog
+        return self.__recipes_catalog.copy()
 
     def get_pantry(self) -> List[Aliment]:
         """ Get the list of aliments in the pantry
 
         :return: Returns the list of aliments in the pantry
         """
-        return self.__pantry
+        return self.__pantry.copy()
 
     def get_shopping_list(self) -> List[str]:
         """ Get the shopping list
 
         :return: Returns the shopping list
         """
-        return self.__shopping_list
-
-unique_instance = None
-
-
-def get_unique_instance() -> Controller:
-    """This function ensures there is only one instance of the Controller class
-
-    :return: The unique instance of the Controller
-    """
-    global unique_instance
-
-    if unique_instance is None:
-        unique_instance = Controller()
-    return unique_instance
+        return self.__shopping_list.copy()

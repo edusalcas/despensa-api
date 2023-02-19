@@ -1,12 +1,17 @@
-from despensa import controller, sqlite_connector
+from environment import Environment
+from despensa.controller import Controller
+from despensa.sqlite_connector import SQLiteConnector
 
-PATH_TEST_DB: str = "tests/database/despensa_test.sqlite"
+Environment().working_is_test()
 
 
 class TestSingleton:
     def test_controller_singleton(self):
-        assert controller.get_unique_instance() is controller.get_unique_instance()
+        c1 = Controller()
+        c2 = Controller()
+        assert c1 is c2, "Not the same object"
 
     def test_sqlite_connector_singleton(self):
-        assert sqlite_connector.get_unique_instance(database_path=PATH_TEST_DB) is \
-               sqlite_connector.get_unique_instance(database_path=PATH_TEST_DB)
+        sqlite_connector1 = SQLiteConnector()
+        sqlite_connector2 = SQLiteConnector()
+        assert sqlite_connector1 is sqlite_connector2
