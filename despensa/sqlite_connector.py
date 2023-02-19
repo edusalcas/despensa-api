@@ -10,14 +10,12 @@ from typing import Callable, List
 
 
 class AlimentTable:
-    """Aliment's attributes positions when read from DB"""
     ID: int = 0
     NAME: int = 1
     TAGS: int = 2
 
 
 class IngredientTable:
-    """Ingredient's attributes positions when read from DB"""
     ID: int = 0
     ALIMENT_ID = 1
     QUANTITY = 2
@@ -26,7 +24,6 @@ class IngredientTable:
 
 
 class RecipeTable:
-    """Recipe's attributes positions when read from DB"""
     ID: int = 0
     NAME: int = 1
     NUM_PEOPLE: int = 2
@@ -37,22 +34,7 @@ class RecipeTable:
 
 
 def clean_connection(func: Callable) -> Callable:
-    """This function will serve as a decorator for the class methods in SQLiteConnector. It opens a connection with
-    the database and then close it when the job is done
-
-    :param func: The function to decorate
-    :return: The function decorated
-    """
-
     def inner(sqlite_ref, *args, **kwargs):
-        """ Inner method that ensures to open and close the connection with the database while the job in the
-        function is done
-
-        :param sqlite_ref: Reference to a SQLiteConnector object
-        :param args: list of arguments
-        :param kwargs: dict of arguments
-        :return: Returns the value the outer function returns
-        """
         close_connection = False
         if sqlite_ref.con is None:  # Create the connection if it is not already created
             sqlite_ref.con = sqlite3.connect(sqlite_ref.db_path)
@@ -70,9 +52,6 @@ def clean_connection(func: Callable) -> Callable:
 
 
 class SQLiteConnector(metaclass=SingletonMeta):
-    """Clase que implementa la funcionalidad para establecer conexión con una base de datos SQLite y realizar
-    operaciones sobre la misma"""
-
     def __init__(self):
         self.con: sqlite3.Connection = None
 
@@ -93,10 +72,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
     # region Add Objects to Database
     @clean_connection
     def add_aliment(self, aliment: Aliment):
-        """Add an aliment to the database
-
-        :param aliment: Aliment to insert in the database
-        """
         name = aliment.name
         tags = ' '.join(aliment.tags)
 
@@ -108,11 +83,17 @@ class SQLiteConnector(metaclass=SingletonMeta):
         self.con.commit()
 
     @clean_connection
-    def add_ingredient(self, ingredient: Ingredient):
-        """Insert an ingredient in the database
+    def update_aliment(self, aliment: Aliment):
+        name = aliment.name
+        tags = ' '.join(aliment.tags)
 
-        :param ingredient: Ingredient to insert
-        """
+        cur = self.con.cursor()
+        sql = f"UPDATE aliment SET tags = '{tags}' WHERE name = '{name}');"
+        cur.execute(sql)
+        self.con.commit()
+
+    @clean_connection
+    def add_ingredient(self, ingredient: Ingredient):
         aliment_id = ingredient.aliment.db_id
         quantity = ingredient.quantity
         quantity_type = ingredient.quantity_type
@@ -130,10 +111,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
 
     @clean_connection
     def add_ingredient_to_pantry(self, ingredient: Ingredient):
-        """Inserts an aliment into pantry
-
-        :param ingredient: Ingredient to insert in pantry
-        """
         cur = self.con.cursor()
         sql = f"""
             INSERT INTO pantry (aliment_id) 
@@ -144,19 +121,11 @@ class SQLiteConnector(metaclass=SingletonMeta):
 
     @clean_connection
     def remove_ingredient_from_pantry(self, ingredient: Ingredient):
-        """Removes an aliment from pantry
-
-        :param ingredient: Ingredient to remove from pantry
-        """
         cur = self.con.cursor()
         cur.execute(f"DELETE FROM pantry WHERE aliment_id = {ingredient.db_id};")
         self.con.commit()
 
     def __add_recipe(self, recipe: Recipe):
-        """Insert a recipe in the database
-
-        :param recipe: The recipe to insert
-        """
         name = recipe.name
         num_people = recipe.num_people
         steps = '\n'.join(recipe.steps)
@@ -175,10 +144,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
         self.con.commit()
 
     def __add_recipe_ingredients(self, recipe: Recipe):
-        """Insert the ingredients of a recipe in the database
-
-        :param recipe: The recipe with the ingredients to insert
-        """
         recipe_id = recipe.db_id
         data = [(recipe_id, ingredient.db_id) for ingredient in recipe.ingredients]
 
@@ -191,10 +156,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
 
     @clean_connection
     def add_recipe_and_ingredients(self, recipe: Recipe):
-        """Insert in the database a recipe and its ingredients
-
-        :param recipe: Recipe to insert with its recipe
-        """
         for ingredient in recipe.ingredients:
             self.add_ingredient(ingredient=ingredient)
 
@@ -203,10 +164,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
 
     @clean_connection
     def insert_item_in_shopping_list(self, item: str):
-        """Insert item to shopping list table
-
-        :param item: item to insert
-        """
         cur = self.con.cursor()
         sql = f"INSERT INTO shopping_list (item) VALUES ('{item}')"
         cur.execute(sql)
@@ -219,11 +176,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
 
     @staticmethod
     def db_to_aliment(aliment_raw: list) -> Aliment:
-        """Transform an aliment from the database to an aliment object
-
-        :param aliment_raw: List of attributes of the aliment
-        :return: The aliment object
-        """
         bd_id = aliment_raw[AlimentTable.ID]
         name = aliment_raw[AlimentTable.NAME]
         tags = aliment_raw[AlimentTable.TAGS].split(' ')
@@ -231,11 +183,7 @@ class SQLiteConnector(metaclass=SingletonMeta):
         return Aliment(name, tags, bd_id)
 
     def db_to_ingredient(self, ingredient_raw: list) -> Ingredient:
-        """Transform an ingredient from the database to an ingredient object
 
-        :param ingredient_raw: List of attributes of the ingredient
-        :return: The ingredient object
-        """
         bd_id = int(ingredient_raw[IngredientTable.ID])
         aliment = self.get_aliment_by_id(int(ingredient_raw[IngredientTable.ALIMENT_ID]))
         quantity = float(ingredient_raw[IngredientTable.QUANTITY])
@@ -245,12 +193,7 @@ class SQLiteConnector(metaclass=SingletonMeta):
         return Ingredient(aliment, quantity, quantity_type, optional, bd_id)
 
     def db_to_recipe(self, recipe_raw: list, ingredients_ids: list) -> Recipe:
-        """Transform a recipe from the database to a recipe object
 
-        :param recipe_raw: List of attributes of the recipe
-        :param ingredients_ids:
-        :return: The recipe object
-        """
         bd_id = recipe_raw[RecipeTable.ID]
         name = recipe_raw[RecipeTable.NAME]
         num_people = recipe_raw[RecipeTable.NUM_PEOPLE]
@@ -267,11 +210,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
     # region Get Objects
     @clean_connection
     def get_aliment_by_id(self, aliment_id: int) -> Aliment:
-        """Get an aliment by id
-
-        :param aliment_id: id of the aliment
-        :return: The aliment
-        """
         cur = self.con.cursor()
         aliment_raw = cur.execute(f"SELECT * FROM aliment WHERE aliment_id = {aliment_id}").fetchone()
         aliment = self.db_to_aliment(aliment_raw)
@@ -280,11 +218,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
 
     @clean_connection
     def get_ingredient_by_id(self, ingredient_id: int) -> Ingredient:
-        """Get an ingredient by id
-
-        :param ingredient_id:  id of the ingredient
-        :return: The ingredient
-        """
         cur = self.con.cursor()
         ingredient_raw = cur.execute(f"SELECT * FROM ingredient WHERE ingredient_id = {ingredient_id}").fetchone()
         ingredient = self.db_to_ingredient(ingredient_raw)
@@ -293,11 +226,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
 
     @clean_connection
     def get_recipe_by_id(self, recipe_id: int) -> Recipe:
-        """Get a recipe by id
-
-        :param recipe_id: id of the recipe
-        :return: The recipe
-        """
         cur = self.con.cursor()
         recipe_raw = cur.execute(f"SELECT * FROM recipe WHERE recipe_id = {recipe_id}").fetchone()
         ingredients_ids = cur.execute(f"""SELECT ingredient_id FROM recipe_ingredient WHERE recipe_id = {recipe_id}""") \
@@ -312,10 +240,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
     # region Get Catalogs
     @clean_connection
     def get_all_aliments(self) -> list[Aliment]:
-        """Get a list of all aliments in the database
-
-        :return: The list of all aliments
-        """
         cur = self.con.cursor()
         res = cur.execute("SELECT * FROM aliment")
         aliments_raw = res.fetchall()
@@ -325,10 +249,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
 
     @clean_connection
     def get_all_recipes(self) -> list[Recipe]:
-        """Get a list of all recipes in the database
-
-        :return: The list of all recipes in the database
-        """
         cur = self.con.cursor()
         res = cur.execute("SELECT recipe_id FROM recipe")
 
@@ -340,10 +260,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
 
     @clean_connection
     def get_pantry(self) -> list[Aliment]:
-        """Get the list of aliments in the pantry
-
-        :return: List of aliments in the pantry
-        """
         cur = self.con.cursor()
         res = cur.execute("SELECT aliment.* FROM pantry INNER JOIN aliment USING(aliment_id)")
         aliments_raw = res.fetchall()
@@ -353,10 +269,6 @@ class SQLiteConnector(metaclass=SingletonMeta):
 
     @clean_connection
     def get_shopping_list(self) -> list[str]:
-        """Get the list of aliments in the pantry
-
-        :return: List of aliments in the pantry
-        """
         cur = self.con.cursor()
         res = cur.execute("SELECT * FROM shopping_list")
         items_raw = res.fetchall()
@@ -368,21 +280,12 @@ class SQLiteConnector(metaclass=SingletonMeta):
 
     @clean_connection
     def execute(self, sql: str):
-        """Execute a sql command
-
-        :param sql: Command to execute
-        """
         cur = self.con.cursor()
         cur.execute(sql)
         self.con.commit()
 
     @clean_connection
     def query(self, sql: str) -> List[str]:
-        """Query to the database
-
-        :param sql: Query
-        :return: The list of results
-        """
         cur = self.con.cursor()
         res = cur.execute(sql)
         return res.fetchall()

@@ -18,7 +18,6 @@ def bool_y_n(condition: str):
 
 
 class ConsoleView:
-
     controller = cnt.Controller()
 
     @dataclass
@@ -50,7 +49,7 @@ class ConsoleView:
             optional = bool_y_n(input("\tIs optional? (Y/N): "))
 
             ingredient = self.controller.create_ingredient(aliments_name, quantity, quantity_type,
-                                                                            optional)
+                                                           optional)
             if ingredient is None:
                 print(f'\tAliment does not exists, insert it first.')
             else:
@@ -87,7 +86,7 @@ class ConsoleView:
         steps = self.get_steps()
 
         recipe = self.controller.create_recipe(recipe_name, num_people, ingredients, steps, category,
-                                                                tags, time)
+                                               tags, time)
 
         clear_console()
         print("Your recipe is:\n")
@@ -134,7 +133,7 @@ class ConsoleView:
                 input()  # TODO: Add options functionality
 
     def list_aliments_catalog(self):
-        aliments = self.controller.get_aliments_catalog()
+        aliments = self.controller.get_all_aliments()
         print('\n'.join([a.simple_str() for a in aliments]))
         input()
 
