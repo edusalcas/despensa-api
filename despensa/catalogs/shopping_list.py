@@ -1,8 +1,8 @@
-from despensa.singleton_meta import SingletonMeta
+from despensa.singleton_meta import WeakSingletonMeta
 from despensa.sqlite_connector import SQLiteConnector
 
 
-class ShoppingList(metaclass=SingletonMeta):
+class ShoppingList(metaclass=WeakSingletonMeta):
     def __init__(self, db_connector: SQLiteConnector):
         self.db_connector: SQLiteConnector = db_connector
         self.__shopping_list: list[str] = db_connector.get_shopping_list()

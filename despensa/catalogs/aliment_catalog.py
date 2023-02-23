@@ -1,11 +1,11 @@
 from typing import List, Union
 
 from despensa.classes import Aliment
-from despensa.singleton_meta import SingletonMeta
+from despensa.singleton_meta import WeakSingletonMeta
 from despensa.sqlite_connector import SQLiteConnector
 
 
-class AlimentCatalog(metaclass=SingletonMeta):
+class AlimentCatalog(metaclass=WeakSingletonMeta):
     def __init__(self, db_connector: SQLiteConnector):
         self.db_connector: SQLiteConnector = db_connector
         self.__aliment_list: list[Aliment] = db_connector.get_all_aliments()

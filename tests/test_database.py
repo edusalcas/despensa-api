@@ -4,7 +4,6 @@ import os
 from despensa.classes import Aliment, Ingredient, Recipe
 from despensa.sqlite_connector import SQLiteConnector
 from environment import Environment
-from definitions import MAIN_DIR
 
 Environment().working_is_test()
 

@@ -3,14 +3,14 @@ from despensa.catalogs.pantry import Pantry
 from despensa.catalogs.recipe_catalog import RecipeCatalog
 from despensa.catalogs.shopping_list import ShoppingList
 from despensa.classes import Aliment, Ingredient, Recipe
-from despensa.singleton_meta import SingletonMeta
+from despensa.singleton_meta import WeakSingletonMeta
 
 from despensa.sqlite_connector import SQLiteConnector
 
-from typing import List
+from typing import List, Union
 
 
-class Controller(metaclass=SingletonMeta):
+class Controller(metaclass=WeakSingletonMeta):
     def __init__(self):
         self.__db_connector: SQLiteConnector = SQLiteConnector()
 
@@ -59,11 +59,14 @@ class Controller(metaclass=SingletonMeta):
     #              Getters              #
     #####################################
 
-    def get_aliment_by_name(self, aliment_name: str) -> Aliment or None:
+    def get_aliment_by_name(self, aliment_name: str) -> Union[Aliment, None]:
         return self.__aliments_catalog.get_aliment_by_name(aliment_name)
 
-    def get_aliment_by_id(self, aliment_id: int) -> Aliment or None:
+    def get_aliment_by_id(self, aliment_id: int) -> Union[Aliment, None]:
         return self.__aliments_catalog.get_aliment_by_id(aliment_id)
+
+    def get_recipe_by_id(self, recipe_id: int) -> Union[Recipe, None]:
+        return self.__recipes_catalog.get_recipe_by_id(recipe_id)
 
     def get_all_aliments(self) -> List[Aliment]:
         return self.__aliments_catalog.get_all()
@@ -76,3 +79,4 @@ class Controller(metaclass=SingletonMeta):
 
     def get_shopping_list(self) -> List[str]:
         return self.__shopping_list.get_all()
+

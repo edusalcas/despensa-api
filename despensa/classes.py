@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Any
+from abc import ABC, abstractmethod
 
 
-class BDInstance:
+class BDInstance(ABC):
     """Class with implements the db_id for objects who will be in database"""
 
     def __init__(self):
@@ -14,6 +17,11 @@ class BDInstance:
         :param db_id: id of the aliment in the database
         """
         self.db_id = db_id
+
+    @staticmethod
+    @abstractmethod
+    def from_json(json: dict[str, Any]) -> BDInstance:
+        ...
 
 
 @dataclass
@@ -54,6 +62,14 @@ class Aliment(BDInstance):
         """
         return f"{self.name.title()}: {', '.join(map(str.title, self.tags))}"
 
+    @staticmethod
+    def from_json(json: dict[str, Any]) -> BDInstance:
+        return Aliment(
+            json['name'],
+            json['tags'],
+            json['db_id']
+        )
+
 
 @dataclass
 class Ingredient(BDInstance):
@@ -68,6 +84,7 @@ class Ingredient(BDInstance):
     quantity_type : str
         the type of the quantity. f.e. "gr", "kg", "spoons"...
     """
+
     aliment: Aliment
     quantity: float
     quantity_type: str = ''
@@ -81,6 +98,16 @@ class Ingredient(BDInstance):
         """
         return f"{self.aliment.name.title()}: {self.quantity} {self.quantity_type}" + \
                (" (Optional)" if self.optional else "")
+
+    @staticmethod
+    def from_json(json: dict[str, Any]) -> BDInstance:
+        return Ingredient(
+            json['aliment'],
+            json['quantity'],
+            json['quantity_type'],
+            json['optional'],
+            json['bd_id']
+        )
 
 
 @dataclass
@@ -104,6 +131,7 @@ class Recipe(BDInstance):
     time : int
         the type of the aliment of AlimentType
     """
+
     name: str
     num_people: int
     ingredients: list[Ingredient]
@@ -147,3 +175,16 @@ class Recipe(BDInstance):
         :return: Return a list with the non-optional aliments
         """
         return [ingredient.aliment for ingredient in self.ingredients if not ingredient.optional]
+
+    @staticmethod
+    def from_json(json: dict[str, Any]) -> BDInstance:
+        return Recipe(
+            json['name'],
+            json['num_people'],
+            json['ingredients'],
+            json['steps'],
+            json['category'],
+            json['tags'],
+            json['time'],
+            json['db_id']
+        )

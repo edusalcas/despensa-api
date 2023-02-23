@@ -1,5 +1,5 @@
 from despensa.classes import Aliment, Ingredient, Recipe
-from despensa.singleton_meta import SingletonMeta
+from despensa.singleton_meta import WeakSingletonMeta
 from definitions import SQLITE_DB, MAIN_DIR
 from environment import Environment
 
@@ -51,7 +51,7 @@ def clean_connection(func: Callable) -> Callable:
     return inner
 
 
-class SQLiteConnector(metaclass=SingletonMeta):
+class SQLiteConnector(metaclass=WeakSingletonMeta):
     def __init__(self):
         self.con: sqlite3.Connection = None
 
