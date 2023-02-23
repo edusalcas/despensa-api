@@ -1,5 +1,7 @@
 from despensa.catalogs.aliment_catalog import AlimentCatalog
 from despensa.catalogs.pantry import Pantry
+from despensa.catalogs.recipe_catalog import RecipeCatalog
+from despensa.catalogs.shopping_list import ShoppingList
 from despensa.classes import Aliment, Ingredient, Recipe
 from despensa.singleton_meta import SingletonMeta
 
@@ -10,21 +12,18 @@ from typing import List
 
 class Controller(metaclass=SingletonMeta):
     def __init__(self):
-        self.db_connector: SQLiteConnector = SQLiteConnector()
+        self.__db_connector: SQLiteConnector = SQLiteConnector()
 
-        self.__aliments_catalog = AlimentCatalog(self.db_connector)
-        self.__recipes_catalog = self.db_connector.get_all_recipes()
-        self.__pantry = Pantry(self.db_connector)
-        self.__shopping_list = self.db_connector.get_shopping_list()
+        self.__aliments_catalog = AlimentCatalog(self.__db_connector)
+        self.__recipes_catalog = RecipeCatalog(self.__db_connector)
+        self.__pantry = Pantry(self.__db_connector)
+        self.__shopping_list = ShoppingList(self.__db_connector)
 
     def create_aliment(self, name: str, tags: List[str]) -> bool:
         return self.__aliments_catalog.create_aliment(name, tags)
 
     def insert_aliment_in_pantry(self, name: str) -> bool:
-        aliment = self.__aliments_catalog.get_aliment_by_name(name)
-        if not aliment:
-            return False
-        return self.__pantry.add_aliment_to_pantry(aliment)
+        return self.__pantry.add_aliment_to_pantry(name)
 
     def remove_aliment_in_pantry(self, name: str) -> None:
         self.__pantry.remove_aliment_from_pantry(name)
@@ -42,24 +41,19 @@ class Controller(metaclass=SingletonMeta):
         return ingredient
 
     @staticmethod
-    def create_recipe(recipe_name: str, num_people: int, ingredients: List[Ingredient], steps: List[str],
-                      category: str, tags: List[str], time: int) -> Recipe:
+    def create_recipe(recipe_name: str, num_people: int, ingredients: List[Ingredient], steps: List[str], category: str, tags: List[str], time: int) -> Recipe:
         recipe = Recipe(recipe_name, num_people, ingredients, steps, category, tags, time)
 
         return recipe
 
-    def insert_recipe(self, recipe: Recipe):
-        self.db_connector.add_recipe_and_ingredients(recipe)
-        self.__recipes_catalog.append(recipe)
+    def insert_recipe(self, recipe: Recipe) -> bool:
+        return self.__recipes_catalog.add_recipe(recipe)
 
     def get_recipes_from_pantry(self) -> List[Recipe]:
-        aliments_in_pantry = self.get_pantry()
-        return [recipe for recipe in self.__recipes_catalog
-                if set(recipe.get_not_optional_aliments()) <= set(aliments_in_pantry)]
+        return self.__recipes_catalog.get_recipes_from_pantry()
 
     def insert_item_in_shopping_list(self, item: str):
-        self.db_connector.insert_item_in_shopping_list(item)
-        self.__shopping_list.append(item)
+        self.__shopping_list.add_item_to_shopping_list(item)
 
     #####################################
     #              Getters              #
@@ -75,10 +69,10 @@ class Controller(metaclass=SingletonMeta):
         return self.__aliments_catalog.get_all()
 
     def get_recipes_catalog(self) -> List[Recipe]:
-        return self.__recipes_catalog.copy()
+        return self.__recipes_catalog.get_all()
 
     def get_pantry(self) -> List[Aliment]:
         return self.__pantry.get_all()
 
     def get_shopping_list(self) -> List[str]:
-        return self.__shopping_list.copy()
+        return self.__shopping_list.get_all()
