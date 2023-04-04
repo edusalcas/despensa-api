@@ -1,6 +1,6 @@
 from despensa.classes import Aliment, Ingredient, Recipe
 from despensa.singleton_meta import WeakSingletonMeta
-from definitions import SQLITE_DB, MAIN_DIR
+from definitions import SQLITE_DB, MAIN_DIR, SQLITE_SAMPLE_DATA
 from environment import Environment
 
 import os
@@ -88,7 +88,7 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
         tags = ' '.join(aliment.tags)
 
         cur = self.con.cursor()
-        sql = f"UPDATE aliment SET tags = '{tags}' WHERE name = '{name}');"
+        sql = f"UPDATE aliment SET tags = '{tags}' WHERE name = '{name}';"
         cur.execute(sql)
         self.con.commit()
 
@@ -237,6 +237,15 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
 
     # endregion
 
+    # region Delete Objects
+    @clean_connection
+    def delete_aliment(self, id_aliment: int):
+        cur = self.con.cursor()
+        cur.execute(f"DELETE FROM aliment WHERE aliment_id = {id_aliment}")
+        self.con.commit()
+
+    # endregion
+
     # region Get Catalogs
     @clean_connection
     def get_all_aliments(self) -> list[Aliment]:
@@ -289,3 +298,13 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
         cur = self.con.cursor()
         res = cur.execute(sql)
         return res.fetchall()
+
+    @clean_connection
+    def generate_sample_data(self):
+        if Environment().get_current_env() == 1:
+            sql_path = os.path.join(Environment().get_working_dir(), SQLITE_SAMPLE_DATA)
+
+            with open(sql_path, 'r') as sample_data_sql_file:
+                sample_data_sql_commands = sample_data_sql_file.read().split(';')
+                for command in sample_data_sql_commands:
+                    self.execute(command)

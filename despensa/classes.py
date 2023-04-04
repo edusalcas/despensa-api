@@ -62,8 +62,14 @@ class Aliment(BDInstance):
         """
         return f"{self.name.title()}: {', '.join(map(str.title, self.tags))}"
 
+    def update_from_json(self, json) -> Aliment:
+        self.name = json['name']
+        self.tags = json['tags']
+
+        return self
+
     @staticmethod
-    def from_json(json: dict[str, Any]) -> BDInstance:
+    def from_json(json: dict[str, Any]) -> Aliment:
         return Aliment(
             json['name'],
             json['tags'],
@@ -100,7 +106,7 @@ class Ingredient(BDInstance):
                (" (Optional)" if self.optional else "")
 
     @staticmethod
-    def from_json(json: dict[str, Any]) -> BDInstance:
+    def from_json(json: dict[str, Any]) -> Ingredient:
         return Ingredient(
             json['aliment'],
             json['quantity'],
@@ -177,7 +183,7 @@ class Recipe(BDInstance):
         return [ingredient.aliment for ingredient in self.ingredients if not ingredient.optional]
 
     @staticmethod
-    def from_json(json: dict[str, Any]) -> BDInstance:
+    def from_json(json: dict[str, Any]) -> Recipe:
         return Recipe(
             json['name'],
             json['num_people'],

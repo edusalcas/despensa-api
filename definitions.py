@@ -9,4 +9,5 @@ TEST = 'test'
 MAIN = 'main'
 
 SQLITE_DB = 'database/despensa.sqlite'
+SQLITE_SAMPLE_DATA = 'database/sample_data.sql'
 

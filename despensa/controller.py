@@ -22,6 +22,9 @@ class Controller(metaclass=WeakSingletonMeta):
     def create_aliment(self, name: str, tags: List[str]) -> bool:
         return self.__aliments_catalog.create_aliment(name, tags)
 
+    def create_aliment_from_json(self, json: dict) -> bool:
+        return self.__aliments_catalog.create_aliment_from_json(json)
+
     def insert_aliment_in_pantry(self, name: str) -> bool:
         return self.__pantry.add_aliment_to_pantry(name)
 
@@ -30,6 +33,12 @@ class Controller(metaclass=WeakSingletonMeta):
 
     def update_aliment(self, name: str, tags: List[str]):
         self.__aliments_catalog.update_aliment(name, tags)
+
+    def update_aliment_from_json(self, id_aliment: int, json: dict):
+        self.__aliments_catalog.update_aliment_from_json(id_aliment, json)
+
+    def delete_aliment(self, aliment_id: int):
+        self.__aliments_catalog.delete_aliment(aliment_id)
 
     def create_ingredient(self, aliments_name: str, quantity: float, quantity_type: str,
                           optional: bool) -> Ingredient or None:
@@ -55,6 +64,9 @@ class Controller(metaclass=WeakSingletonMeta):
     def insert_item_in_shopping_list(self, item: str):
         self.__shopping_list.add_item_to_shopping_list(item)
 
+    def generate_db_sample_data(self):
+        self.__db_connector.generate_sample_data()
+
     #####################################
     #              Getters              #
     #####################################
@@ -79,4 +91,3 @@ class Controller(metaclass=WeakSingletonMeta):
 
     def get_shopping_list(self) -> List[str]:
         return self.__shopping_list.get_all()
-

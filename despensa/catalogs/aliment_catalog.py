@@ -31,11 +31,32 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
         self.__aliment_id_map[aliment.db_id] = aliment
         return True
 
+    def create_aliment_from_json(self, json: dict) -> bool:
+        aliment: Aliment = Aliment.from_json(json)
+        if self.is_present(aliment):
+            return False
+
+        self.db_connector.add_aliment(aliment)
+        self.__aliment_list.append(aliment)
+        self.__aliment_id_map[aliment.db_id] = aliment
+        return True
+
     def update_aliment(self, name, tags):
         aliment = self.get_aliment_by_name(name)
         if aliment:
-            self.db_connector.update_aliment(aliment)
             aliment.tags = tags
+            self.db_connector.update_aliment(aliment)
+
+    def update_aliment_from_json(self, id_aliment: int, json: dict):
+        aliment = self.get_aliment_by_id(id_aliment)
+        if aliment:
+            aliment = aliment.update_from_json(json)
+            self.db_connector.update_aliment(aliment)
 
     def get_all(self) -> list[Aliment]:
         return self.__aliment_list.copy()
+
+    def delete_aliment(self, id_aliment: int):
+        self.db_connector.delete_aliment(id_aliment)
+
+
