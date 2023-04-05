@@ -37,3 +37,33 @@ INSERT INTO main.ingredient (aliment_id, quantity, quantity_type, optional) VALU
      FALSE
     )
 ;
+
+DELETE FROM main.recipe;
+DELETE FROM sqlite_sequence WHERE name='recipe';
+INSERT INTO main.recipe (name, num_people, steps, category, tags, time) VALUES
+    (
+     1,
+     1,
+     'step1\nstep2',
+     'main',
+     'healthy,quick',
+     '15min'
+    )
+;
+
+DELETE FROM main.recipe_ingredient;
+DELETE FROM sqlite_sequence WHERE name='recipe_ingredient';
+INSERT INTO main.recipe_ingredient (recipe_id, ingredient_id) VALUES
+    (
+     1,
+     1
+    ),
+    (
+     1,
+     2
+    ),
+    (
+     1,
+     3
+    )
+;

@@ -62,7 +62,7 @@ class Aliment(BDInstance):
         """
         return f"{self.name.title()}: {', '.join(map(str.title, self.tags))}"
 
-    def update_from_json(self, json) -> Aliment:
+    def update_from_json(self, json: dict) -> Aliment:
         self.name = json['name']
         self.tags = json['tags']
 
@@ -108,7 +108,7 @@ class Ingredient(BDInstance):
     @staticmethod
     def from_json(json: dict[str, Any]) -> Ingredient:
         return Ingredient(
-            json['aliment'],
+            Aliment.from_json(json['aliment']),
             json['quantity'],
             json['quantity_type'],
             json['optional'],
@@ -187,10 +187,21 @@ class Recipe(BDInstance):
         return Recipe(
             json['name'],
             json['num_people'],
-            json['ingredients'],
+            [Ingredient.from_json(ingredient) for ingredient in json['ingredients']],
             json['steps'],
             json['category'],
             json['tags'],
             json['time'],
             json['db_id']
         )
+
+    def update_from_json(self, json: dict) -> Recipe:
+        self.name = json['name']
+        self.num_people = json['num_people']
+        self.ingredients = [Ingredient.from_json(ingredient) for ingredient in json['ingredients']]
+        self.steps = json['steps']
+        self.tags = json['tags']
+        self.time = json['time']
+        self.db_id = json['db_id']
+
+        return self

@@ -57,6 +57,10 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
         return self.__aliment_list.copy()
 
     def delete_aliment(self, id_aliment: int):
+        aliment = self.get_aliment_by_id(id_aliment)
+        self.__aliment_list.remove(aliment)
+        self.__aliment_id_map.pop(id_aliment)
+        self.__aliment_name_map.pop(aliment.name)
         self.db_connector.delete_aliment(id_aliment)
 
 

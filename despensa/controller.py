@@ -55,6 +55,15 @@ class Controller(metaclass=WeakSingletonMeta):
 
         return recipe
 
+    def create_recipe_from_json(self, json) -> bool:
+        return self.__recipes_catalog.create_recipe_from_json(json)
+
+    def update_recipe_from_json(self, recipe_id: int, json: dict):
+        self.__recipes_catalog.update_recipe_from_json(recipe_id, json)
+
+    def delete_recipe(self, recipe_id):
+        self.__recipes_catalog.delete_recipe(recipe_id)
+
     def insert_recipe(self, recipe: Recipe) -> bool:
         return self.__recipes_catalog.add_recipe(recipe)
 

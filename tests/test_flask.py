@@ -1,7 +1,7 @@
 import pytest
 import json
 
-from despensa.classes import Aliment
+from despensa.classes import Aliment, Recipe, Ingredient
 from despensa.controller import Controller
 from despensa_flask import create_app
 from environment import Environment
@@ -76,3 +76,57 @@ class TestAliment:
         aliments_new = Controller().get_all_aliments()
 
         assert aliments == aliments_new
+
+
+class TestRecipe:
+    base_url: str = "/rest/recipes"
+
+    def test_get_all_recipes(self, client):
+        response = client.get(self.base_url)
+        recipes = Controller().get_recipes_catalog()
+        recipes_flask = json.loads(response.data, object_hook=Recipe.from_json)
+
+        assert recipes == recipes_flask
+
+    def test_get_recipe(self, client):
+        db_id: int = 1
+        response = client.get(f"{self.base_url}/{db_id}")
+        recipe = Controller().get_recipe_by_id(db_id)
+        recipe_flask = json.loads(response.data, object_hook=Recipe.from_json)
+
+        assert recipe == recipe_flask
+
+    def test_update_recipe(self, client):
+        db_id: int = 1
+        new_ingredients = [
+            Ingredient(aliment=Aliment(name='Onion', tags=['vegetable']), quantity=1, quantity_type='unit'),
+            Ingredient(aliment=Aliment(name='Garlic', tags=['vegetable']), quantity=2, quantity_type='g')
+        ]
+        recipe = Recipe(name='Pasta with tomato sauce', description='Easy and quick recipe', ingredients=new_ingredients, steps=['Boil the pasta', 'Make the tomato sauce'])
+        client.put(f"{self.base_url}/{db_id}", json=recipe.to_json())
+
+        response = client.get(f"{self.base_url}/{db_id}")
+        recipe_updated = json.loads(response.data, object_hook=Recipe.from_json)
+
+        assert recipe == recipe_updated
+
+    def test_create_recipe(self, client):
+        new_ingredients = [
+            RecipeIngredient(aliment=Aliment(name='Salmon', tags=['fish']), quantity=150, unit='g'),
+            RecipeIngredient(aliment=Aliment(name='Asparagus', tags=['vegetable']), quantity=200, unit='g'),
+            RecipeIngredient(aliment=Aliment(name='Rice', tags=['grain']), quantity=80, unit='g')
+        ]
+        recipe = Recipe(name='Salmon with Asparagus and Rice', description='A healthy recipe', ingredients=new_ingredients, steps=['Cook the rice', 'Grill the salmon and asparagus'])
+        recipes = Controller().get_all_recipes()
+        client.post(self.base_url, json=recipe.to_json())
+        recipes_new = Controller().get_all_recipes()
+
+        assert recipes + [recipe] == recipes_new
+
+    def test_delete_recipe(self, client):
+        db_id: int = 1
+        recipes = [r for r in Controller().get_all_recipes() if r.db_id != db_id]
+        client.delete(f"{self.base_url}/{db_id}")
+        recipes_new = Controller().get_all_recipes()
+
+        assert recipes == recipes_new

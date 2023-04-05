@@ -32,3 +32,25 @@ class RecipeCatalog(metaclass=WeakSingletonMeta):
 
     def get_recipe_by_id(self, recipe_id: int) -> Union[Recipe, None]:
         return self.__recipe_id_map.get(recipe_id, None)
+
+    def create_recipe_from_json(self, json: dict) -> bool:
+        recipe: Recipe = Recipe.from_json(json)
+        if recipe in self.__recipe_list:
+            return False
+
+        self.__db_connector.add_recipe_and_ingredients(recipe)
+        self.__recipe_list.append(recipe)
+        self.__recipe_id_map[recipe.db_id] = recipe
+        return True
+
+    def update_recipe_from_json(self, recipe_id: int, json: dict):
+        recipe = self.get_recipe_by_id(recipe_id)
+        if recipe:
+            recipe = recipe.update_from_json(json)
+            self.__db_connector.update_recipe(recipe)
+
+    def delete_recipe(self, recipe_id):
+        recipe = self.get_recipe_by_id(recipe_id)
+        self.__recipe_list.remove(recipe)
+        self.__recipe_id_map.pop(recipe_id)
+        self.__db_connector.delete_recipe(recipe_id)

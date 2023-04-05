@@ -163,6 +163,40 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
         self.__add_recipe_ingredients(recipe=recipe)
 
     @clean_connection
+    def update_recipe(self, recipe: Recipe):
+        cur = self.con.cursor()
+
+        sql = f"DELETE FROM ingredient WHERE ingredient_id IN (SELECT ingredient_id FROM recipe_ingredient WHERE recipe_id = {recipe.db_id})"
+        cur.execute(sql)
+        sql = f"DELETE FROM recipe_ingredient WHERE recipe_id = {recipe.db_id}"
+        cur.execute(sql)
+        for ingredient in recipe.ingredients:
+            self.add_ingredient(ingredient)
+        self.__add_recipe_ingredients(recipe)
+
+        name = recipe.name
+        num_people = recipe.num_people
+        steps = '\n'.join(recipe.steps)
+        category = recipe.category
+        tags = ' '.join(recipe.tags)
+        time = recipe.time
+        sql = f"""
+            UPDATE recipe 
+            SET 
+                name='{name}', num_people='{num_people}', steps='{steps}', category='{category}', tags='{tags}', time='{time}' 
+            WHERE recipe_id = {recipe.db_id};"""
+        cur.execute(sql)
+        self.con.commit()
+
+    @clean_connection
+    def delete_recipe(self, recipe_id):
+        cur = self.con.cursor()
+
+        sql = f"DELETE FROM recipe WHERE recipe_id = {recipe_id})"
+        cur.execute(sql)
+        self.con.commit()
+
+    @clean_connection
     def insert_item_in_shopping_list(self, item: str):
         cur = self.con.cursor()
         sql = f"INSERT INTO shopping_list (item) VALUES ('{item}')"
