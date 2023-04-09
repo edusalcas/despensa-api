@@ -52,6 +52,7 @@ class TestIngredient:
 
         assert ing.simple_str() == 'Onion: 10.0 gr (Optional)'
 
+
 class TestRecipe:
     ingredients = [
         Ingredient(aliment=Aliment(name='onion'), quantity=10.0, quantity_type='gr'),

@@ -112,9 +112,17 @@ class Ingredient(BDInstance):
             json['quantity'],
             json['quantity_type'],
             json['optional'],
-            json['bd_id']
+            json['db_id']
         )
 
+    def __eq__(self, other):
+        """Overrides the default implementation"""
+        if isinstance(other, Ingredient):
+            return self.aliment == other.aliment \
+                   and self.quantity == other.quantity \
+                   and self.quantity_type == other.quantity_type \
+                   and self.optional == other.optional
+        return False
 
 @dataclass
 class Recipe(BDInstance):
@@ -202,6 +210,16 @@ class Recipe(BDInstance):
         self.steps = json['steps']
         self.tags = json['tags']
         self.time = json['time']
-        self.db_id = json['db_id']
 
         return self
+
+    def __eq__(self, other):
+        """Overrides the default implementation"""
+        if isinstance(other, Recipe):
+            return self.name == other.name \
+                   and self.num_people == other.num_people \
+                   and self.ingredients == other.ingredients \
+                   and self.steps == other.steps \
+                   and self.tags == other.tags \
+                   and self.time == other.time
+        return False

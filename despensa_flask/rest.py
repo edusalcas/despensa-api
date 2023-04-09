@@ -33,7 +33,7 @@ def update_aliment(aliment_id: str) -> Response:
 
 @bp.route('/aliments/<aliment_id>', methods=['DELETE'])
 def delete_aliment(aliment_id: int) -> Response:
-    Controller().delete_aliment(aliment_id)
+    Controller().delete_aliment(int(aliment_id))
     return jsonify(success=True)
 
 
@@ -47,7 +47,7 @@ def get_all_recipes() -> Response:
 
 @bp.route('/recipes/<recipe_id>', methods=['GET'])
 def get_recipe(recipe_id: int) -> Response:
-    recipe: Recipe = Controller().get_recipe_by_id(recipe_id)
+    recipe: Recipe = Controller().get_recipe_by_id(int(recipe_id))
     return jsonify(recipe)
 
 
@@ -65,5 +65,5 @@ def update_recipe(recipe_id: str) -> Response:
 
 @bp.route('/recipes/<recipe_id>', methods=['DELETE'])
 def delete_recipe(recipe_id: int) -> Response:
-    Controller().delete_recipe(recipe_id)
+    Controller().delete_recipe(int(recipe_id))
     return jsonify(success=True)

@@ -73,9 +73,6 @@ class Controller(metaclass=WeakSingletonMeta):
     def insert_item_in_shopping_list(self, item: str):
         self.__shopping_list.add_item_to_shopping_list(item)
 
-    def generate_db_sample_data(self):
-        self.__db_connector.generate_sample_data()
-
     #####################################
     #              Getters              #
     #####################################

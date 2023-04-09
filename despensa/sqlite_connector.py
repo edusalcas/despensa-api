@@ -136,7 +136,7 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
         cur = self.con.cursor()
         sql = f"""
             INSERT INTO recipe (name, num_people, steps, category, tags, time)
-                VALUES ('{name}', {num_people}, '{steps}', '{category}', '{tags}', {time});
+                VALUES ('{name}', {num_people}, '{steps}', '{category}', '{tags}', '{time}');
         """
         cur.execute(sql)
 
@@ -165,10 +165,9 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
     @clean_connection
     def update_recipe(self, recipe: Recipe):
         cur = self.con.cursor()
+        cur.execute(f"PRAGMA foreign_keys = ON")
 
         sql = f"DELETE FROM ingredient WHERE ingredient_id IN (SELECT ingredient_id FROM recipe_ingredient WHERE recipe_id = {recipe.db_id})"
-        cur.execute(sql)
-        sql = f"DELETE FROM recipe_ingredient WHERE recipe_id = {recipe.db_id}"
         cur.execute(sql)
         for ingredient in recipe.ingredients:
             self.add_ingredient(ingredient)
@@ -192,7 +191,8 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
     def delete_recipe(self, recipe_id):
         cur = self.con.cursor()
 
-        sql = f"DELETE FROM recipe WHERE recipe_id = {recipe_id})"
+        cur.execute(f"PRAGMA foreign_keys = ON")
+        sql = f"DELETE FROM recipe WHERE recipe_id = {recipe_id}"
         cur.execute(sql)
         self.con.commit()
 
@@ -233,8 +233,8 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
         num_people = recipe_raw[RecipeTable.NUM_PEOPLE]
         steps = recipe_raw[RecipeTable.STEPS].split('\n')
         category = recipe_raw[RecipeTable.CATEGORY]
-        tags = recipe_raw[RecipeTable.TAGS].split(' ')
-        time = recipe_raw[RecipeTable.TIME]
+        tags = recipe_raw[RecipeTable.TAGS].split(' ') if recipe_raw[RecipeTable.TAGS] != '' else []
+        time = recipe_raw[RecipeTable.TIME] if recipe_raw[RecipeTable.TIME] != 'None' else None
         ingredients = list(map(self.get_ingredient_by_id, ingredients_ids))
 
         return Recipe(name, num_people, ingredients, steps, category, tags, time, bd_id)
@@ -275,6 +275,7 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
     @clean_connection
     def delete_aliment(self, id_aliment: int):
         cur = self.con.cursor()
+        cur.execute(f"PRAGMA foreign_keys = ON")
         cur.execute(f"DELETE FROM aliment WHERE aliment_id = {id_aliment}")
         self.con.commit()
 
