@@ -73,6 +73,9 @@ class Controller(metaclass=WeakSingletonMeta):
     def insert_item_in_shopping_list(self, item: str):
         self.__shopping_list.add_item_to_shopping_list(item)
 
+    def remove_item_from_shopping_list(self, item: str):
+        self.__shopping_list.remove_item_from_shopping_list(item)
+
     #####################################
     #              Getters              #
     #####################################

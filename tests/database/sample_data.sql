@@ -67,3 +67,15 @@ INSERT INTO main.recipe_ingredient (recipe_id, ingredient_id) VALUES
      3
     )
 ;
+
+DELETE FROM main.pantry;
+INSERT INTO main.pantry (aliment_id) VALUES
+    (1),
+    (2)
+;
+
+DELETE FROM main.shopping_list;
+INSERT INTO main.shopping_list (item) VALUES
+    ('item1'),
+    ('item2')
+;

@@ -67,3 +67,43 @@ def update_recipe(recipe_id: str) -> Response:
 def delete_recipe(recipe_id: int) -> Response:
     Controller().delete_recipe(int(recipe_id))
     return jsonify(success=True)
+
+
+# Pantry
+
+@bp.route('/pantry', methods=['GET'])
+def get_pantry() -> Response:
+    pantry = Controller().get_pantry()
+    return jsonify(pantry)
+
+
+@bp.route('/pantry/<name>', methods=['POST'])
+def add_to_pantry(name: str) -> Response:
+    Controller().insert_aliment_in_pantry(name)
+    return jsonify(success=True)
+
+
+@bp.route('/pantry/<name>', methods=['DELETE'])
+def remove_from_pantry(name: str):
+    Controller().remove_aliment_in_pantry(name)
+    return jsonify(success=True)
+
+
+# Shopping List
+
+@bp.route('/shopping_list', methods=['GET'])
+def get_shopping_list():
+    shopping_list = Controller().get_shopping_list()
+    return jsonify(shopping_list)
+
+
+@bp.route('/shopping_list/<item>', methods=['POST'])
+def add_to_shopping_list(item: str):
+    Controller().insert_item_in_shopping_list(item)
+    return jsonify(success=True)
+
+
+@bp.route('/shopping_list/<item>', methods=['DELETE'])
+def remove_from_shopping_list(item: str):
+    Controller().remove_item_from_shopping_list(item)
+    return jsonify(success=True)

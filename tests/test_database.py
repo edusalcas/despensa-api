@@ -78,7 +78,7 @@ class TestSQLiteConnectorAliment:
         sqlite_con.add_ingredient_to_pantry(al0)
         sqlite_con.add_ingredient_to_pantry(al1)
 
-        sqlite_con.remove_ingredient_from_pantry(al0)
+        sqlite_con.remove_aliment_from_pantry(al0)
         pantry = sqlite_con.get_pantry()
 
         assert [al1] == pantry

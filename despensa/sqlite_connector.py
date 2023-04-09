@@ -120,7 +120,7 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
         self.con.commit()
 
     @clean_connection
-    def remove_ingredient_from_pantry(self, ingredient: Ingredient):
+    def remove_aliment_from_pantry(self, ingredient: Ingredient):
         cur = self.con.cursor()
         cur.execute(f"DELETE FROM pantry WHERE aliment_id = {ingredient.db_id};")
         self.con.commit()
@@ -200,6 +200,14 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
     def insert_item_in_shopping_list(self, item: str):
         cur = self.con.cursor()
         sql = f"INSERT INTO shopping_list (item) VALUES ('{item}')"
+        cur.execute(sql)
+
+        self.con.commit()
+
+    @clean_connection
+    def remove_item_from_shopping_list(self, name):
+        cur = self.con.cursor()
+        sql = f"DELETE FROM shopping_list WHERE item = '{name}'"
         cur.execute(sql)
 
         self.con.commit()

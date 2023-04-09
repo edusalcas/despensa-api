@@ -130,3 +130,57 @@ class TestRecipe:
         recipes_new = Controller().get_recipes_catalog()
 
         assert recipes == recipes_new
+
+
+class TestPantry:
+    base_url: str = "/rest/pantry"
+
+    def test_get_pantry(self, client):
+        response = client.get(self.base_url)
+        pantry = Controller().get_pantry()
+        pantry_flask = [Aliment.from_json(recipe_json) for recipe_json in response.json]
+
+        assert pantry == pantry_flask
+
+    def test_add_aliment_to_pantry(self, client):
+        new_aliment = Controller().get_aliment_by_id(3)
+        pantry = Controller().get_pantry()
+        client.post(f"{self.base_url}/{new_aliment.name}")
+        pantry_new = Controller().get_pantry()
+
+        assert pantry + [new_aliment] == pantry_new
+
+    def test_delete_recipe(self, client):
+        old_aliment = Controller().get_aliment_by_id(1)
+        pantry = [p for p in Controller().get_pantry() if p.name != old_aliment.name]
+        client.delete(f"{self.base_url}/{old_aliment.name}")
+        pantry_new = Controller().get_pantry()
+
+        assert pantry == pantry_new
+
+
+class TestShoppingList:
+    base_url: str = "/rest/shopping_list"
+
+    def test_get_shopping_list(self, client):
+        response = client.get(self.base_url)
+        shopping_list = Controller().get_shopping_list()
+        shopping_list_flask = response.json
+
+        assert shopping_list == shopping_list_flask
+
+    def test_add_aliment_to_shopping_list(self, client):
+        new_item = 'item_new'
+        shopping_list = Controller().get_shopping_list()
+        client.post(f"{self.base_url}/{new_item}")
+        shopping_list_new = Controller().get_shopping_list()
+
+        assert shopping_list + [new_item] == shopping_list_new
+
+    def test_delete_recipe(self, client):
+        old_item = 'item1'
+        shopping_list = [p for p in Controller().get_shopping_list() if p != old_item]
+        client.delete(f"{self.base_url}/{old_item}")
+        shopping_list_new = Controller().get_shopping_list()
+
+        assert shopping_list == shopping_list_new

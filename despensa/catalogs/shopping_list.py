@@ -18,8 +18,10 @@ class ShoppingList(metaclass=WeakSingletonMeta):
 
         return False
 
-    def remove_aliment_from_shopping_list(self, name: str):
-        if self.is_present(name): self.__shopping_list.remove(name)
-
     def get_all(self) -> list[str]:
         return self.__shopping_list.copy()
+
+    def remove_item_from_shopping_list(self, name: str):
+        if self.is_present(name):
+            self.__shopping_list.remove(name)
+            self.db_connector.remove_item_from_shopping_list(name)

@@ -31,6 +31,7 @@ class Pantry(metaclass=WeakSingletonMeta):
     def remove_aliment_from_pantry(self, name: str):
         aliment_to_remove = self.get_aliment(name)
         if aliment_to_remove:
+            self.__db_connector.remove_aliment_from_pantry(aliment_to_remove)
             self.__pantry_list.remove(aliment_to_remove)
             self.__aliment_name_map.pop(name)
 
