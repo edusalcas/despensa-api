@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Foods</title>
+</head>
+<body>
+	<header>
+		<h1>Meal Planner App</h1>
+	</header>
+	<table>
+	  <thead>
+		<tr>
+		  <th>Name</th>
+		  <th>Tags</th>
+		  <th>ID</th>
+		</tr>
+	  </thead>
+	  <tbody id="food-table-body">
+	  </tbody>
+	</table>
+	<footer>
+		<p>&copy; 2023 Meal Planner App. All rights reserved.</p>
+	</footer>
+	<script>
+	  fetch("http://localhost:5000/rest/aliments")
+		.then(response => response.json())
+		.then(data => {
+		  const tableBody = document.getElementById("food-table-body");
+		  data.forEach(food => {
+			const row = document.createElement("tr");
+			const nameCell = document.createElement("td");
+			const tagsCell = document.createElement("td");
+			const idCell = document.createElement("td");
+			nameCell.textContent = food.name;
+			tagsCell.textContent = food.tags.join(", ");
+			idCell.textContent = food.db_id;
+			row.appendChild(nameCell);
+			row.appendChild(tagsCell);
+			row.appendChild(idCell);
+			tableBody.appendChild(row);
+		  });
+		})
+		.catch(error => console.error(error));
+	</script>
+</body>
+</html>

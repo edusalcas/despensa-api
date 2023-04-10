@@ -1,12 +1,14 @@
 import os
 
 from flask import Flask, render_template
-from . import rest
+from flask_cors import CORS
+from . import rest, web
 
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_path='D:\\Repositorios\\despensa-api\\despensa_flask', instance_relative_config=False)
+    CORS(app)
     app.config.from_mapping(
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flask.sqlite'),
@@ -26,5 +28,6 @@ def create_app(test_config=None):
         pass
 
     app.register_blueprint(rest.bp)
+    app.register_blueprint(web.web_bp)
 
     return app
