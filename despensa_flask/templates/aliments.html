@@ -9,6 +9,8 @@
 	<header>
 		<h1>Meal Planner App</h1>
 	</header>
+	<!-- HTML code for the button to go back to index -->
+	<button onclick="goBack()">Back to Index</button>
 	<table>
 	  <thead>
 		<tr>
@@ -20,10 +22,99 @@
 	  <tbody id="food-table-body">
 	  </tbody>
 	</table>
-	<footer>
-		<p>&copy; 2023 Meal Planner App. All rights reserved.</p>
-	</footer>
+	<button onclick="changeModalState()">Add Food</button>
+
+	<!-- HTML code for the modal -->
+	<div id="modal" class="modal">
+	  <div class="modal-content">
+		<h2>Add Food</h2>
+		<form id="add-food-form" onsubmit="return validateForm()">
+		  <label for="food-name">Name:</label>
+		  <input type="text" id="food-name" name="food-name"><br>
+		  <label for="food-tags">Tags:</label>
+		  <input type="text" id="food-tags" name="food-tags"><br>
+		  <button type="submit">Add</button>
+		</form>
+	  </div>
+	</div>
+
+	<!-- JavaScript code to handle the modal and form submission -->
 	<script>
+	  const modal = document.getElementById("modal");
+	  modal.style.display = "none";
+	  const form = document.getElementById("add-food-form");
+
+	  // Function to open the modal
+	  function changeModalState() {
+		if (modal.style.display === "block") {
+			modal.style.display = "none";
+		} else {
+			modal.style.display = "block";
+		}
+	  }
+
+	  function goBack() {
+		window.location.href = "/";
+	  }
+
+	  // Function to validate form inputs
+	  function validateForm() {
+		const name = document.getElementById("food-name").value;
+		if (name === "") {
+			// Change the background color of the corresponding cells to red
+			document.getElementById("food-name").style.borderColor = "red";
+			return false;
+	    } else {
+			// Close the modal
+			changeModalState();
+		}
+	  }
+
+	  // Add event listener to the form to submit the new food
+	  form.addEventListener("submit", (event) => {
+		event.preventDefault();
+
+		const name = document.getElementById("food-name").value;
+		const tags = document.getElementById("food-tags").value.split(",").map(tag => tag.trim());
+		const db_id = 0;
+
+		// Make a request to the API to add the new food
+		fetch("http://localhost:5000/rest/aliments", {
+		  method: "POST",
+		  headers: {
+			"Content-Type": "application/json"
+		  },
+		  body: JSON.stringify({name, tags, db_id})
+		})
+		  .then(response => {
+			if (response.ok) {
+			  return response.json();
+			} else {
+			  throw new Error("Something went wrong");
+			}
+		  })
+		  .then(data => {
+			// Add the new food to the table
+			const tableBody = document.getElementById("food-table-body");
+			const row = document.createElement("tr");
+			const nameCell = document.createElement("td");
+			const tagsCell = document.createElement("td");
+			const idCell = document.createElement("td");
+			nameCell.textContent = data.name;
+			if (data.tags === undefined) {
+				tagsCell.textContent = ""
+			} else {
+				tagsCell.textContent = data.tags.join(", ");
+			}
+			idCell.textContent = data.bd_id;
+			row.appendChild(nameCell);
+			row.appendChild(tagsCell);
+			row.appendChild(idCell);
+			tableBody.appendChild(row);
+		  })
+		  .catch(error => console.error(error));
+	  });
+
 	  fetch("http://localhost:5000/rest/aliments")
 		.then(response => response.json())
 		.then(data => {
@@ -44,5 +135,8 @@
 		})
 		.catch(error => console.error(error));
 	</script>
+	<footer>
+		<p>&copy; 2023 Meal Planner App. All rights reserved.</p>
+	</footer>
 </body>
 </html>
