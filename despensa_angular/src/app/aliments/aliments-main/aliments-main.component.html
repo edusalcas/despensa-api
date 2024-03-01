@@ -1,0 +1,28 @@
+<button (click)="redirectTo('index')" >Back to Index</button>
+
+<table>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Tags</th>
+    <th>ID</th>
+  </tr>
+  </thead>
+  <tbody id="food-table-body">
+  </tbody>
+</table>
+
+<button (click)="changeModalState('modal')">Add Food</button>
+
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <h2>Add Food</h2>
+    <form id="add-food-form" (submit)="validateForm(['food-name','food-tags'])">
+      <label for="food-name">Name:</label>
+      <input type="text" id="food-name" name="food-name"><br>
+      <label for="food-tags">Tags:</label>
+      <input type="text" id="food-tags" name="food-tags"><br>
+      <button type="submit">Add</button>
+    </form>
+  </div>
+</div>
