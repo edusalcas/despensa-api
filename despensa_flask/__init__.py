@@ -1,13 +1,16 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, Blueprint
 from flask_cors import CORS
+
 from . import rest, web
 
 
 def create_app(test_config=None):
     # create and configure the app
-    app = Flask(__name__, instance_path='D:\\Repositorios\\despensa-api\\despensa_flask', instance_relative_config=False)
+    project_dir = os.path.dirname(os.path.abspath(__file__))
+    instance_path = os.path.join(project_dir, 'instance')
+    app = Flask(__name__, instance_path=instance_path, instance_relative_config=False)
     CORS(app)
     app.config.from_mapping(
         SECRET_KEY='dev',

@@ -57,27 +57,38 @@ export class AlimentsMainComponent {
          }
        }
      }
-     if (formOK) this.fetchFood();
+     if (formOK) {
+       this.fetchNewFood();
+       this.retrieveFoodData();
+     }
    }
 
-   fetchFood(){
+   fetchNewFood(){
+     const db_id :number = 0;
+     const food_name  = <HTMLInputElement> document.getElementById("food-name");
+     const food_tags  = <HTMLInputElement> document.getElementById("food-tags");
+     if (food_name && food_tags) {
+        const tags = food_tags.value.split(",").map(tag => tag.trim());
+        this.alimentsService.insertFood(db_id, food_name.value, tags);
+     }
+   }
+   retrieveFoodData(){
      this.alimentsService.getFood().subscribe(data => {
        const tableBody = <HTMLElement> document.getElementById("food-table-body");
-       if (data instanceof Array) {
-         data.forEach(food => {
-           const row = document.createElement("tr");
-           const nameCell = document.createElement("td");
-           const tagsCell = document.createElement("td");
-           const idCell = document.createElement("td");
-           nameCell.textContent = food.name;
-           tagsCell.textContent = food.tags.join(", ");
-           idCell.textContent = food.db_id;
-           row.appendChild(nameCell);
-           row.appendChild(tagsCell);
-           row.appendChild(idCell);
-           tableBody.appendChild(row);
-         });
-       }
+       data.forEach(food => {
+         const row = document.createElement("tr");
+         const nameCell = document.createElement("td");
+         const tagsCell = document.createElement("td");
+         const idCell = document.createElement("td");
+         nameCell.textContent = food.name;
+         tagsCell.textContent = food.tags.join(", ");
+         idCell.textContent = String(food.db_id);
+         row.appendChild(nameCell);
+         row.appendChild(tagsCell);
+         row.appendChild(idCell);
+         tableBody.appendChild(row);
+       });
      });
    }
+
 }

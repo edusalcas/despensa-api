@@ -1,19 +1,27 @@
 import { Injectable } from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {Observable} from "rxjs";
+import {Food} from "../entities/food";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AlimentsService {
   private url: string = "http://localhost:5000/rest/aliments";
-  constructor(private http:HttpClient) { }
+  constructor(
+    private http:HttpClient,
+  ) { }
 
-  getFood():Observable<unknown>{
-    return this.http.get(this.url, { headers: { Accept: 'application/json' } });
+  getFood(){
+    return this.http.get<Food[]>(this.url, { headers: { Accept: 'application/json' } });
   }
 
-  insertFood(name: string, tags: string[], db_id: bigint){
-    return this.http.post(this.url, { headers: })
+  insertFood(db_id: number, name: string, tags: string[]){
+    const food = new Food(db_id, name,tags);
+    return this.http.post(
+      this.url,
+      {
+        headers: { Accept: 'application/json' },
+        body: JSON.stringify(food),
+      })
   }
 }

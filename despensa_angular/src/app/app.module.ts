@@ -9,6 +9,7 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { IndexComponent } from './index/index.component';
 import { AlimentsMainComponent } from './aliments/aliments-main/aliments-main.component';
+import {HttpClientModule, provideHttpClient, withFetch} from "@angular/common/http";
 
 @NgModule({
   declarations: [
@@ -22,10 +23,12 @@ import { AlimentsMainComponent } from './aliments/aliments-main/aliments-main.co
   imports: [
     BrowserModule,
     AppRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    HttpClientModule
   ],
   providers: [
-    provideClientHydration()
+    provideClientHydration(),
+    provideHttpClient(withFetch())
   ],
   bootstrap: [AppComponent]
 })
