@@ -1,28 +1,37 @@
-<button (click)="redirectTo('index')" >Back to Index</button>
+<div class="container">
+  <table class="table table-bordered table-hover table-striped table-striped table-hover">
+    <thead>
+    <tr>
+      <th>Name</th>
+      <th>Tags</th>
+      <th>ID</th>
+    </tr>
+    </thead>
+    <tbody id="food-table-body">
+      <tr *ngFor="let food of foodList">
+        <td>{{food.name}}</td>
+        <td>{{food.tags}}</td>
+        <td>{{food.db_id}}</td>
+      </tr>
+    </tbody>
+  </table>
 
-<table>
-  <thead>
-  <tr>
-    <th>Name</th>
-    <th>Tags</th>
-    <th>ID</th>
-  </tr>
-  </thead>
-  <tbody id="food-table-body">
-  </tbody>
-</table>
+  <div>
+    <button (click)="changeModalState()">Add Food</button>
 
-<button (click)="changeModalState('modal')">Add Food</button>
-
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <h2>Add Food</h2>
-    <form id="add-food-form" (submit)="validateForm(['food-name','food-tags'])">
-      <label for="food-name">Name:</label>
-      <input type="text" id="food-name" name="food-name"><br>
-      <label for="food-tags">Tags:</label>
-      <input type="text" id="food-tags" name="food-tags"><br>
-      <button type="submit">Add</button>
-    </form>
+    <div [ngClass]="{'modal-visible' : isModalHidden}">
+      <div class="modal-content">
+        <h2>Add Food</h2>
+        <div *ngIf="mensajeError !== ''" class="alert alert-danger" >{{mensajeError}}</div>
+        <form id="add-food-form" #addFoodForm="ngForm" (submit)="validateForm(addFoodForm.value)">
+          <label for="food-name">Name:</label>
+          <input type="text" id="food-name" name="name" ngModel required><br>
+          <label for="food-tags">Tags:</label>
+          <input type="text" id="food-tags" name="tags" [(ngModel)]="tags" required><br>
+          <input type="hidden" id="db_id" name="db_id" ngModel>
+          <button type="submit" [disabled]="!addFoodForm.valid">Add</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
