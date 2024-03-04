@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {Router} from "@angular/router";
 
 @Component({
@@ -8,6 +8,9 @@ import {Router} from "@angular/router";
 })
 export class HeaderComponent {
 
+  @Input() headerContent: string | undefined;
+
+  @Input() navBar: [{page:string, name:string}] | undefined;
   constructor(private router: Router) {
   }
 

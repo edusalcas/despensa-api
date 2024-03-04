@@ -93,8 +93,8 @@ export class AlimentsMainComponent implements OnInit {
 
   retrieveFoodData() {
     this.alimentsService.getAllFood().subscribe(data => {
-      data.forEach((food, index) => {
-        if (this.foodList[index] && this.foodList[index].aliment !== food) {
+      data.forEach((food: Food, index: number) => {
+        if (this.foodList[index] && !this.foodList[index]?.aliment.equals(food)) {
           this.foodList[index].aliment = food;
         } else {
           this.foodList.push({aliment: food, editable: false});
@@ -110,19 +110,21 @@ export class AlimentsMainComponent implements OnInit {
   saveData(index: number, event: any) {
     const newTags = event.target?.innerText.split(",").map((str: string) => str.trim());
     this.foodList[index].editable = false;
-    this.foodList[index].aliment.tags = newTags;
-    new Promise((resolve, reject) => {
-      this.alimentsService.updateFood(this.foodList[index].aliment).subscribe({
-        next: data => {
-          resolve(data);
-        },
-        error: err => {
-          reject(err);
-        }
-      });
-    }).then(() => {
-      this.retrieveFoodData();
-    })
-      .catch(err => console.error("An error has occurs", err));
+    if (newTags && this.foodList[index].aliment.tags.toString() !== newTags.toString()) {
+      this.foodList[index].aliment.tags = newTags;
+      new Promise((resolve, reject) => {
+        this.alimentsService.updateFood(this.foodList[index].aliment).subscribe({
+          next: data => {
+            resolve(data);
+          },
+          error: err => {
+            reject(err);
+          }
+        });
+      }).then(() => {
+        this.retrieveFoodData();
+      })
+        .catch(err => console.error("An error has occurs", err));
+    }
   }
 }

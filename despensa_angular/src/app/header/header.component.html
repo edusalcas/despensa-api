@@ -1,9 +1,9 @@
 <header class="header">
-  <h1>Meat Planner</h1>
+  <h1>{{headerContent}}</h1>
   <nav>
-    <ul>
+    <ul *ngFor="let nav of navBar">
       <li>
-        <a (click)="redirectTo('index')">Index</a>
+        <a (click)="redirectTo(nav.page)">{{nav.name}}</a>
       </li>
     </ul>
   </nav>

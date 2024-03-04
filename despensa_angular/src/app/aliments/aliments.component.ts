@@ -7,4 +7,7 @@ import {Component} from "@angular/core";
 })
 export class AlimentsComponent {
 
+  public headerContent:string = "Meal Planner App";
+
+  public navBar:[{page:string,name:string}] = [{page: "index", name: "Index"}];
 }

@@ -6,7 +6,7 @@ export class Food {
 
   private _tags: string[];
 
-  constructor(id:number, name:string, tags:string[]) {
+  constructor(id: number, name: string, tags: string[]) {
     this._db_id = id;
     this._name = name;
     this._tags = tags;
@@ -34,5 +34,13 @@ export class Food {
 
   set tags(value: string[]) {
     this._tags = value;
+  }
+
+  equals(other: Food): boolean {
+    return this.name === other.name && this.db_id === other.db_id && this.tags === other.tags;
+  }
+
+  hash(): string {
+    return `${this.name}${this.db_id}`;
   }
 }

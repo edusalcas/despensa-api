@@ -63,17 +63,17 @@ class Aliment(BDInstance):
         return f"{self.name.title()}: {', '.join(map(str.title, self.tags))}"
 
     def update_from_json(self, json: dict) -> Aliment:
-        self.name = json['name']
-        self.tags = json['tags']
+        self.name = json['_name']
+        self.tags = json['_tags']
 
         return self
 
     @staticmethod
     def from_json(json: dict[str, Any]) -> Aliment:
         return Aliment(
-            json['name'],
-            json['tags'],
-            json['db_id']
+            json['_name'],
+            json['_tags'],
+            json['_db_id']
         )
 
 

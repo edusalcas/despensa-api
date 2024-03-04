@@ -84,11 +84,11 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
 
     @clean_connection
     def update_aliment(self, aliment: Aliment):
-        name = aliment.name
+        db_id = aliment.db_id
         tags = ' '.join(aliment.tags)
 
         cur = self.con.cursor()
-        sql = f"UPDATE aliment SET tags = '{tags}' WHERE name = '{name}';"
+        sql = f"UPDATE aliment SET tags = '{tags}' WHERE aliment_id = '{db_id}';"
         cur.execute(sql)
         self.con.commit()
 
