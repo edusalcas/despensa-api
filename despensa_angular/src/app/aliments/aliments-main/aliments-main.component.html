@@ -4,15 +4,13 @@
     <tr>
       <th>Name</th>
       <th>Tags</th>
-      <th>ID</th>
     </tr>
     </thead>
     <tbody id="food-table-body">
-      <tr *ngFor="let food of foodList">
-        <td>{{food.name}}</td>
-        <td>{{food.tags}}</td>
-        <td>{{food.db_id}}</td>
-      </tr>
+    <tr *ngFor="let food of foodList; let i = index">
+      <td>{{ food.aliment.name }}</td>
+      <td [contentEditable]="food.editable" (dblclick)="editTags(i)" (keydown.enter)="saveData(i,$event)" >{{ food.aliment.tags }}</td>
+    </tr>
     </tbody>
   </table>
 
@@ -22,12 +20,12 @@
     <div [ngClass]="{'modal-visible' : isModalHidden}">
       <div class="modal-content">
         <h2>Add Food</h2>
-        <div *ngIf="mensajeError !== ''" class="alert alert-danger" >{{mensajeError}}</div>
+        <div *ngIf="hasErrors" class="alert alert-danger">{{ errorMessage }}</div>
         <form id="add-food-form" #addFoodForm="ngForm" (submit)="validateForm(addFoodForm.value)">
           <label for="food-name">Name:</label>
           <input type="text" id="food-name" name="name" ngModel required><br>
           <label for="food-tags">Tags:</label>
-          <input type="text" id="food-tags" name="tags" [(ngModel)]="tags" required><br>
+          <input type="text" id="food-tags" name="tags" [(ngModel)]="tags"><br>
           <input type="hidden" id="db_id" name="db_id" ngModel>
           <button type="submit" [disabled]="!addFoodForm.valid">Add</button>
         </form>

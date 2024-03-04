@@ -23,11 +23,13 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
     def get_aliment_by_id(self, bd_id: int) -> Union[Aliment, None]:
         return self.__aliment_id_map.get(bd_id)
 
-    def create_aliment(self, name: str, tags: List[str]) -> bool:
+    def create_aliment_from_params(self, name: str, tags: List[str]) -> bool:
         aliment = Aliment(name.lower(), tags)
+        return self.create_aliment(aliment)
+
+    def create_aliment(self, aliment: Aliment):
         if self.is_present(aliment):
             return False
-
         self.db_connector.add_aliment(aliment)
         self.__aliment_list.append(aliment)
         self.__aliment_id_map[aliment.db_id] = aliment
@@ -35,13 +37,7 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
 
     def create_aliment_from_json(self, json: dict) -> bool:
         aliment: Aliment = Aliment.from_json(json)
-        if self.is_present(aliment):
-            return False
-
-        self.db_connector.add_aliment(aliment)
-        self.__aliment_list.append(aliment)
-        self.__aliment_id_map[aliment.db_id] = aliment
-        return True
+        return self.create_aliment(aliment)
 
     def update_aliment(self, name, tags):
         aliment = self.get_aliment_by_name(name)

@@ -20,7 +20,7 @@ class Controller(metaclass=WeakSingletonMeta):
         self.__shopping_list = ShoppingList(self.__db_connector)
 
     def create_aliment(self, name: str, tags: List[str]) -> bool:
-        return self.__aliments_catalog.create_aliment(name, tags)
+        return self.__aliments_catalog.create_aliment_from_params(name, tags)
 
     def create_aliment_from_json(self, json: dict) -> bool:
         return self.__aliments_catalog.create_aliment_from_json(json)
@@ -50,7 +50,8 @@ class Controller(metaclass=WeakSingletonMeta):
         return ingredient
 
     @staticmethod
-    def create_recipe(recipe_name: str, num_people: int, ingredients: List[Ingredient], steps: List[str], category: str, tags: List[str], time: int) -> Recipe:
+    def create_recipe(recipe_name: str, num_people: int, ingredients: List[Ingredient], steps: List[str], category: str,
+                      tags: List[str], time: int) -> Recipe:
         recipe = Recipe(recipe_name, num_people, ingredients, steps, category, tags, time)
 
         return recipe

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Food} from "../entities/food";
 import {Observable} from "rxjs";
@@ -7,22 +7,27 @@ import {Observable} from "rxjs";
   providedIn: 'root'
 })
 export class AlimentsService {
-    private url: string = "http://localhost:5000/rest/aliments";
-    private httpOptions = {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json'
-        })
-    };
+  private url: string = "http://localhost:5000/rest/aliments";
+  private httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json'
+    })
+  };
 
-    constructor(
-      private http:HttpClient,
-    ) { }
+  constructor(
+    private http: HttpClient,
+  ) {
+  }
 
-    getAllFood(){
-      return this.http.get<Food[]>(this.url, { headers: { Accept: 'application/json' } });
-    }
+  getAllFood() {
+    return this.http.get<Food[]>(this.url, {headers: {Accept: 'application/json'}});
+  }
 
-    insertFood(food:Food):Observable<boolean>{
-      return this.http.post<boolean>(this.url, food,  this.httpOptions );
-    }
+  insertFood(food: Food): Observable<boolean> {
+    return this.http.post<boolean>(this.url, food, this.httpOptions);
+  }
+
+  updateFood(food: Food): Observable<any> {
+    return this.http.put(this.url.concat(`/${food.db_id}`), food, this.httpOptions);
+  }
 }

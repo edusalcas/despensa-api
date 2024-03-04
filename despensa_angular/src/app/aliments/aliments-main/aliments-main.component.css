@@ -9,10 +9,12 @@ input.ng-invalid.ng-touched {
 }
 
 .alert {
-  padding: 15px;
-  margin-bottom: 20px;
-  border: 1px solid transparent;
-  border-radius: 4px;
+    padding: 20px;
+    background-color: #f44336;
+    color: white;
+    opacity: 1;
+    transition: opacity 0.6s;
+    margin-bottom: 15px;
 }
 
 .alert-danger {
@@ -23,16 +25,17 @@ input.ng-invalid.ng-touched {
 
 .container {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  align-items: start;
 }
 
 .modal-content {
-  width: 45%;
+  width: 50%;
 }
 
 .table {
   text-align: center;
-  width: 45%;
+  width: 50%;
   margin-bottom: 1rem;
   color: #212529;
   border-collapse: collapse;
@@ -80,4 +83,36 @@ input.ng-invalid.ng-touched {
 .table-hover tbody tr:hover {
   color: #212529;
   background-color: rgba(0, 0, 0, 0.075);
+}
+
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+
+.modal-content input[type=text] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+}
+
+
+.modal-content button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.modal-content button:hover {
+    opacity: 0.8;
 }
