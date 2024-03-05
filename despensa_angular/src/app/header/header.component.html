@@ -3,7 +3,7 @@
   <nav>
     <ul *ngFor="let nav of navBar">
       <li>
-        <a (click)="redirectTo(nav.page)">{{nav.name}}</a>
+        <a [routerLink]= nav.page >{{nav.name}}</a>
       </li>
     </ul>
   </nav>

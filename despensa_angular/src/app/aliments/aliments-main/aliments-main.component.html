@@ -8,8 +8,10 @@
     </thead>
     <tbody id="food-table-body">
     <tr *ngFor="let food of foodList; let i = index">
-      <td>{{ food.aliment.name }}</td>
-      <td [contentEditable]="food.editable" [ngClass]="{'editable' : food.editable}" (dblclick)="editTags(i)" (keydown.enter)="saveData(i,$event)" >{{ food.aliment.tags }}</td>
+      <td>{{ food.aliment._name }}</td>
+      <td [contentEditable]="food.editable" [ngClass]="{'editable' : food.editable}" (dblclick)="editTags(i)"
+          (keydown.enter)="saveData(i,$event)">{{ food.aliment._tags }}
+      </td>
     </tr>
     </tbody>
   </table>

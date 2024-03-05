@@ -53,9 +53,10 @@ export class AlimentsMainComponent implements OnInit {
    * it retrieves the food data from the database and hides the modal. If the insertion is unsuccessful,
    * it sets `hasErrors` to true. Any unhandled errors during the operation are logged to the console.
    */
-  async validateForm(data: Food) {
+  async validateForm(data: any) {
     try {
-      const isInsert: boolean = await this.fetchNewFood(data);
+      const {db_id, name, tags} = data;
+      const isInsert: boolean = await this.fetchNewFood(new Food(db_id, name, tags));
       if (isInsert) {
         this.hasErrors = false;
         this.retrieveFoodData();
@@ -76,8 +77,7 @@ export class AlimentsMainComponent implements OnInit {
    * @param food {Food}
    */
   fetchNewFood(food: Food): Promise<boolean> {
-    if (food.tags) food.tags = this.tagsArray;
-    else food.tags = [""];
+    food._tags = food._tags ? this.tagsArray : food._tags = [""];
     return new Promise((resolve, reject) => {
       this.alimentsService.insertFood(food).subscribe({
           next: data => {
@@ -92,14 +92,20 @@ export class AlimentsMainComponent implements OnInit {
   }
 
   retrieveFoodData() {
-    this.alimentsService.getAllFood().subscribe(data => {
-      data.forEach((food: Food, index: number) => {
-        if (this.foodList[index] && !this.foodList[index]?.aliment.equals(food)) {
-          this.foodList[index].aliment = food;
-        } else {
-          this.foodList.push({aliment: food, editable: false});
-        }
-      });
+    this.alimentsService.getAllFood().subscribe({
+      next: data=> {
+        data.forEach((food: Food, index: number) => {
+          const equals = this.foodList[index]?.aliment.equals(food);
+          if (!this.foodList[index]) {
+            this.foodList.push({aliment: food, editable: false});
+          } else if (!equals) {
+            this.foodList[index].aliment = food;
+          }
+        });
+      },
+      error: err => {
+        console.error("Error occurred while fetching food data:", err);
+      }
     });
   }
 
@@ -108,10 +114,12 @@ export class AlimentsMainComponent implements OnInit {
   }
 
   saveData(index: number, event: any) {
-    const newTags = event.target?.innerText.split(",").map((str: string) => str.trim());
+    const newTags = event.target?.innerText.split(",").map((str: string) => str.trim()).filter((a: string) => a !== "");
     this.foodList[index].editable = false;
-    if (newTags && this.foodList[index].aliment.tags.toString() !== newTags.toString()) {
-      this.foodList[index].aliment.tags = newTags;
+    const someChanges = newTags ? this.foodList[index].aliment._tags.some((a, index) => a !== newTags[index]) : false;
+    const lenChange = newTags ? newTags.length !== this.foodList[index].aliment._tags.length : false;
+    if ((someChanges || lenChange)) {
+      this.foodList[index].aliment._tags = newTags;
       new Promise((resolve, reject) => {
         this.alimentsService.updateFood(this.foodList[index].aliment).subscribe({
           next: data => {
@@ -125,6 +133,8 @@ export class AlimentsMainComponent implements OnInit {
         this.retrieveFoodData();
       })
         .catch(err => console.error("An error has occurs", err));
+    } else {
+      event.target.innerText = newTags.toString();
     }
   }
 }

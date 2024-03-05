@@ -1,46 +1,53 @@
 export class Food {
 
-  private _db_id: number;
+  private db_id: number;
 
-  private _name: string;
+  private name: string;
 
-  private _tags: string[];
+  private tags: string[];
 
   constructor(id: number, name: string, tags: string[]) {
-    this._db_id = id;
-    this._name = name;
-    this._tags = tags;
+    this.db_id = id;
+    this.name = name;
+    this.tags = tags;
   }
 
-  get db_id(): number {
-    return this._db_id;
+  set _name(name: string) {
+    this.name = name;
   }
 
-  set db_id(value: number) {
-    this._db_id = value;
+
+  get _name(): string {
+    return this.name;
   }
 
-  get name(): string {
-    return this._name;
+  set _db_id(db_id: number) {
+    this.db_id = db_id;
   }
 
-  set name(value: string) {
-    this._name = value;
+
+  get _db_id(): number {
+    return this.db_id;
   }
 
-  get tags(): string[] {
-    return this._tags;
+  set _tags(tags: string[]) {
+    this.tags = tags;
   }
 
-  set tags(value: string[]) {
-    this._tags = value;
+
+  get _tags(): string[] {
+    return this.tags;
   }
 
   equals(other: Food): boolean {
-    return this.name === other.name && this.db_id === other.db_id && this.tags === other.tags;
+    return this._name === other._name && this._db_id === other._db_id && this.tagsEquals(other._tags);
+  }
+
+  private tagsEquals(otherTags: Array<string>) {
+    return otherTags && this._tags.length === otherTags.length && this._tags.every((a, index) => a === otherTags[index]);
   }
 
   hash(): string {
-    return `${this.name}${this.db_id}`;
+    return `${this._name}${this._db_id}`;
   }
 }

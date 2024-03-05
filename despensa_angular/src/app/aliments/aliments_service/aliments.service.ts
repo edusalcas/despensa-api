@@ -1,7 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Food} from "../entities/food";
-import {map, Observable} from "rxjs";
+import {catchError, map, Observable, throwError} from "rxjs";
+import {throws} from "node:assert";
 
 @Injectable({
   providedIn: 'root'
@@ -19,16 +20,25 @@ export class AlimentsService {
   ) {
   }
 
-  getAllFood():Observable<Food[]> {
-    return this.http.get<Food[]>(this.url, {headers: {Accept: 'application/json'}})
-      .pipe(map(data => data.map( data => new Food(data.db_id, data.name, data.tags))))
+  getAllFood(): Observable<Food[]> {
+    return this.http.get<any[]>(this.url, {headers: {Accept: 'application/json'}})
+      .pipe(map(data => data.map(data => {
+        const {db_id, name, tags} = data;
+        return new Food(db_id,
+          name,
+          tags);
+      })))
   }
 
-  insertFood(food: Food):Observable<boolean> {
+  insertFood(food: unknown): Observable<boolean> {
+    if (!(food instanceof Food)) {
+      throw new Error('Invalid argument: food must be an instance of Food class');
+    }
+
     return this.http.post<boolean>(this.url, food, this.httpOptions);
   }
 
-  updateFood(food: Food):Observable<any> {
-    return this.http.put(this.url.concat(`/${food.db_id}`), food, this.httpOptions);
+  updateFood(food: Food): Observable<any> {
+    return this.http.put(this.url.concat(`/${food._db_id}`), food, this.httpOptions);
   }
 }
