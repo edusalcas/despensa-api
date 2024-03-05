@@ -10,11 +10,10 @@ export class HeaderComponent {
 
   @Input() headerContent: string | undefined;
 
-  @Input() navBar: [{page:string, name:string}] | undefined;
+  @Input() navBar: {page:string, name:string}[] | undefined;
+
+  @Input() login: boolean | undefined;
   constructor(private router: Router) {
   }
 
-  redirectTo(page: string) {
-    this.router.navigate([`/${page}`]);
-  }
 }

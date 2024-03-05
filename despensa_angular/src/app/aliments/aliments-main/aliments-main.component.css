@@ -2,10 +2,6 @@
   visibility: hidden;
 }
 
-* {
-  margin: 5dvh;
-}
-
 input.ng-invalid.ng-touched {
   border-color: red;
 }
@@ -35,18 +31,13 @@ input.ng-invalid.ng-touched {
 
 .container {
   display: flex;
-  justify-content: space-evenly;
   align-items: start;
-}
-
-.modal-content {
-  width: 50%;
 }
 
 .table {
   text-align: center;
-  width: 50%;
-  margin-bottom: 1rem;
+  width: 70%;
+  margin: 3rem 3rem 5rem;
   color: #212529;
   border-collapse: collapse;
 }
@@ -95,13 +86,23 @@ input.ng-invalid.ng-touched {
   background-color: rgba(0, 0, 0, 0.075);
 }
 
+.modal {
+  width: 30%;
+  display: grid;
+}
 
+.modal>button{
+  display: grid;
+  justify-content: start;
+  width: fit-content;
+  margin-top: 1rem;
+}
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto;
+  margin: .75rem 0 0;
   padding: 20px;
   border: 1px solid #888;
-  width: 80%;
+  width: 85%;
 }
 
 

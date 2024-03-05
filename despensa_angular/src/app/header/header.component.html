@@ -1,10 +1,14 @@
 <header class="header">
   <h1>{{headerContent}}</h1>
-  <nav>
+  <nav class="navbar">
     <ul *ngFor="let nav of navBar">
       <li>
         <a [routerLink]= nav.page >{{nav.name}}</a>
       </li>
     </ul>
   </nav>
+  <ul *ngIf="login">
+    <li>Sign in</li>
+    <li>Sign Up</li>
+  </ul>
 </header>

@@ -1,25 +1,37 @@
 .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: #f8f9fa;
-  padding: 20px;
-  margin-bottom: 20px;
+  padding: 1rem;
+  min-height: 12.5dvh;
 }
 
 .header h1 {
   margin: 0;
 }
 
-.header ul {
-  list-style-type: none;
-  margin: 0;
+li a {
+  color: #0060ef;
+  text-decoration: none;
+}
+
+li a:hover {
+  color: #00ffe1;
+}
+
+.navbar {
+  display: inherit;
+
   padding: 0;
 }
 
-.header li {
-  display: inline;
+.navbar li {
+  list-style-type: none;
   margin-right: 10px;
 }
 
-.header a {
+.navbar a {
   cursor: pointer;
   text-decoration: none;
   color: #007bff;

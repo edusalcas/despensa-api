@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Food} from "../entities/food";
-import {catchError, map, Observable, throwError} from "rxjs";
-import {throws} from "node:assert";
+import {map, Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'

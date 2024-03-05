@@ -9,6 +9,7 @@ import { FooterComponent } from './footer/footer.component';
 import { IndexComponent } from './index/index.component';
 import { AlimentsMainComponent } from './aliments/aliments-main/aliments-main.component';
 import {HttpClientModule, provideHttpClient, withFetch} from "@angular/common/http";
+import { RecipesComponent } from './recipes/recipes.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import {HttpClientModule, provideHttpClient, withFetch} from "@angular/common/ht
     HeaderComponent,
     FooterComponent,
     IndexComponent,
-    AlimentsMainComponent
+    AlimentsMainComponent,
+    RecipesComponent
   ],
     imports: [
         BrowserModule,
