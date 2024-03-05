@@ -10,6 +10,8 @@ import { IndexComponent } from './index/index.component';
 import { AlimentsMainComponent } from './aliments/aliments-main/aliments-main.component';
 import {HttpClientModule, provideHttpClient, withFetch} from "@angular/common/http";
 import { RecipesComponent } from './recipes/recipes.component';
+import { RecipesMainComponent } from './recipes/recipes-main/recipes-main.component';
+import {NgOptimizedImage} from "@angular/common";
 
 @NgModule({
   declarations: [
@@ -19,14 +21,16 @@ import { RecipesComponent } from './recipes/recipes.component';
     FooterComponent,
     IndexComponent,
     AlimentsMainComponent,
-    RecipesComponent
+    RecipesComponent,
+    RecipesMainComponent
   ],
     imports: [
         BrowserModule,
         AppRoutingModule,
         ReactiveFormsModule,
         HttpClientModule,
-        FormsModule
+        FormsModule,
+        NgOptimizedImage
     ],
   providers: [
     provideClientHydration(),

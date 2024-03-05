@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Food} from "../entities/food";
+import {Food} from "../../entities/food";
 import {map, Observable} from "rxjs";
 
 @Injectable({

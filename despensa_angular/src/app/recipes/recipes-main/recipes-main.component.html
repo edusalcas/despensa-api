@@ -1,0 +1,18 @@
+<main class="container">
+  <aside class="lateral lateral-menu">
+    <h1>Filter by:</h1>
+    <ul *ngFor="let filter of filterList">
+      <li>{{filter}}
+        <ul>
+          <li></li>
+        </ul>
+      </li>
+    </ul>
+  </aside>
+  <div class="gallery">
+    <div *ngFor="let recipe of recipeList">
+      <img alt="{{recipe._name}}" ngSrc="#" (click)="showDetails()">
+      <p>{{ recipe._name }}</p>
+    </div>
+  </div>
+</main>

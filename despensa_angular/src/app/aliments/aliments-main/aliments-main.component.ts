@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {AlimentsService} from "../aliments_service/aliments.service";
-import {Food} from "../entities/food";
+import {AlimentsService} from "../../services/aliments_service/aliments.service";
+import {Food} from "../../entities/food";
 import {NgForm} from "@angular/forms";
 
 @Component({
