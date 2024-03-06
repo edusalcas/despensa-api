@@ -3,6 +3,7 @@ import {AlimentsService} from "../../../services/aliments_service/aliments.servi
 import {FormsModule, NgForm} from "@angular/forms";
 import {Food} from "../../../entities/food";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
+import {NgbModal, NgbModule} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-aliments-main',
@@ -12,22 +13,22 @@ import {NgClass, NgForOf, NgIf} from "@angular/common";
     NgForOf,
     NgClass,
     FormsModule,
-    NgIf
-  ],
-  styleUrl: './aliments-main.component.css'
+    NgIf,
+    NgbModule,
+  ]
 })
 export class AlimentsMainComponent implements OnInit {
 
   @ViewChild('addFoodForm') addFoodForm: NgForm | undefined;
-  tags = '';
+  protected tags = '';
 
-  foodList: Array<{ aliment: Food, editable: boolean }> = [];
+  protected foodList: Array<{ aliment: Food, editable: boolean }> = [];
 
   isModalHidden: boolean = true;
 
-  hasErrors: boolean = false;
+  protected hasErrors: boolean = false;
 
-  errorMessage: string = 'The food name is already in use';
+  protected errorMessage: string = 'The food name is already in use';
 
   get tagsArray() {
     return this.tags.split(',').map((tag: { trim: () => any; }) => tag.trim());
@@ -36,6 +37,7 @@ export class AlimentsMainComponent implements OnInit {
 
   constructor(
     private alimentsService: AlimentsService,
+    private modalService: NgbModal
   ) {
   }
 
@@ -48,8 +50,9 @@ export class AlimentsMainComponent implements OnInit {
    * a class is dynamically added to or removed from the modal, thereby changing its visibility.
    * If the modal is hidden, the associated form is reset.
    */
-  changeModalState() {
-    this.isModalHidden = !this.isModalHidden;
+  changeModalState(modal:any) {
+
+    this.modalService.open(modal , {centered: true});
 
     if (!this.isModalHidden) {
       this.addFoodForm?.reset();
@@ -68,7 +71,6 @@ export class AlimentsMainComponent implements OnInit {
       if (isInsert) {
         this.hasErrors = false;
         this.retrieveFoodData();
-        this.changeModalState();
       } else {
         this.hasErrors = true;
       }
@@ -77,8 +79,6 @@ export class AlimentsMainComponent implements OnInit {
     }
   }
 
-  // @ts-ignore
-  // @ts-ignore
   /**
    * This method returns a new Promise. If the Promise is resolved with a boolean value of true,
    * it indicates a successful insertion. If it is resolved with a boolean value of false,
@@ -104,7 +104,7 @@ export class AlimentsMainComponent implements OnInit {
 
   retrieveFoodData() {
     this.alimentsService.getAllFood().subscribe({
-      next: (data: { forEach: (arg0: (food: Food, index: number) => void) => void; })=> {
+      next: (data: { forEach: (arg0: (food: Food, index: number) => void) => void; }) => {
         data.forEach((food: Food, index: number) => {
           const equals = this.foodList[index]?.aliment.equals(food);
           if (!this.foodList[index]) {

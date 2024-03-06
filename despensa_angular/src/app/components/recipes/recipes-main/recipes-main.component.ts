@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
+import {NgForOf, NgOptimizedImage} from "@angular/common";
 import {Recipe} from "../../../entities/recipe";
 import {RecipesService} from "../../../services/recipes_service/recipes.service";
-import {NgForOf, NgOptimizedImage} from "@angular/common";
-
+import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle} from "@ng-bootstrap/ng-bootstrap";
 
 
 /**
@@ -26,16 +26,22 @@ import {NgForOf, NgOptimizedImage} from "@angular/common";
   standalone: true,
   imports: [
     NgForOf,
-    NgOptimizedImage
+    NgOptimizedImage,
+    NgbDropdown,
+    NgbDropdownMenu,
+    NgbDropdownToggle,
   ],
   styleUrl: './recipes-main.component.css'
 })
 export class RecipesMainComponent implements OnInit {
 
   protected recipeList: Recipe[] = [];
-  protected filterList: string[] =
-    ["Type", "Difficulty", "Num of guests", "Category", "Duration", "Properties", "Nutrition", "Destined for",
-      "Cocking", "Season", "Country", "Region", "Spiciness level", "Cost", "Drink"];
+  protected filterList: { name: string, options: string[] }[] =
+    [{name: "Type", options: ["Rica","Guy"]}, {name: "Difficulty", options: [""]}, {name: "Num of guests", options: [""]},
+      {name: "Category", options: [""]}, {name: "Duration", options: [""]}, {name: "Properties", options: [""]},
+      {name: "Nutrition", options: [""]}, {name: "Destined for", options: [""]}, {name: "Cocking", options: [""]},
+      {name: "Season", options: [""]}, {name: "Country", options: [""]}, {name: "Region", options: [""]},
+      {name: "Spiciness level", options: [""]}, {name: "Cost", options: [""]}, {name: "Drink", options: [""]}];
 
   constructor(private recipeService: RecipesService) {
   }
@@ -60,6 +66,10 @@ export class RecipesMainComponent implements OnInit {
   }
 
   showDetails() {
+
+  }
+
+  showModalAddRecipe() {
 
   }
 }

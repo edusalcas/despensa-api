@@ -9,8 +9,7 @@ import {HeaderComponent} from "../header/header.component";
   imports: [
     FooterComponent,
     HeaderComponent
-  ],
-  styleUrl: './index.component.css'
+  ]
 })
 export class IndexComponent {
 

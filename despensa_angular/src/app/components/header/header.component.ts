@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {RouterLink} from "@angular/router";
 import {NgForOf, NgIf} from "@angular/common";
+import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 
 
 
@@ -11,9 +12,9 @@ import {NgForOf, NgIf} from "@angular/common";
   imports: [
     RouterLink,
     NgIf,
-    NgForOf
-  ],
-  styleUrl: './header.component.css'
+    NgForOf,
+    NgbModule
+  ]
 })
 export class HeaderComponent {
 
