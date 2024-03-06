@@ -1,11 +1,19 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {AlimentsService} from "../../services/aliments_service/aliments.service";
-import {Food} from "../../entities/food";
-import {NgForm} from "@angular/forms";
+import {AlimentsService} from "../../../services/aliments_service/aliments.service";
+import {FormsModule, NgForm} from "@angular/forms";
+import {Food} from "../../../entities/food";
+import {NgClass, NgForOf, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-aliments-main',
   templateUrl: './aliments-main.component.html',
+  standalone: true,
+  imports: [
+    NgForOf,
+    NgClass,
+    FormsModule,
+    NgIf
+  ],
   styleUrl: './aliments-main.component.css'
 })
 export class AlimentsMainComponent implements OnInit {
@@ -22,7 +30,7 @@ export class AlimentsMainComponent implements OnInit {
   errorMessage: string = 'The food name is already in use';
 
   get tagsArray() {
-    return this.tags.split(',').map(tag => tag.trim());
+    return this.tags.split(',').map((tag: { trim: () => any; }) => tag.trim());
   }
 
 
@@ -69,6 +77,8 @@ export class AlimentsMainComponent implements OnInit {
     }
   }
 
+  // @ts-ignore
+  // @ts-ignore
   /**
    * This method returns a new Promise. If the Promise is resolved with a boolean value of true,
    * it indicates a successful insertion. If it is resolved with a boolean value of false,
@@ -78,12 +88,13 @@ export class AlimentsMainComponent implements OnInit {
    */
   fetchNewFood(food: Food): Promise<boolean> {
     food._tags = food._tags ? this.tagsArray : food._tags = [""];
-    return new Promise((resolve, reject) => {
+    // @ts-ignore
+    return new Promise((resolve: (arg0: any) => void, reject: (arg0: any) => void) => {
       this.alimentsService.insertFood(food).subscribe({
-          next: data => {
+          next: (data: any) => {
             resolve(data);
           },
-          error: error => {
+          error: (error: any) => {
             reject(error);
           }
         }
@@ -93,7 +104,7 @@ export class AlimentsMainComponent implements OnInit {
 
   retrieveFoodData() {
     this.alimentsService.getAllFood().subscribe({
-      next: data=> {
+      next: (data: { forEach: (arg0: (food: Food, index: number) => void) => void; })=> {
         data.forEach((food: Food, index: number) => {
           const equals = this.foodList[index]?.aliment.equals(food);
           if (!this.foodList[index]) {

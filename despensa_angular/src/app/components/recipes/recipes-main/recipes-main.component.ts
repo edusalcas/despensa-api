@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {Recipe} from "../../entities/recipe";
-import {RecipesService} from "../../services/recipes_service/recipes.service";
-import {Food} from "../../entities/food";
+import {Recipe} from "../../../entities/recipe";
+import {RecipesService} from "../../../services/recipes_service/recipes.service";
+import {NgForOf, NgOptimizedImage} from "@angular/common";
+
 
 
 /**
@@ -22,6 +23,11 @@ import {Food} from "../../entities/food";
 @Component({
   selector: 'app-recipes-main',
   templateUrl: './recipes-main.component.html',
+  standalone: true,
+  imports: [
+    NgForOf,
+    NgOptimizedImage
+  ],
   styleUrl: './recipes-main.component.css'
 })
 export class RecipesMainComponent implements OnInit {

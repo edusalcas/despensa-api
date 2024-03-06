@@ -3,19 +3,9 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "despensa_angular": {
+    "despensa_angular2": {
       "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "standalone": false
-        },
-        "@schematics/angular:directive": {
-          "standalone": false
-        },
-        "@schematics/angular:pipe": {
-          "standalone": false
-        }
-      },
+      "schematics": {},
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -23,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/despensa_angular",
+            "outputPath": "dist/despensa_angular2",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -72,10 +62,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "despensa_angular:build:production"
+              "buildTarget": "despensa_angular2:build:production"
             },
             "development": {
-              "buildTarget": "despensa_angular:build:development"
+              "buildTarget": "despensa_angular2:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -83,7 +73,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "despensa_angular:build"
+            "buildTarget": "despensa_angular2:build"
           }
         },
         "test": {

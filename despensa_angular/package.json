@@ -1,5 +1,5 @@
 {
-  "name": "despensa-angular",
+  "name": "despensa-angular2",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -7,7 +7,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:despensa_angular": "node dist/despensa_angular/server/server.mjs"
+    "serve:ssr:despensa_angular2": "node dist/despensa_angular2/server/server.mjs"
   },
   "private": true,
   "dependencies": {

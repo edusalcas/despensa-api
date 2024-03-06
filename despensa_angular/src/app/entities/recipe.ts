@@ -1,3 +1,5 @@
+import {Ingredient} from "./ingredient";
+
 export class Recipe {
 
   private db_id:number;
@@ -6,7 +8,7 @@ export class Recipe {
 
   private num_people:number;
 
-  private ingredients:string[];
+  private ingredients:Ingredient[];
 
   private steps:string;
 
@@ -16,7 +18,7 @@ export class Recipe {
 
   private time:number;
 
-  constructor(db_id: number, name: string, num_people: number, ingredients:string[], steps: string, category: string, tags: string[], time: number) {
+  constructor(db_id: number, name: string, num_people: number, ingredients:Ingredient[], steps: string, category: string, tags: string[], time: number) {
     this.db_id = db_id;
     this.name = name;
     this.num_people = num_people;
@@ -48,11 +50,11 @@ export class Recipe {
     return this.num_people;
   }
 
-  get _ingredients(): string[] {
+  get _ingredients(): Ingredient[] {
     return this.ingredients;
   }
 
-  set _ingredients(value: string[]) {
+  set _ingredients(value: Ingredient[]) {
     this.ingredients = value;
   }
 

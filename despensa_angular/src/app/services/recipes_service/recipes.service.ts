@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {map, Observable} from "rxjs";
-import {Food} from "../../entities/food";
+import {map} from "rxjs/operators";
+import {Observable} from "rxjs";
 import {Recipe} from "../../entities/recipe";
 
 @Injectable({
@@ -21,6 +21,7 @@ export class RecipesService {
   }
 
   getAllRecipes(): Observable<Recipe[]> {
+
     return this.http.get<any[]>(this.url, {headers: {Accept: 'application/json'}})
       .pipe(map(data => data.map(data => {
         const {db_id, name, num_people, ingredients, steps, category, tags, time} = data;

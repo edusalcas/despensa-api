@@ -1,9 +1,17 @@
 import {Component} from "@angular/core";
-
+import {HeaderComponent} from "../header/header.component";
+import {FooterComponent} from "../footer/footer.component";
+import {AlimentsMainComponent} from "./aliments-main/aliments-main.component";
 @Component({
   selector: "aliments",
   templateUrl: `aliments.component.html`,
   styleUrl: `aliments.component.css`,
+  imports: [
+    HeaderComponent,
+    FooterComponent,
+    AlimentsMainComponent
+  ],
+  standalone: true
 })
 export class AlimentsComponent {
 
