@@ -22,10 +22,7 @@ export class AlimentsService {
   getAllFood(): Observable<Food[]> {
     return this.http.get<any[]>(this.url, {headers: {Accept: 'application/json'}})
       .pipe(map(data => data.map(data => {
-        const {db_id, name, tags} = data;
-        return new Food(db_id,
-          name,
-          tags);
+        return this.castAsFood(data);
       })))
   }
 
@@ -39,5 +36,12 @@ export class AlimentsService {
 
   updateFood(food: Food): Observable<any> {
     return this.http.put(this.url.concat(`/${food._db_id}`), food, this.httpOptions);
+  }
+
+  castAsFood(aliment: any) {
+    const {db_id, name, tags} = aliment;
+        return new Food(db_id,
+          name,
+          tags);
   }
 }

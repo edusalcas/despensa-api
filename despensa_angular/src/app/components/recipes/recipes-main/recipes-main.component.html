@@ -29,7 +29,6 @@
       </div>
     </nav>
 
-
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
       <div
         class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
@@ -40,7 +39,6 @@
           </div>
         </div>
       </div>
-
       <div class="container">
         <div class="row" *ngFor="let recipe of recipeList">
           <div class="col-md-4">
@@ -62,15 +60,19 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Add Food</h5>
+        <h5 class="modal-title">Add Recipe</h5>
         <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
       </div>
       <div class="modal-body">
-        <form id="add-food-form" #addFoodForm="ngForm" (submit)="validateForm(addFoodForm.value)">
-          <div class="mb-3 position-relative">
-            <label for="food-name" class="form-label">Name:</label>
-            <input type="text" id="food-name" name="name" ngModel #name="ngModel" required class="form-control">
-            <svg *ngIf="name.invalid && (name.dirty || name.touched)" id="svg-invalid"
+        <form id="add-edit-recipe" #addEditRecipeForm="ngForm" (submit)="validateForm(addEditRecipeForm.value)">
+          <div *ngIf="isEditing" class="mb-3">
+            <label for="db_id" class="form-label">DB ID</label>
+            <input type="number" class="form-control" id="db_id">
+          </div>
+          <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" #name="ngModel" ngModel name="name" id="name" required>
+            <svg *ngIf="name.invalid && (name.dirty || name.touched)" class="svg-invalid"
                  xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
             >
               <path d="M11.001 10h2v5h-2zM11 16h2v2h-2z"></path>
@@ -79,14 +81,37 @@
             </svg>
           </div>
           <div class="mb-3">
-            <label for="food-tags" class="form-label">Tags:</label>
-            <input type="text" id="food-tags" name="tags" class="form-control">
+            <label for="num_people" class="form-label">Number of guests</label>
+            <input type="number" class="form-control" id="num_people">
           </div>
-          <input type="hidden" id="db_id" name="db_id" ngModel>
-          <button type="submit" [disabled]="!addFoodForm.valid" class="btn btn-primary">Add</button>
+          <div class="mb-3">
+            <label class="form-label">Ingredients</label>
+            <div *ngFor="let ingredient of ingredientsList" class="form-check">
+              <input class="form-check-input" type="checkbox" value="" id="{{ingredient._db_id}}">
+              <label class="form-check-label" for="{{ingredient._db_id}}">
+                {{ ingredient._name[0].toUpperCase() + ingredient._name.slice(1) }}
+              </label>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="steps" class="form-label">Steps</label>
+            <input type="text" class="form-control" id="steps">
+          </div>
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <input type="text" class="form-control" id="category">
+          </div>
+          <div class="mb-3">
+            <label for="tags" class="form-label">Tags</label>
+            <input type="text" class="form-control" id="tags">
+          </div>
+          <div class="mb-3">
+            <label for="time" class="form-label">Time</label>
+            <input type="number" class="form-control" id="time">
+          </div>
+          <button type="submit" [disabled]="!addEditRecipeForm.valid" class="btn btn-primary">Add</button>
         </form>
       </div>
     </div>
   </div>
 </ng-template>
-

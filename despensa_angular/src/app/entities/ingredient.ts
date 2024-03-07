@@ -57,4 +57,8 @@ export class Ingredient {
   set _db_id(value: number) {
     this.db_id = value;
   }
+
+  equals(other: Ingredient) {
+    return this._aliment.equals(other._aliment) && this._db_id === other._db_id
+  }
 }
