@@ -1,8 +1,13 @@
-import {Component, OnInit} from '@angular/core';
-import {NgForOf, NgOptimizedImage} from "@angular/common";
+import {Component, OnInit, TemplateRef} from '@angular/core';
+import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {Recipe} from "../../../entities/recipe";
 import {RecipesService} from "../../../services/recipes_service/recipes.service";
-import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle} from "@ng-bootstrap/ng-bootstrap";
+import {
+  NgbAccordionModule,
+  NgbModal,
+  NgbModalRef
+} from "@ng-bootstrap/ng-bootstrap";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 
 /**
@@ -27,9 +32,10 @@ import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle} from "@ng-bootstrap/ng-
   imports: [
     NgForOf,
     NgOptimizedImage,
-    NgbDropdown,
-    NgbDropdownMenu,
-    NgbDropdownToggle,
+    NgbAccordionModule,
+    FormsModule,
+    NgIf,
+    ReactiveFormsModule,
   ],
   styleUrl: './recipes-main.component.css'
 })
@@ -37,13 +43,19 @@ export class RecipesMainComponent implements OnInit {
 
   protected recipeList: Recipe[] = [];
   protected filterList: { name: string, options: string[] }[] =
-    [{name: "Type", options: ["Rica","Guy"]}, {name: "Difficulty", options: [""]}, {name: "Num of guests", options: [""]},
+    [{name: "Type", options: ["Rica", "Guy"]}, {name: "Difficulty", options: [""]}, {
+      name: "Num of guests",
+      options: [""]
+    },
       {name: "Category", options: [""]}, {name: "Duration", options: [""]}, {name: "Properties", options: [""]},
       {name: "Nutrition", options: [""]}, {name: "Destined for", options: [""]}, {name: "Cocking", options: [""]},
       {name: "Season", options: [""]}, {name: "Country", options: [""]}, {name: "Region", options: [""]},
       {name: "Spiciness level", options: [""]}, {name: "Cost", options: [""]}, {name: "Drink", options: [""]}];
 
-  constructor(private recipeService: RecipesService) {
+  protected modalRef: NgbModalRef | undefined
+
+  constructor(private recipeService: RecipesService,
+              private modalService: NgbModal) {
   }
 
   ngOnInit() {
@@ -69,7 +81,15 @@ export class RecipesMainComponent implements OnInit {
 
   }
 
-  showModalAddRecipe() {
+  showModalAddRecipe(modal: TemplateRef<any>) {
+    this.modalRef = this.modalService.open(modal, {centered: true})
+  }
+
+  closeModal() {
+    this.modalRef?.close();
+  }
+
+  validateForm(value: any) {
 
   }
 }

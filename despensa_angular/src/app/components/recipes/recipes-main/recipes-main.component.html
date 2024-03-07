@@ -7,15 +7,23 @@
         </h1>
         <div class="row">
           <div class="col">
-            <ul class="nav flex-column mb-2" *ngFor="let filter of filterList">
-              <li ngbDropdown class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="dropdownBasic1" ngbDropdownToggle>{{ filter.name }}</a>
-                <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                  <button class="dropdown-item" *ngFor="let option of filter.options">{{ option }}</button>
+            <div ngbAccordion>
+              <div ngbAccordionItem *ngFor="let filter of filterList">
+                <div ngbAccordionHeader>
+                  <button ngbAccordionButton>{{ filter.name }}</button>
                 </div>
-              </li>
-            </ul>
-
+                <div ngbAccordionCollapse>
+                  <div ngbAccordionBody>
+                    <ng-template>
+                      <div *ngFor="let option of filter.options">
+                        <label for="{{option}}">{{ option }}</label>
+                        <input id="{{option}}" type="checkbox" value="{{option}}">
+                      </div>
+                    </ng-template>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -28,7 +36,7 @@
         <h1 class="h2">Gallery</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group mr-2">
-            <button class="btn btn-sm btn-outline-secondary" (click)="showModalAddRecipe()">Add Recipe</button>
+            <button class="btn btn-sm btn-outline-secondary" (click)="showModalAddRecipe(modal)">Add Recipe</button>
           </div>
         </div>
       </div>
@@ -49,3 +57,36 @@
     </main>
   </div>
 </div>
+
+<ng-template #modal>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Food</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <form id="add-food-form" #addFoodForm="ngForm" (submit)="validateForm(addFoodForm.value)">
+          <div class="mb-3 position-relative">
+            <label for="food-name" class="form-label">Name:</label>
+            <input type="text" id="food-name" name="name" ngModel #name="ngModel" required class="form-control">
+            <svg *ngIf="name.invalid && (name.dirty || name.touched)" id="svg-invalid"
+                 xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            >
+              <path d="M11.001 10h2v5h-2zM11 16h2v2h-2z"></path>
+              <path
+                d="M13.768 4.2C13.42 3.545 12.742 3.138 12 3.138s-1.42.407-1.768 1.063L2.894 18.064a1.986 1.986 0 0 0 .054 1.968A1.984 1.984 0 0 0 4.661 21h14.678c.708 0 1.349-.362 1.714-.968a1.989 1.989 0 0 0 .054-1.968L13.768 4.2zM4.661 19 12 5.137 19.344 19H4.661z"></path>
+            </svg>
+          </div>
+          <div class="mb-3">
+            <label for="food-tags" class="form-label">Tags:</label>
+            <input type="text" id="food-tags" name="tags" class="form-control">
+          </div>
+          <input type="hidden" id="db_id" name="db_id" ngModel>
+          <button type="submit" [disabled]="!addFoodForm.valid" class="btn btn-primary">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</ng-template>
+

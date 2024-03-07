@@ -1,45 +1,58 @@
-<div class="container m-3 min-vh-100">
-  <table class="table table-bordered table-hover table-striped">
-    <thead>
-    <tr>
-      <th>Name</th>
-      <th>Tags</th>
-    </tr>
-    </thead>
-    <tbody id="food-table-body">
-    <tr *ngFor="let food of foodList; let i = index">
-      <td>{{ food.aliment._name }}</td>
-      <td [contentEditable]="food.editable" [ngClass]="{'bg-warning' : food.editable}" (dblclick)="editTags(i)"
-          (keydown.enter)="saveData(i,$event)">{{ food.aliment._tags }}
-      </td>
-    </tr>
-    </tbody>
-  </table>
-
-  <button type="button" class="btn btn-primary" (click)="changeModalState(modal)">Add Food</button>
-
-  <ng-template #modal>
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Add Food</h5>
-        </div>
-        <div class="modal-body">
-          <div *ngIf="hasErrors" class="alert alert-danger">{{ errorMessage }}</div>
-          <form id="add-food-form" #addFoodForm="ngForm" (submit)="validateForm(addFoodForm.value)">
-            <div class="mb-3">
-              <label for="food-name" class="form-label">Name:</label>
-              <input type="text" id="food-name" name="name" ngModel required class="form-control">
-            </div>
-            <div class="mb-3">
-              <label for="food-tags" class="form-label">Tags:</label>
-              <input type="text" id="food-tags" name="tags" [(ngModel)]="tags" class="form-control">
-            </div>
-            <input type="hidden" id="db_id" name="db_id" ngModel>
-            <button type="submit" [disabled]="!addFoodForm.valid" class="btn btn-primary">Add</button>
-          </form>
-        </div>
+<div class="container-fluid">
+  <div class="text-center">
+    <button type="button" class="btn btn-primary m-2" (click)="openModal(modal)">Add Food</button>
+  </div>
+  <div class="row  justify-content-center">
+    <div class="col-10">
+      <table class="table table-bordered table-hover table-striped">
+        <thead>
+        <tr class="text-center">
+          <th>Name</th>
+          <th>Tags</th>
+        </tr>
+        </thead>
+        <tbody id="food-table-body">
+        <tr *ngFor="let food of foodList; let i = index">
+          <td>{{ food.aliment._name }}</td>
+          <td [contentEditable]="food.editable" [ngClass]="{'bg-warning' : food.editable}" (dblclick)="editTags(i)"
+              (keydown.enter)="saveData(i,$event)">{{ food.aliment._tags }}
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<ng-template #modal>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Food</h5>
+        <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div *ngIf="hasErrors" class="alert alert-danger">{{ errorMessage }}</div>
+        <form id="add-food-form" #addFoodForm="ngForm" (submit)="validateForm(addFoodForm.value)">
+          <div class="mb-3 position-relative">
+            <label for="food-name" class="form-label">Name:</label>
+            <input type="text" id="food-name" name="name" ngModel #name="ngModel" required class="form-control">
+            <svg *ngIf="name.invalid && (name.dirty || name.touched)" id="svg-invalid"
+                 xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            >
+              <path d="M11.001 10h2v5h-2zM11 16h2v2h-2z"></path>
+              <path
+                d="M13.768 4.2C13.42 3.545 12.742 3.138 12 3.138s-1.42.407-1.768 1.063L2.894 18.064a1.986 1.986 0 0 0 .054 1.968A1.984 1.984 0 0 0 4.661 21h14.678c.708 0 1.349-.362 1.714-.968a1.989 1.989 0 0 0 .054-1.968L13.768 4.2zM4.661 19 12 5.137 19.344 19H4.661z"></path>
+            </svg>
+          </div>
+          <div class="mb-3">
+            <label for="food-tags" class="form-label">Tags:</label>
+            <input type="text" id="food-tags" name="tags" [(ngModel)]="tags" class="form-control">
+          </div>
+          <input type="hidden" id="db_id" name="db_id" ngModel>
+          <button type="submit" [disabled]="!addFoodForm.valid" class="btn btn-primary">Add</button>
+        </form>
       </div>
     </div>
-  </ng-template>
-</div>
+  </div>
+</ng-template>
+

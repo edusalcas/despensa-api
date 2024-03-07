@@ -1,17 +1,16 @@
-.modal-visible {
-  visibility: hidden;
+.container-fluid{
+  min-height: 75vh;
 }
-
 input.ng-invalid.ng-touched {
   border-color: red;
+  background: #ebccd1;
 }
 
-.editable {
-  background-color: #FFFF99;
-}
-
-.editable::before{
-  content: "*";
+#svg-invalid {
+  fill: rgba(255, 0, 0, 1);
+  position: absolute;
+  right: 3%;
+  top: 55%;
 }
 
 .alert {
@@ -29,101 +28,3 @@ input.ng-invalid.ng-touched {
   border-color: #ebccd1;
 }
 
-.container {
-  display: flex;
-  align-items: start;
-}
-
-.table {
-  text-align: center;
-  width: 70%;
-  margin: 3rem 3rem 5rem;
-  color: #212529;
-  border-collapse: collapse;
-}
-
-.table th,
-.table td {
-  padding: 0.75rem;
-  vertical-align: top;
-  border-top: 1px solid #dee2e6;
-}
-
-.table thead th {
-  vertical-align: bottom;
-  border-bottom: 2px solid #dee2e6;
-}
-
-.table tbody + tbody {
-  border-top: 2px solid #dee2e6;
-}
-
-.table-sm th,
-.table-sm td {
-  padding: 0.3rem;
-}
-
-.table-bordered {
-  border: 1px solid #dee2e6;
-}
-
-.table-bordered th,
-.table-bordered td {
-  border: 1px solid #dee2e6;
-}
-
-.table-bordered thead th,
-.table-bordered thead td {
-  border-bottom-width: 2px;
-}
-
-.table-striped tbody tr:nth-of-type(odd) {
-  background-color: rgba(0, 0, 0, 0.05);
-}
-
-.table-hover tbody tr:hover {
-  color: #212529;
-  background-color: rgba(0, 0, 0, 0.075);
-}
-
-.modal {
-  width: 30%;
-  display: grid;
-}
-
-.modal>button{
-  display: grid;
-  justify-content: start;
-  width: fit-content;
-  margin-top: 1rem;
-}
-.modal-content {
-  background-color: #fefefe;
-  margin: .75rem 0 0;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 85%;
-}
-
-
-.modal-content input[type=text] {
-  width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
-  display: inline-block;
-}
-
-
-.modal-content button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-}
-
-.modal-content button:hover {
-  opacity: 0.8;
-}

@@ -3,11 +3,12 @@ import {AlimentsService} from "../../../services/aliments_service/aliments.servi
 import {FormsModule, NgForm} from "@angular/forms";
 import {Food} from "../../../entities/food";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
-import {NgbModal, NgbModule} from "@ng-bootstrap/ng-bootstrap";
+import {NgbModal, NgbModalRef, NgbModule} from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
   selector: 'app-aliments-main',
   templateUrl: './aliments-main.component.html',
+  styleUrl: "aliments-main.component.css",
   standalone: true,
   imports: [
     NgForOf,
@@ -24,7 +25,7 @@ export class AlimentsMainComponent implements OnInit {
 
   protected foodList: Array<{ aliment: Food, editable: boolean }> = [];
 
-  isModalHidden: boolean = true;
+  protected modalReference: NgbModalRef | undefined;
 
   protected hasErrors: boolean = false;
 
@@ -50,13 +51,12 @@ export class AlimentsMainComponent implements OnInit {
    * a class is dynamically added to or removed from the modal, thereby changing its visibility.
    * If the modal is hidden, the associated form is reset.
    */
-  changeModalState(modal:any) {
+  openModal(modal:any) {
+    this.modalReference = this.modalService.open(modal , {centered: true});
+  }
 
-    this.modalService.open(modal , {centered: true});
-
-    if (!this.isModalHidden) {
-      this.addFoodForm?.reset();
-    }
+  closeModal() {
+    this.modalReference?.close();
   }
 
   /**
@@ -71,6 +71,7 @@ export class AlimentsMainComponent implements OnInit {
       if (isInsert) {
         this.hasErrors = false;
         this.retrieveFoodData();
+        this.modalReference?.close();
       } else {
         this.hasErrors = true;
       }
@@ -148,4 +149,5 @@ export class AlimentsMainComponent implements OnInit {
       event.target.innerText = newTags.toString();
     }
   }
+
 }
