@@ -8,16 +8,14 @@ import {
   NgbModalRef
 } from "@ng-bootstrap/ng-bootstrap";
 import {FormsModule, NgForm, ReactiveFormsModule} from "@angular/forms";
-import {Ingredient} from "../../../entities/ingredient";
-import {IngredientsService} from "../../../services/ingredientsService/ingredients.service";
 import {AlimentsService} from "../../../services/aliments_service/aliments.service";
 import {Food} from "../../../entities/food";
 
 
 /**
  * - Página de recetas:
- *    - Listado de recetas
- *    - Botón añadir receta nueva
+ *    - Listado de recetas Done
+ *    - Botón añadir receta nueva Done
  *    - Click en receta te lleva a página de receta
  * - Página de detalle receta:
  *    - Detalles de la receta, pasos, descripción, ingredientes...
@@ -90,7 +88,7 @@ export class RecipesMainComponent implements OnInit {
     })
   }
 
-  showDetails() {
+  showDetails(indexDb:number) {
 
   }
 
@@ -110,7 +108,7 @@ export class RecipesMainComponent implements OnInit {
   }
 
   showModalAddRecipe(modal: TemplateRef<any>) {
-    this.modalRef = this.modalService.open(modal, {centered: true})
+    this.modalRef = this.modalService.open(modal, {centered: true, scrollable: true})
   }
 
   closeModal() {

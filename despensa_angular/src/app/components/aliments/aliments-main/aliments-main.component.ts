@@ -121,11 +121,13 @@ export class AlimentsMainComponent implements OnInit {
     });
   }
 
-  editTags(index: number) {
+  editTags(indexDb: number) {
+    const index = this.foodList.findIndex(food => food.aliment._db_id === indexDb);
     this.foodList[index].editable = true;
   }
 
-  saveData(index: number, event: any) {
+  saveData(indexDb: number, event: any) {
+    const index = this.foodList.findIndex(food => food.aliment._db_id === indexDb);
     const newTags = event.target?.innerText.split(",").map((str: string) => str.trim()).filter((a: string) => a !== "");
     this.foodList[index].editable = false;
     const someChanges = newTags ? this.foodList[index].aliment._tags.some((a, index) => a !== newTags[index]) : false;
