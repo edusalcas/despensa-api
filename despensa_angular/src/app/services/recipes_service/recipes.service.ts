@@ -3,9 +3,6 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {map} from "rxjs/operators";
 import {Observable} from "rxjs";
 import {Recipe} from "../../entities/recipe";
-import {Ingredient} from "../../entities/ingredient";
-import {Food} from "../../entities/food";
-import {AlimentsService} from "../aliments_service/aliments.service";
 import {IngredientsService} from "../ingredientsService/ingredients.service";
 
 @Injectable({
@@ -25,11 +22,31 @@ export class RecipesService {
   ) {
   }
 
-  getAllRecipes(): Observable<Recipe[]> {
+  get(id: number) {
+    return this.http.get<any>(this.url.concat(`/${id}`), {headers: {Accept: 'application/json'}})
+      .pipe(
+        map(data => {
+          let {db_id, name, num_people, ingredients, steps, category, tags, time} = data;
+          steps = this.castAsStringArr(steps);
+          tags = this.castAsStringArr(tags);
+          ingredients = this.castAsArrayIngredients(ingredients);
+          return new Recipe(db_id,
+            name,
+            num_people,
+            ingredients,
+            steps,
+            category,
+            tags,
+            time);
+        }));
+  }
 
+  getAllRecipes(): Observable<Recipe[]> {
     return this.http.get<any[]>(this.url, {headers: {Accept: 'application/json'}})
       .pipe(map(data => data.map(data => {
         let {db_id, name, num_people, ingredients, steps, category, tags, time} = data;
+        steps = this.castAsStringArr(steps);
+        tags = this.castAsStringArr(tags);
         ingredients = this.castAsArrayIngredients(ingredients);
         return new Recipe(db_id,
           name,
@@ -57,5 +74,10 @@ export class RecipesService {
     return ingredients.map(ingredient => {
       return this.ingredientsService.castAsIngredient(ingredient);
     });
+  }
+
+  private castAsStringArr(str: any) {
+    if (typeof str !== 'string') str = str.toString();
+    return str.split(',').map((tag: { trim: () => any; }) => tag.trim());
   }
 }

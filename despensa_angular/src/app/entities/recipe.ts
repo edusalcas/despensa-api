@@ -10,7 +10,7 @@ export class Recipe {
 
   private ingredients:Ingredient[];
 
-  private steps:string;
+  private steps:string[];
 
   private category:string;
 
@@ -18,7 +18,7 @@ export class Recipe {
 
   private time:number;
 
-  constructor(db_id: number, name: string, num_people: number, ingredients:Ingredient[], steps: string, category: string, tags: string[], time: number) {
+  constructor(db_id: number, name: string, num_people: number, ingredients:Ingredient[], steps: string[], category: string, tags: string[], time: number) {
     this.db_id = db_id;
     this.name = name;
     this.num_people = num_people;
@@ -62,11 +62,11 @@ export class Recipe {
     this.num_people = value;
   }
 
-  get _steps(): string {
+  get _steps(): string[] {
     return this.steps;
   }
 
-  set _steps(value: string) {
+  set _steps(value: string[]) {
     this.steps = value;
   }
 

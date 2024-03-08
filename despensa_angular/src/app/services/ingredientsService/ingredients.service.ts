@@ -15,7 +15,7 @@ export class IngredientsService {
   public castAsIngredient(ingredient: any) {
 
     let {aliment, quantity, quantity_type, optional, db_id} = ingredient;
-
+    optional = optional === 1;
     aliment = this.alimentsService.castAsFood(aliment);
 
     return new Ingredient(aliment, quantity, quantity_type, optional, db_id);

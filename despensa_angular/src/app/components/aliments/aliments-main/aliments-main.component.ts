@@ -1,9 +1,10 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {AlimentsService} from "../../../services/aliments_service/aliments.service";
 import {FormsModule, NgForm} from "@angular/forms";
 import {Food} from "../../../entities/food";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {NgbModal, NgbModalRef, NgbModule} from "@ng-bootstrap/ng-bootstrap";
+import {Subscription} from "rxjs";
 
 @Component({
   selector: 'app-aliments-main',
@@ -18,7 +19,7 @@ import {NgbModal, NgbModalRef, NgbModule} from "@ng-bootstrap/ng-bootstrap";
     NgbModule,
   ]
 })
-export class AlimentsMainComponent implements OnInit {
+export class AlimentsMainComponent implements OnInit, OnDestroy {
 
   @ViewChild('addFoodForm') addFoodForm: NgForm | undefined;
   protected tags = '';
@@ -30,6 +31,8 @@ export class AlimentsMainComponent implements OnInit {
   protected hasErrors: boolean = false;
 
   protected errorMessage: string = 'The food name is already in use';
+
+  private subFood: Subscription[] = [];
 
   get tagsArray() {
     return this.tags.split(',').map((tag: { trim: () => any; }) => tag.trim());
@@ -43,7 +46,11 @@ export class AlimentsMainComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.retrieveFoodData();
+    this.subFood.push(this.retrieveFoodData());
+  }
+
+  ngOnDestroy() {
+    this.subFood.forEach(sub => sub.unsubscribe());
   }
 
   /**
@@ -70,7 +77,7 @@ export class AlimentsMainComponent implements OnInit {
       const isInsert: boolean = await this.fetchNewFood(new Food(db_id, name, tags));
       if (isInsert) {
         this.hasErrors = false;
-        this.retrieveFoodData();
+        this.subFood?.push(this.retrieveFoodData());
         this.modalReference?.close();
       } else {
         this.hasErrors = true;
@@ -91,7 +98,7 @@ export class AlimentsMainComponent implements OnInit {
     food._tags = food._tags ? this.tagsArray : food._tags = [""];
     // @ts-ignore
     return new Promise((resolve: (arg0: any) => void, reject: (arg0: any) => void) => {
-      this.alimentsService.insertFood(food).subscribe({
+      this.subFood.push(this.alimentsService.insertFood(food).subscribe({
           next: (data: any) => {
             resolve(data);
           },
@@ -99,12 +106,12 @@ export class AlimentsMainComponent implements OnInit {
             reject(error);
           }
         }
-      );
+      ));
     });
   }
 
   retrieveFoodData() {
-    this.alimentsService.getAllFood().subscribe({
+    return this.alimentsService.getAllFood().subscribe({
       next: (data: { forEach: (arg0: (food: Food, index: number) => void) => void; }) => {
         data.forEach((food: Food, index: number) => {
           const equals = this.foodList[index]?.aliment.equals(food);
@@ -135,16 +142,16 @@ export class AlimentsMainComponent implements OnInit {
     if ((someChanges || lenChange)) {
       this.foodList[index].aliment._tags = newTags;
       new Promise((resolve, reject) => {
-        this.alimentsService.updateFood(this.foodList[index].aliment).subscribe({
+        this.subFood.push(this.alimentsService.updateFood(this.foodList[index].aliment).subscribe({
           next: data => {
             resolve(data);
           },
           error: err => {
             reject(err);
           }
-        });
+        }));
       }).then(() => {
-        this.retrieveFoodData();
+        this.subFood.push(this.retrieveFoodData());
       })
         .catch(err => console.error("An error has occurs", err));
     } else {

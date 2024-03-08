@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {Recipe} from "../../../entities/recipe";
 import {RecipesService} from "../../../services/recipes_service/recipes.service";
@@ -10,15 +10,17 @@ import {
 import {FormsModule, NgForm, ReactiveFormsModule} from "@angular/forms";
 import {AlimentsService} from "../../../services/aliments_service/aliments.service";
 import {Food} from "../../../entities/food";
+import {Router} from "@angular/router";
+import {Subscription} from "rxjs";
 
 
 /**
  * - Página de recetas:
  *    - Listado de recetas Done
  *    - Botón añadir receta nueva Done
- *    - Click en receta te lleva a página de receta
+ *    - Click en receta te lleva a página de receta Done
  * - Página de detalle receta:
- *    - Detalles de la receta, pasos, descripción, ingredientes...
+ *    - Detalles de la receta, pasos, descripción, ingredientes... Done
  *    - Botón editar receta te lleva a página edición de receta
  *    - Botón borrar receta
  * - Página de edición de receta:
@@ -41,7 +43,7 @@ import {Food} from "../../../entities/food";
   ],
   styleUrl: './recipes-main.component.css'
 })
-export class RecipesMainComponent implements OnInit {
+export class RecipesMainComponent implements OnInit, OnDestroy {
 
   @ViewChild('addEditRecipeForm') addEditRecipeForm: NgForm | undefined;
 
@@ -60,21 +62,30 @@ export class RecipesMainComponent implements OnInit {
 
   protected modalRef: NgbModalRef | undefined;
 
-  protected isEditing:boolean;
+  protected isEditing: boolean;
+  protected subscribeRecipe: Subscription | undefined;
+  protected subscribeIngredient: Subscription | undefined;
 
   constructor(private recipeService: RecipesService,
               private alimentsService: AlimentsService,
-              private modalService: NgbModal) {
-    this.isEditing = false;
+              private modalService: NgbModal,
+              private router: Router
+  ) {
+    this
+      .isEditing = false;
   }
 
   ngOnInit() {
-    this.retriveRecipesFromData();
-    this.retriveIngredients();
+    this.subscribeRecipe = this.retriveRecipesFromData();
   }
 
-  private retriveRecipesFromData() {
-    this.recipeService.getAllRecipes().subscribe({
+  ngOnDestroy() {
+    this.subscribeIngredient?.unsubscribe();
+    this.subscribeRecipe?.unsubscribe();
+  }
+
+  retriveRecipesFromData() {
+    return this.recipeService.getAllRecipes().subscribe({
       next: data => {
         data.forEach((recipe: Recipe, index: number) => {
           const equals = this.recipeList[index]?.equals(recipe);
@@ -88,13 +99,13 @@ export class RecipesMainComponent implements OnInit {
     })
   }
 
-  showDetails(indexDb:number) {
-
+  showDetails(indexDb: number) {
+    this.router.navigate(["/recipes/details", indexDb]).catch(err => console.error(err));
   }
 
-  private retriveIngredients() {
-    this.alimentsService.getAllFood().subscribe({
-       next: data => {
+  retriveIngredients() {
+    return this.alimentsService.getAllFood().subscribe({
+      next: data => {
         data.forEach((food: Food, index: number) => {
           const equals = this.ingredientsList[index]?.equals(food);
           if (!this.ingredientsList[index]) {
@@ -107,17 +118,17 @@ export class RecipesMainComponent implements OnInit {
     });
   }
 
-  showModalAddRecipe(modal: TemplateRef<any>) {
-    this.modalRef = this.modalService.open(modal, {centered: true, scrollable: true})
+  showModalAddRecipe(modal: TemplateRef<any> ) {
+    this.modalRef = this.modalService.open(modal, {centered: true, scrollable: true});
+    this.subscribeIngredient = this.retriveIngredients();
   }
 
   closeModal() {
     this.modalRef?.close();
   }
 
-  validateForm(value: any) {
-
+  validateForm(value:any) {
+      console.log(value)
   }
-
 
 }
