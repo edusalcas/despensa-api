@@ -128,7 +128,7 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
     def __add_recipe(self, recipe: Recipe):
         name = recipe.name
         num_people = recipe.num_people
-        steps = '\n'.join(recipe.steps)
+        steps = '%_%'.join(recipe.steps)
         category = recipe.category
         tags = ' '.join(recipe.tags)
         time = recipe.time
@@ -175,7 +175,7 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
 
         name = recipe.name
         num_people = recipe.num_people
-        steps = '\n'.join(recipe.steps)
+        steps = '%_%'.join(recipe.steps)
         category = recipe.category
         tags = ' '.join(recipe.tags)
         time = recipe.time
@@ -239,7 +239,7 @@ class SQLiteConnector(metaclass=WeakSingletonMeta):
         bd_id = recipe_raw[RecipeTable.ID]
         name = recipe_raw[RecipeTable.NAME]
         num_people = recipe_raw[RecipeTable.NUM_PEOPLE]
-        steps = recipe_raw[RecipeTable.STEPS].split('\n')
+        steps = recipe_raw[RecipeTable.STEPS].split('%_%')
         category = recipe_raw[RecipeTable.CATEGORY]
         tags = recipe_raw[RecipeTable.TAGS].split(' ') if recipe_raw[RecipeTable.TAGS] != '' else []
         time = recipe_raw[RecipeTable.TIME] if recipe_raw[RecipeTable.TIME] != 'None' else None
