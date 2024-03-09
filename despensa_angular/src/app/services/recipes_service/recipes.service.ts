@@ -41,6 +41,7 @@ export class RecipesService {
     if (!(recipe instanceof Recipe)) {
       throw new Error('Invalid argument: recipe must be an instance of Recipe class');
     }
+    console.log(recipe)
     return this.http.post<boolean>(this.url, recipe, this.httpOptions);
   }
 

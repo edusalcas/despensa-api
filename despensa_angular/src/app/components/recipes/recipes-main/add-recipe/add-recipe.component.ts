@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
-import {FormsModule} from "@angular/forms";
+import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {NgForOf, NgIf} from "@angular/common";
 import {Food} from "../../../../entities/food";
 import {Subscription} from "rxjs";
@@ -8,6 +8,7 @@ import {NgSelectModule} from "@ng-select/ng-select";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {Recipe} from "../../../../entities/recipe";
 
+
 @Component({
   selector: 'app-add-recipe',
   standalone: true,
@@ -15,7 +16,8 @@ import {Recipe} from "../../../../entities/recipe";
     FormsModule,
     NgForOf,
     NgIf,
-    NgSelectModule
+    NgSelectModule,
+    ReactiveFormsModule
   ],
   templateUrl: './add-recipe.component.html',
   styleUrl: './add-recipe.component.css'
@@ -28,12 +30,24 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   @Output() close = new EventEmitter<any>();
   @Output() confirm = new EventEmitter<any>();
   @ViewChild('modal')
-  modal: any;
-  body: string | undefined;
+  private modal: any;
+  protected form: FormGroup;
+  protected units = ["gr", "mL", "L"];
+
 
   constructor(private alimentsService: AlimentsService,
-              private modalService: NgbModal) {
+              private modalService: NgbModal,
+              private fb: FormBuilder) {
     this.isEditing = false;
+    this.form = this.fb.group({
+      name: '',
+      num_people: '',
+      ingredients: this.fb.array([]),
+      steps: this.fb.array([]),
+      category: '',
+      tags: '',
+      time: ''
+    })
   }
 
   ngOnInit(): void {
@@ -51,13 +65,59 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   open() {
     this.modalService.open(this.modal, {centered: true, scrollable: true}).result.then(
       result => {
-        console.log(result);
+        try {
+          result = Recipe.cast(result)
+        } catch (err) {
+          console.error(err);
+        }
         this.confirm.emit(result);
       },
       () => {
         this.close.emit();
       }
     );
+  }
+
+  get ingredients() {
+    return this.form.get('ingredients') as FormArray;
+  }
+
+  get steps() {
+    return this.form.get('steps') as FormArray;
+  }
+
+  addIngredient(event?: Event) {
+    event?.preventDefault();
+    const ingredientGroup = this.fb.group({
+      aliment: this.fb.group({
+        db_id: '',
+        name: '',
+        tags: ''
+      }),
+      quantity: '',
+      quantity_type: ''
+    });
+
+    this.ingredients.push(ingredientGroup);
+  }
+
+  removeIngredient(index: number, event: Event) {
+    event.preventDefault();
+    this.ingredients.removeAt(index);
+  }
+
+  addStep(event: any) {
+    event?.preventDefault();
+    const stepGroup = this.fb.group({
+      step: ''
+    });
+
+    this.steps.push(stepGroup);
+  }
+
+  removeStep(index: number, event: Event) {
+    event.preventDefault();
+    this.steps.removeAt(index);
   }
 
   retriveIngredients() {
@@ -73,25 +133,5 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
         });
       }
     });
-  }
-
-  inputs: { value: string, filteredIngredients: Food[] }[] = [];
-
-  addInput() {
-    this.inputs.push({value: '', filteredIngredients: []});
-  }
-
-  removeInput(index: number) {
-    this.inputs.splice(index, 1);
-  }
-
-  search(index: number): void {
-    if (this.inputs[index].value) {
-      this.inputs[index].filteredIngredients = this.ingredientsList.filter(item =>
-        item._name.toLowerCase().includes(this.inputs[index].value.toLowerCase())
-      );
-    } else {
-      this.inputs[index].filteredIngredients = [];
-    }
   }
 }

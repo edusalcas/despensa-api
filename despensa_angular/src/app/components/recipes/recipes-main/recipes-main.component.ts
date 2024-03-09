@@ -1,4 +1,4 @@
-import {Component, ComponentRef, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {Recipe} from "../../../entities/recipe";
 import {RecipesService} from "../../../services/recipes_service/recipes.service";
@@ -10,6 +10,7 @@ import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {AddRecipeComponent} from "./add-recipe/add-recipe.component";
 import {AddRecipeService} from "../../../services/modal-service/add-recipe.service";
+
 
 
 /**
@@ -55,12 +56,9 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
       {name: "Season", options: [""]}, {name: "Country", options: [""]}, {name: "Region", options: [""]},
       {name: "Spiciness level", options: [""]}, {name: "Cost", options: [""]}, {name: "Drink", options: [""]}];
 
-
-
-
-  protected subscribeRecipe: Subscription | undefined;
   @ViewChild('modal', {read: ViewContainerRef})
-  entry!: ViewContainerRef;
+  private entry!: ViewContainerRef;
+  private subs: Subscription[] = [];
 
   constructor(private recipeService: RecipesService,
               private modalService: AddRecipeService,
@@ -70,11 +68,11 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscribeRecipe = this.retriveRecipesFromData();
+    this.subs.push(this.retriveRecipesFromData());
   }
 
   ngOnDestroy() {
-    this.subscribeRecipe?.unsubscribe();
+    this.subs?.forEach(sub => sub.unsubscribe());
   }
 
   retriveRecipesFromData() {
@@ -88,7 +86,7 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
             } else if (!equals) {
               this.recipeList[index] = recipe;
             }
-          }else {
+          } else {
             this.recipeList = [];
             this.recipeList.push(recipe);
           }
@@ -103,9 +101,23 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
 
 
   showModalAddRecipe() {
-    this.modalService.openModal(this.entry).subscribe(
-      value => console.log(value)
-    );
+    this.subs.push(this.modalService.openModal(this.entry).subscribe(
+      value => {
+        new Promise(((resolve, reject) => {
+          this.subs.push(this.recipeService.insertRecipe(value).subscribe({
+            next: (data: any) => {
+              resolve(data);
+            },
+            error: (error: any) => {
+              reject(error);
+            }
+
+          }))
+        })).then(r => {
+          if (r) this.subs.push(this.retriveRecipesFromData())
+        }).catch(error => console.error(error));
+      }
+    ));
   }
 
 }

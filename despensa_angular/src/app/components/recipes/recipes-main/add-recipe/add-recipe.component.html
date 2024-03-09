@@ -1,10 +1,10 @@
-<ng-template #modal let-form>
+<ng-template #modal let-mod>
   <div class="modal-header">
     <h5 class="modal-title">Add Recipe</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="form.dismiss()"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="mod.dismiss()"></button>
   </div>
   <div class="modal-body">
-    <form id="add-edit-recipe" #addEditRecipeForm="ngForm" (submit)="form.close(addEditRecipeForm.value)">
+    <form id="add-edit-recipe" [formGroup]="form" (submit)="mod.close(form.value)">
       <div *ngIf="isEditing" class="mb-3">
         <label for="db_id" class="form-label">DB ID</label>
         <input type="number" class="form-control" id="db_id">
@@ -12,9 +12,9 @@
       <div class="mb-3">
         <label for="name" class="form-label">Name</label>
         <div class="input-group">
-          <input type="text" class="form-control position-relative" #name="ngModel" ngModel name="name" id="name"
+          <input type="text" class="form-control position-relative" formControlName="name" id="name"
                  required>
-          <svg *ngIf="name.invalid && (name.dirty || name.touched)" class="svg-invalid"
+          <svg class="svg-invalid"
                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
           >
             <path d="M11.001 10h2v5h-2zM11 16h2v2h-2z"></path>
@@ -25,61 +25,65 @@
       </div>
       <div class="mb-3">
         <label for="num_people" class="form-label">Number of people</label>
-        <input type="number" class="form-control" id="num_people" min="1">
+        <input type="number" class="form-control" formControlName="num_people" id="num_people" min="1">
       </div>
 
       <div class="mb-3">
         <label class="form-label">Ingredients</label>
-        <button class="btn btn-success" (click)="addInput()">+</button>
-        <div class="input-group">
-          <div class="mb-3" *ngFor="let input of inputs; let i = index">
+        <button class="btn btn-success  btn-sm mx-3" (click)="addIngredient($event)">+</button>
+        <div class="input-group" formArrayName="ingredients">
+          <div class="mb-3" *ngFor="let ingredient of ingredients.controls; let i = index">
             <label class="form-label">Ingredient {{ i + 1 }}</label>
-            <div class="input-group input-input-group">
-              <input type="text" class="form-control" [(ngModel)]="input.value" name="{{i}}" (keyup)="search(i)">
-              <input type="number" min="0" class="form-control" name="{{i}}">
-              <ng-select [items]="ingredientsList"
+            <div class="input-group" [formGroupName]="i">
+              <div class="form-control" formGroupName="aliment">
+                <input type="hidden" formControlName="db_id" value="">
+                <ng-select class="d-flex justify-content-center" formControlName="name" [items]="ingredientsList"
+                           bindLabel="_name"
+                           bindValue="_name"
+                           [addTag]="true">
+                </ng-select>
+                <input type="hidden" formControlName="tags" value="">
+              </div>
+              <input formControlName="quantity" placeholder="" type="number" class="form-control" min="0">
+              <ng-select class="form-control my-ng-select" formControlName="quantity_type" [items]="units"
                          bindLabel="_name"
                          bindValue="_name"
-                         placeholder="Selecciona o introduce una opción"
                          [addTag]="true">
               </ng-select>
-              <button class="btn btn-danger" (click)="removeInput(i)">-</button>
-            </div>
-            <div *ngFor="let item of input.filteredIngredients" class="search-result">
-              {{ item._name }}
+              <button class="btn btn-danger" (click)="removeIngredient(i, $event)">-</button>
             </div>
           </div>
         </div>
       </div>
       <div class="mb-3">
         <label class="form-label">Steps</label>
-        <button class="btn btn-success" (click)="addInput()">+</button>
-        <div class="input-group">
-          <div class="mb-3" *ngFor="let input of inputs; let i = index">
+        <button class="btn btn-success btn-sm mx-3" (click)="addStep($event)">+</button>
+        <div class="input-group" formArrayName="steps">
+          <div class="mb-3" *ngFor="let step of steps.controls; let i = index">
             <label class="form-label">Step {{ i + 1 }}</label>
             <div class="input-group">
-              <input type="text" class="form-control">
-              <button class="btn btn-danger" (click)="removeInput(i)">-</button>
+              <input type="text" formControlName="step" class="form-control">
+              <button class="btn btn-danger" (click)="removeStep(i, $event)">-</button>
             </div>
           </div>
         </div>
       </div>
       <div class="mb-3">
         <label for="category" class="form-label">Category</label>
-        <input type="text" class="form-control" id="category">
+        <input type="text" class="form-control" formControlName="category" id="category">
       </div>
       <div class="mb-3">
         <label for="tags" class="form-label">Tags</label>
-        <input type="text" class="form-control" id="tags">
+        <input type="text" class="form-control" formControlName="tags" id="tags">
       </div>
       <div class="mb-3">
         <label for="time" class="form-label">Time</label>
         <div class="input-group">
-          <input type="number" class="form-control" id="time" min="0">
+          <input type="number" class="form-control" id="time" formControlName="time" min="0">
           <span class="input-group-text">mins</span>
         </div>
       </div>
-      <button type="submit" [disabled]="!addEditRecipeForm.valid" class="btn btn-primary">Add</button>
+      <button type="submit" [disabled]="!form.valid" class="btn btn-primary">Add</button>
     </form>
   </div>
 </ng-template>

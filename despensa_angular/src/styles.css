@@ -34,3 +34,11 @@ input.ng-invalid.ng-touched {
 .input-input-group{
   border-radius: 0.25rem;
 }
+
+.ng-option {
+  background-color: white;
+}
+
+.ng-dropdown-panel-items{
+  top: 2rem;
+}

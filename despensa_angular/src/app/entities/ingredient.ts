@@ -66,6 +66,7 @@ export class Ingredient {
 
     let {aliment, quantity, quantity_type, optional, db_id} = ingredient;
     optional = optional === 1;
+    db_id = db_id? db_id: 0;
     aliment = Food.cast(aliment);
 
     return new Ingredient(aliment, quantity, quantity_type, optional, db_id);

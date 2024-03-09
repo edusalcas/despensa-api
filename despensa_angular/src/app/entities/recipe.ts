@@ -100,6 +100,8 @@ export class Recipe {
 
   static cast(data: { db_id: any; name: any; num_people: any; ingredients: any; steps: any; category: any; tags: any; time: any; }) {
     let {db_id, name, num_people, ingredients, steps, category, tags, time} = data;
+    db_id = db_id? db_id : 0;
+    time = time? time.toString().concat("mins") : "0mins";
     ingredients = this.castAsArrayIngredients(ingredients);
     return new Recipe(db_id,
       name,
