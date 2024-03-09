@@ -1,0 +1,86 @@
+<ng-template>
+  <div class="modal-header">
+    <h5 class="modal-title">Add Recipe</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+  </div>
+  <div class="modal-body">
+    <form id="add-edit-recipe" #addEditRecipeForm="ngForm" (submit)="validateForm(addEditRecipeForm.value)">
+      <div *ngIf="isEditing" class="mb-3">
+        <label for="db_id" class="form-label">DB ID</label>
+        <input type="number" class="form-control" id="db_id">
+      </div>
+      <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <div class="input-group">
+          <input type="text" class="form-control position-relative" #name="ngModel" ngModel name="name" id="name"
+                 required>
+          <svg *ngIf="name.invalid && (name.dirty || name.touched)" class="svg-invalid"
+               xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+          >
+            <path d="M11.001 10h2v5h-2zM11 16h2v2h-2z"></path>
+            <path
+              d="M13.768 4.2C13.42 3.545 12.742 3.138 12 3.138s-1.42.407-1.768 1.063L2.894 18.064a1.986 1.986 0 0 0 .054 1.968A1.984 1.984 0 0 0 4.661 21h14.678c.708 0 1.349-.362 1.714-.968a1.989 1.989 0 0 0 .054-1.968L13.768 4.2zM4.661 19 12 5.137 19.344 19H4.661z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="num_people" class="form-label">Number of people</label>
+        <input type="number" class="form-control" id="num_people" min="1">
+      </div>
+      <!--TODO: que se puedan añadir alimentos directamente desde aqui ademas de un campo de number para la cantidad y un select para las unidades ademas de un select texto para las custom-->
+      <div class="mb-3">
+        <label class="form-label">Ingredients</label>
+        <button class="btn btn-success" (click)="addInput()">+</button>
+        <div class="input-group">
+          <div class="mb-3" *ngFor="let input of inputs; let i = index">
+            <label class="form-label">Ingredient {{ i + 1 }}</label>
+            <div class="input-group input-input-group">
+              <input type="text" class="form-control" [(ngModel)]="input.value" name="{{i}}" (keyup)="search(i)">
+              <input type="number" min="0" class="form-control" name="{{i}}">
+              <select>
+                <option><input type="text" class="form-control"></option>
+                <option *ngFor="let unit of ingredientsList">{{ unit._name }}</option>
+              </select>
+              <button class="btn btn-danger" (click)="removeInput(i)">-</button>
+            </div>
+            <div *ngFor="let item of input.filteredIngredients" class="search-result">
+              {{ item._name }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--TODO: que se puedan añadir pasos y que ponga step1 ,etc... -->
+      <div class="mb-3">
+        <label class="form-label">Steps</label>
+        <button class="btn btn-success" (click)="addInput()">+</button>
+        <div class="input-group">
+          <div class="mb-3" *ngFor="let input of inputs; let i = index">
+            <label class="form-label">Step {{ i + 1 }}</label>
+            <div class="input-group">
+              <input type="text" class="form-control">
+              <button class="btn btn-danger" (click)="removeInput(i)">-</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <input type="text" class="form-control" id="category">
+      </div>
+      <div class="mb-3">
+        <label for="tags" class="form-label">Tags</label>
+        <input type="text" class="form-control" id="tags">
+      </div>
+      <div class="mb-3">
+        <label for="time" class="form-label">Time</label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="time" min="0">
+          <span class="input-group-text">mins</span>
+        </div>
+      </div>
+      <button type="submit" [disabled]="!addEditRecipeForm.valid" class="btn btn-primary">Add</button>
+    </form>
+  </div>
+
+</ng-template>

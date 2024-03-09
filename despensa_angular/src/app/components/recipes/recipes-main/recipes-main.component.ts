@@ -8,10 +8,9 @@ import {
   NgbModalRef
 } from "@ng-bootstrap/ng-bootstrap";
 import {FormsModule, NgForm, ReactiveFormsModule} from "@angular/forms";
-import {AlimentsService} from "../../../services/aliments_service/aliments.service";
-import {Food} from "../../../entities/food";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
+import {AddRecipeComponent} from "./add-recipe/add-recipe.component";
 
 
 /**
@@ -40,6 +39,7 @@ import {Subscription} from "rxjs";
     FormsModule,
     NgIf,
     ReactiveFormsModule,
+    AddRecipeComponent,
   ],
   styleUrl: './recipes-main.component.css'
 })
@@ -58,21 +58,17 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
       {name: "Season", options: [""]}, {name: "Country", options: [""]}, {name: "Region", options: [""]},
       {name: "Spiciness level", options: [""]}, {name: "Cost", options: [""]}, {name: "Drink", options: [""]}];
 
-  protected ingredientsList: Food[] = [];
+
 
   protected modalRef: NgbModalRef | undefined;
-
-  protected isEditing: boolean;
   protected subscribeRecipe: Subscription | undefined;
-  protected subscribeIngredient: Subscription | undefined;
+
 
   constructor(private recipeService: RecipesService,
-              private alimentsService: AlimentsService,
               private modalService: NgbModal,
               private router: Router
   ) {
-    this
-      .isEditing = false;
+
   }
 
   ngOnInit() {
@@ -80,7 +76,6 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscribeIngredient?.unsubscribe();
     this.subscribeRecipe?.unsubscribe();
   }
 
@@ -103,32 +98,9 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
     this.router.navigate(["/recipes/details", indexDb]).catch(err => console.error(err));
   }
 
-  retriveIngredients() {
-    return this.alimentsService.getAllFood().subscribe({
-      next: data => {
-        data.forEach((food: Food, index: number) => {
-          const equals = this.ingredientsList[index]?.equals(food);
-          if (!this.ingredientsList[index]) {
-            this.ingredientsList.push(food);
-          } else if (!equals) {
-            this.ingredientsList[index] = food;
-          }
-        });
-      }
-    });
-  }
 
-  showModalAddRecipe(modal: TemplateRef<any> ) {
+  showModalAddRecipe(modal: AddRecipeComponent) {
     this.modalRef = this.modalService.open(modal, {centered: true, scrollable: true});
-    this.subscribeIngredient = this.retriveIngredients();
-  }
-
-  closeModal() {
-    this.modalRef?.close();
-  }
-
-  validateForm(value:any) {
-      console.log(value)
   }
 
 }
