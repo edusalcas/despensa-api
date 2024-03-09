@@ -1,16 +1,15 @@
-import {Component, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {Component, ComponentRef, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {Recipe} from "../../../entities/recipe";
 import {RecipesService} from "../../../services/recipes_service/recipes.service";
 import {
   NgbAccordionModule,
-  NgbModal,
-  NgbModalRef
 } from "@ng-bootstrap/ng-bootstrap";
-import {FormsModule, NgForm, ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {AddRecipeComponent} from "./add-recipe/add-recipe.component";
+import {AddRecipeService} from "../../../services/modal-service/add-recipe.service";
 
 
 /**
@@ -45,9 +44,7 @@ import {AddRecipeComponent} from "./add-recipe/add-recipe.component";
 })
 export class RecipesMainComponent implements OnInit, OnDestroy {
 
-  @ViewChild('addEditRecipeForm') addEditRecipeForm: NgForm | undefined;
-
-  protected recipeList: Recipe[] = [];
+  protected recipeList: Recipe[] | undefined;
   protected filterList: { name: string, options: string[] }[] =
     [{name: "Type", options: ["Rica", "Guy"]}, {name: "Difficulty", options: [""]}, {
       name: "Num of guests",
@@ -60,12 +57,13 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
 
 
 
-  protected modalRef: NgbModalRef | undefined;
-  protected subscribeRecipe: Subscription | undefined;
 
+  protected subscribeRecipe: Subscription | undefined;
+  @ViewChild('modal', {read: ViewContainerRef})
+  entry!: ViewContainerRef;
 
   constructor(private recipeService: RecipesService,
-              private modalService: NgbModal,
+              private modalService: AddRecipeService,
               private router: Router
   ) {
 
@@ -83,11 +81,16 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
     return this.recipeService.getAllRecipes().subscribe({
       next: data => {
         data.forEach((recipe: Recipe, index: number) => {
-          const equals = this.recipeList[index]?.equals(recipe);
-          if (!this.recipeList[index]) {
+          if (this.recipeList) {
+            const equals = this.recipeList[index].equals(recipe);
+            if (!this.recipeList[index]) {
+              this.recipeList.push(recipe);
+            } else if (!equals) {
+              this.recipeList[index] = recipe;
+            }
+          }else {
+            this.recipeList = [];
             this.recipeList.push(recipe);
-          } else if (!equals) {
-            this.recipeList[index] = recipe;
           }
         });
       }
@@ -99,8 +102,10 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
   }
 
 
-  showModalAddRecipe(modal: AddRecipeComponent) {
-    this.modalRef = this.modalService.open(modal, {centered: true, scrollable: true});
+  showModalAddRecipe() {
+    this.modalService.openModal(this.entry).subscribe(
+      value => console.log(value)
+    );
   }
 
 }

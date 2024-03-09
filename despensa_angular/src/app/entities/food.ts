@@ -50,4 +50,11 @@ export class Food {
   hash(): string {
     return `${this._name}${this._db_id}`;
   }
+
+  static cast(aliment: any) {
+    const {db_id, name, tags} = aliment;
+        return new Food(db_id,
+          name,
+          tags);
+  }
 }

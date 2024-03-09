@@ -61,4 +61,13 @@ export class Ingredient {
   equals(other: Ingredient) {
     return this._aliment.equals(other._aliment) && this._db_id === other._db_id
   }
+
+  static cast(ingredient: any) {
+
+    let {aliment, quantity, quantity_type, optional, db_id} = ingredient;
+    optional = optional === 1;
+    aliment = Food.cast(aliment);
+
+    return new Ingredient(aliment, quantity, quantity_type, optional, db_id);
+  }
 }

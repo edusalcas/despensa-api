@@ -35,12 +35,12 @@
         <h1 class="h2">Gallery</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
           <div class="btn-group mr-2">
-            <button class="btn btn-sm btn-outline-secondary" (click)="showModalAddRecipe(modal)">Add Recipe</button>
+            <button class="btn btn-sm btn-outline-secondary" (click)="showModalAddRecipe()">Add Recipe</button>
           </div>
         </div>
       </div>
       <div class="container">
-        <div class="row" *ngFor="let recipe of recipeList;">
+        <div class="row" *ngFor="let recipe of recipeList">
           <div class="col-md-4">
             <div class="card mb-4 shadow-sm">
               <img class="bd-placeholder-img card-img-top" width="100" height="100" alt="{{recipe._name}}" ngSrc="#"
@@ -56,4 +56,4 @@
   </div>
 </div>
 
-<app-add-recipe #modal></app-add-recipe>
+<div #modal></div>

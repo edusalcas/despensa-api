@@ -1,10 +1,10 @@
-<ng-template>
+<ng-template #modal let-form>
   <div class="modal-header">
     <h5 class="modal-title">Add Recipe</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="form.dismiss()"></button>
   </div>
   <div class="modal-body">
-    <form id="add-edit-recipe" #addEditRecipeForm="ngForm" (submit)="validateForm(addEditRecipeForm.value)">
+    <form id="add-edit-recipe" #addEditRecipeForm="ngForm" (submit)="form.close(addEditRecipeForm.value)">
       <div *ngIf="isEditing" class="mb-3">
         <label for="db_id" class="form-label">DB ID</label>
         <input type="number" class="form-control" id="db_id">
@@ -27,7 +27,7 @@
         <label for="num_people" class="form-label">Number of people</label>
         <input type="number" class="form-control" id="num_people" min="1">
       </div>
-      <!--TODO: que se puedan añadir alimentos directamente desde aqui ademas de un campo de number para la cantidad y un select para las unidades ademas de un select texto para las custom-->
+
       <div class="mb-3">
         <label class="form-label">Ingredients</label>
         <button class="btn btn-success" (click)="addInput()">+</button>
@@ -37,10 +37,12 @@
             <div class="input-group input-input-group">
               <input type="text" class="form-control" [(ngModel)]="input.value" name="{{i}}" (keyup)="search(i)">
               <input type="number" min="0" class="form-control" name="{{i}}">
-              <select>
-                <option><input type="text" class="form-control"></option>
-                <option *ngFor="let unit of ingredientsList">{{ unit._name }}</option>
-              </select>
+              <ng-select [items]="ingredientsList"
+                         bindLabel="_name"
+                         bindValue="_name"
+                         placeholder="Selecciona o introduce una opción"
+                         [addTag]="true">
+              </ng-select>
               <button class="btn btn-danger" (click)="removeInput(i)">-</button>
             </div>
             <div *ngFor="let item of input.filteredIngredients" class="search-result">
@@ -49,8 +51,6 @@
           </div>
         </div>
       </div>
-
-      <!--TODO: que se puedan añadir pasos y que ponga step1 ,etc... -->
       <div class="mb-3">
         <label class="form-label">Steps</label>
         <button class="btn btn-success" (click)="addInput()">+</button>
@@ -82,5 +82,4 @@
       <button type="submit" [disabled]="!addEditRecipeForm.valid" class="btn btn-primary">Add</button>
     </form>
   </div>
-
 </ng-template>

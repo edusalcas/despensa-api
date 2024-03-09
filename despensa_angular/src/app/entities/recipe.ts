@@ -97,4 +97,23 @@ export class Recipe {
   equals(recipe: Recipe) {
     return this._db_id === recipe._db_id && this._name === recipe._name;
   }
+
+  static cast(data: { db_id: any; name: any; num_people: any; ingredients: any; steps: any; category: any; tags: any; time: any; }) {
+    let {db_id, name, num_people, ingredients, steps, category, tags, time} = data;
+    ingredients = this.castAsArrayIngredients(ingredients);
+    return new Recipe(db_id,
+      name,
+      num_people,
+      ingredients,
+      steps,
+      category,
+      tags,
+      time);
+  }
+
+  private static castAsArrayIngredients(ingredients: any[]) {
+    return ingredients.map(ingredient => {
+      return Ingredient.cast(ingredient);
+    });
+  }
 }

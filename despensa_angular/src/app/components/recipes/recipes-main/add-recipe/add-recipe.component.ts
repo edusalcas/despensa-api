@@ -1,9 +1,12 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormsModule} from "@angular/forms";
 import {NgForOf, NgIf} from "@angular/common";
 import {Food} from "../../../../entities/food";
 import {Subscription} from "rxjs";
 import {AlimentsService} from "../../../../services/aliments_service/aliments.service";
+import {NgSelectModule} from "@ng-select/ng-select";
+import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {Recipe} from "../../../../entities/recipe";
 
 @Component({
   selector: 'app-add-recipe',
@@ -11,20 +14,26 @@ import {AlimentsService} from "../../../../services/aliments_service/aliments.se
   imports: [
     FormsModule,
     NgForOf,
-    NgIf
+    NgIf,
+    NgSelectModule
   ],
   templateUrl: './add-recipe.component.html',
   styleUrl: './add-recipe.component.css'
 })
-export class AddRecipeComponent implements OnInit, OnDestroy {
+export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  protected isEditing: any;
+  protected isEditing: boolean;
   protected ingredientsList: Food[] = [];
   protected subscribeIngredient: Subscription | undefined;
+  @Output() close = new EventEmitter<any>();
+  @Output() confirm = new EventEmitter<any>();
+  @ViewChild('modal')
+  modal: any;
+  body: string | undefined;
 
-  constructor(private alimentsService: AlimentsService,) {
-    this
-      .isEditing = false;
+  constructor(private alimentsService: AlimentsService,
+              private modalService: NgbModal) {
+    this.isEditing = false;
   }
 
   ngOnInit(): void {
@@ -35,9 +44,20 @@ export class AddRecipeComponent implements OnInit, OnDestroy {
     this.subscribeIngredient?.unsubscribe();
   }
 
+  ngAfterViewInit(): void {
+    this.open()
+  }
 
-  closeModal() {
-    //this.modalRef?.close();
+  open() {
+    this.modalService.open(this.modal, {centered: true, scrollable: true}).result.then(
+      result => {
+        console.log(result);
+        this.confirm.emit(result);
+      },
+      () => {
+        this.close.emit();
+      }
+    );
   }
 
   retriveIngredients() {
@@ -53,9 +73,6 @@ export class AddRecipeComponent implements OnInit, OnDestroy {
         });
       }
     });
-  }
-  validateForm(value: any) {
-    console.log(value)
   }
 
   inputs: { value: string, filteredIngredients: Food[] }[] = [];
