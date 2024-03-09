@@ -1,0 +1,6 @@
+DROP TABLE IF EXISTS aliment;
+DROP TABLE IF EXISTS ingredient;
+DROP TABLE IF EXISTS recipe;
+DROP TABLE IF EXISTS recipe_ingredient;
+DROP TABLE IF EXISTS pantry;
+DROP TABLE IF EXISTS shopping_list;

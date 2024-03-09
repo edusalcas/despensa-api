@@ -6,6 +6,25 @@ from despensa.singleton_meta import Singleton
 
 
 class AbstractConnector(ABC, Singleton):
+
+    def __init__(self):
+        self.config = None
+
+    def create_all_tables(self):
+        with open(self.config.create_tables_sql_path, 'r') as create_tables_sql_file:
+            create_tables_sql_commands = create_tables_sql_file.read().split(';')
+            for command in [c.strip() for c in create_tables_sql_commands if c.strip() != '']:
+                self.execute(command)
+        print("All tables created")
+
+    def clear_all_tables(self):
+        with open(self.config.drop_tables_sql_path, 'r') as drop_tables_sql_file:
+            drop_tables_sql_commands = drop_tables_sql_file.read().split(';')
+            for command in [c.strip() for c in drop_tables_sql_commands if c.strip() != '']:
+                self.execute(command)
+
+        print("All tables deleted")
+
     # region CRUD Aliment
     @abstractmethod
     def add_aliment(self, aliment: Aliment):

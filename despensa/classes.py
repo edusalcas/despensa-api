@@ -103,7 +103,7 @@ class Ingredient(BDInstance):
         :return: Simple description of the ingredient
         """
         return f"{self.aliment.name.title()}: {self.quantity} {self.quantity_type}" + \
-               (" (Optional)" if self.optional else "")
+            (" (Optional)" if self.optional else "")
 
     @staticmethod
     def from_json(json: dict[str, Any]) -> Ingredient:
@@ -119,10 +119,11 @@ class Ingredient(BDInstance):
         """Overrides the default implementation"""
         if isinstance(other, Ingredient):
             return self.aliment == other.aliment \
-                   and self.quantity == other.quantity \
-                   and self.quantity_type == other.quantity_type \
-                   and self.optional == other.optional
+                and self.quantity == other.quantity \
+                and self.quantity_type == other.quantity_type \
+                and self.optional == other.optional
         return False
+
 
 @dataclass
 class Recipe(BDInstance):
@@ -217,9 +218,9 @@ class Recipe(BDInstance):
         """Overrides the default implementation"""
         if isinstance(other, Recipe):
             return self.name == other.name \
-                   and self.num_people == other.num_people \
-                   and self.ingredients == other.ingredients \
-                   and self.steps == other.steps \
-                   and self.tags == other.tags \
-                   and self.time == other.time
+                and self.num_people == other.num_people \
+                and self.ingredients == other.ingredients \
+                and self.steps == other.steps \
+                and self.tags == other.tags \
+                and self.time == other.time
         return False

@@ -30,10 +30,9 @@ def sample_recipe(sample_ingredient) -> Recipe:
 @pytest.fixture
 def sqlite_con():
     sqlite_con = SQLiteConnector()
-
+    sqlite_con.create_all_tables()
     yield sqlite_con
-    if os.path.exists(sqlite_con.db_path):
-        os.remove(sqlite_con.db_path)
+    sqlite_con.clear_all_tables()
 
 
 class TestSQLiteConnectorAliment:
