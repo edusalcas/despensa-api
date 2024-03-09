@@ -2,7 +2,7 @@ import os
 
 from flask import Flask, render_template
 from flask_cors import CORS
-from . import rest, web
+from . import rest
 
 
 def create_app(test_config=None):
@@ -28,6 +28,5 @@ def create_app(test_config=None):
         pass
 
     app.register_blueprint(rest.bp)
-    app.register_blueprint(web.web_bp)
 
     return app

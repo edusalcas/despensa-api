@@ -1,14 +1,14 @@
 from typing import Union, List
 
+from despensa.abstract_connector import AbstractConnector
 from despensa.classes import Recipe
 from despensa.singleton_meta import WeakSingletonMeta
-from despensa.sqlite_connector import SQLiteConnector
 from despensa.catalogs.pantry import Pantry
 
 
 class RecipeCatalog(metaclass=WeakSingletonMeta):
-    def __init__(self, db_connector: SQLiteConnector):
-        self.__db_connector: SQLiteConnector = db_connector
+    def __init__(self, db_connector: AbstractConnector):
+        self.__db_connector: AbstractConnector = db_connector
         self.__recipe_list: list[Recipe] = db_connector.get_all_recipes()
         self.__recipe_id_map: dict[int, Recipe] = dict(zip([a.db_id for a in self.__recipe_list], self.__recipe_list))
 
@@ -19,7 +19,7 @@ class RecipeCatalog(metaclass=WeakSingletonMeta):
         if recipe in self.__recipe_list:
             return False
 
-        self.__db_connector.add_recipe_and_ingredients(recipe)
+        self.__db_connector.add_recipe(recipe)
         self.__recipe_list.append(recipe)
         self.__recipe_id_map[recipe.db_id] = recipe
 
@@ -38,7 +38,7 @@ class RecipeCatalog(metaclass=WeakSingletonMeta):
         if recipe in self.__recipe_list:
             return False
 
-        self.__db_connector.add_recipe_and_ingredients(recipe)
+        self.__db_connector.add_recipe(recipe)
         self.__recipe_list.append(recipe)
         self.__recipe_id_map[recipe.db_id] = recipe
         return True
@@ -53,4 +53,4 @@ class RecipeCatalog(metaclass=WeakSingletonMeta):
         recipe = self.get_recipe_by_id(recipe_id)
         self.__recipe_list.remove(recipe)
         self.__recipe_id_map.pop(recipe_id)
-        self.__db_connector.delete_recipe(recipe_id)
+        self.__db_connector.remove_recipe(recipe)

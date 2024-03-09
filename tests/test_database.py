@@ -7,6 +7,7 @@ from environment import Environment
 
 Environment().working_is_test()
 
+
 @pytest.fixture
 def sample_aliment() -> Aliment:
     al = Aliment(name='onion', tags=['vegetable', 'favorite'])
@@ -54,29 +55,25 @@ class TestSQLiteConnectorAliment:
 
         assert [al0, al1, al2] == db_aliments
 
-    def test_add_aliment_to_pantry(self, sqlite_con: SQLiteConnector):
+    @staticmethod
+    def add_aliments_to_pantry(sqlite_con):
         al0 = Aliment(name='onion', tags=['vegetable', 'favorite'])
         al1 = Aliment(name='chicken', tags=['meat'])
-
         sqlite_con.add_aliment(al0)
         sqlite_con.add_aliment(al1)
+        sqlite_con.add_aliment_to_pantry(al0)
+        sqlite_con.add_aliment_to_pantry(al1)
+        return al0, al1
 
-        sqlite_con.add_ingredient_to_pantry(al0)
-        sqlite_con.add_ingredient_to_pantry(al1)
+    def test_add_aliment_to_pantry(self, sqlite_con: SQLiteConnector):
+        al0, al1 = self.add_aliments_to_pantry(sqlite_con)
 
         pantry = sqlite_con.get_pantry()
 
         assert [al0, al1] == pantry
 
     def test_remove_aliment_from_pantry(self, sqlite_con: SQLiteConnector):
-        al0 = Aliment(name='onion', tags=['vegetable', 'favorite'])
-        al1 = Aliment(name='chicken', tags=['meat'])
-
-        sqlite_con.add_aliment(al0)
-        sqlite_con.add_aliment(al1)
-
-        sqlite_con.add_ingredient_to_pantry(al0)
-        sqlite_con.add_ingredient_to_pantry(al1)
+        al0, al1 = self.add_aliments_to_pantry(sqlite_con)
 
         sqlite_con.remove_aliment_from_pantry(al0)
         pantry = sqlite_con.get_pantry()
@@ -96,7 +93,7 @@ class TestSQLiteConnectorRecipe:
     def test_recipe_to_sqlite(self, sqlite_con: SQLiteConnector, sample_recipe):
         for ingredient in sample_recipe.ingredients:
             sqlite_con.add_aliment(ingredient.aliment)
-        sqlite_con.add_recipe_and_ingredients(sample_recipe)
+        sqlite_con.add_recipe(sample_recipe)
         db_recipe = sqlite_con.get_recipe_by_id(sample_recipe.db_id)
 
         assert sample_recipe == db_recipe
@@ -128,8 +125,8 @@ class TestSQLiteConnectorRecipe:
         sqlite_con.add_aliment(al0)
         sqlite_con.add_aliment(al1)
         sqlite_con.add_aliment(al2)
-        sqlite_con.add_recipe_and_ingredients(re0)
-        sqlite_con.add_recipe_and_ingredients(re1)
+        sqlite_con.add_recipe(re0)
+        sqlite_con.add_recipe(re1)
 
         db_recipes = sqlite_con.get_all_recipes()
 

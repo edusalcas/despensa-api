@@ -1,10 +1,10 @@
+from despensa.abstract_connector import AbstractConnector
 from despensa.singleton_meta import WeakSingletonMeta
-from despensa.sqlite_connector import SQLiteConnector
 
 
 class ShoppingList(metaclass=WeakSingletonMeta):
-    def __init__(self, db_connector: SQLiteConnector):
-        self.db_connector: SQLiteConnector = db_connector
+    def __init__(self, db_connector: AbstractConnector):
+        self.db_connector: AbstractConnector = db_connector
         self.__shopping_list: list[str] = db_connector.get_shopping_list()
 
     def is_present(self, item: str) -> bool:
@@ -24,4 +24,4 @@ class ShoppingList(metaclass=WeakSingletonMeta):
     def remove_item_from_shopping_list(self, name: str):
         if self.is_present(name):
             self.__shopping_list.remove(name)
-            self.db_connector.remove_item_from_shopping_list(name)
+            self.db_connector.remove_item_in_shopping_list(name)
