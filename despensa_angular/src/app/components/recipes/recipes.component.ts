@@ -11,8 +11,6 @@ import {RouterOutlet} from "@angular/router";
   templateUrl: 'recipes.component.html',
   standalone: true,
   imports: [
-    HeaderComponent,
-    FooterComponent,
     RecipesMainComponent,
     DetailsComponent,
     RouterOutlet
@@ -21,11 +19,4 @@ import {RouterOutlet} from "@angular/router";
 })
 export class RecipesComponent {
 
-  public header = 'Meal Planner App';
-
-  public navBar: { page: string, name: string }[] =
-    [{page: "/index", name: "Index"},
-      {page: "/aliments", name: "Aliments"},
-      {page: "/pantry", name: "Pantry"},
-      {page: "/shopping_list", name: "Shopping List"}];
 }

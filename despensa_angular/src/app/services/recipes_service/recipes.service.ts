@@ -27,8 +27,6 @@ export class RecipesService {
       .pipe(
         map(data => {
           let {db_id, name, num_people, ingredients, steps, category, tags, time} = data;
-          steps = this.castAsStringArr(steps);
-          tags = this.castAsStringArr(tags);
           ingredients = this.castAsArrayIngredients(ingredients);
           return new Recipe(db_id,
             name,
@@ -45,8 +43,6 @@ export class RecipesService {
     return this.http.get<any[]>(this.url, {headers: {Accept: 'application/json'}})
       .pipe(map(data => data.map(data => {
         let {db_id, name, num_people, ingredients, steps, category, tags, time} = data;
-        steps = this.castAsStringArr(steps);
-        tags = this.castAsStringArr(tags);
         ingredients = this.castAsArrayIngredients(ingredients);
         return new Recipe(db_id,
           name,
@@ -76,8 +72,4 @@ export class RecipesService {
     });
   }
 
-  private castAsStringArr(str: any) {
-    if (typeof str !== 'string') str = str.toString();
-    return str.split(',').map((tag: { trim: () => any; }) => tag.trim());
-  }
 }
