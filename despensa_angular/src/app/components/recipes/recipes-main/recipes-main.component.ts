@@ -12,7 +12,6 @@ import {AddRecipeComponent} from "./add-recipe/add-recipe.component";
 import {AddRecipeService} from "../../../services/modal-service/add-recipe.service";
 
 
-
 /**
  * - Página de recetas:
  *    - Listado de recetas Done
@@ -102,22 +101,20 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
 
   showModalAddRecipe() {
     this.subs.push(this.modalService.openModal(this.entry).subscribe(
-      value => {
-        new Promise(((resolve, reject) => {
-          this.subs.push(this.recipeService.insertRecipe(value).subscribe({
-            next: (data: any) => {
-              resolve(data);
-            },
-            error: (error: any) => {
-              reject(error);
-            }
+      async value => {
+        await this.recipeService.insertRecipe(value).then(resp => resp.subscribe({
+          next: () => {
 
-          }))
+          },
+          error: (error: any) => {
+            console.error(error);
+          }
+
         })).then(r => {
           if (r) this.subs.push(this.retriveRecipesFromData())
         }).catch(error => console.error(error));
-      }
-    ));
+      })
+    )
   }
 
 }

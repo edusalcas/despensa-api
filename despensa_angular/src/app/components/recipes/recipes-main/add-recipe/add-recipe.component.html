@@ -14,7 +14,7 @@
         <div class="input-group">
           <input type="text" class="form-control position-relative" formControlName="name" id="name"
                  required>
-          <svg class="svg-invalid"
+          <svg *ngIf="form.controls['name'].invalid && (form.controls['name'].dirty || form.controls['name'].touched)" class="svg-invalid"
                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
           >
             <path d="M11.001 10h2v5h-2zM11 16h2v2h-2z"></path>
@@ -44,8 +44,8 @@
                 </ng-select>
                 <input type="hidden" formControlName="tags" value="">
               </div>
-              <input formControlName="quantity" placeholder="" type="number" class="form-control" min="0">
-              <ng-select class="form-control my-ng-select" formControlName="quantity_type" [items]="units"
+              <input formControlName="quantity" type="number" class="form-control" min="0">
+              <ng-select class="form-control" formControlName="quantity_type" [items]="units"
                          bindLabel="_name"
                          bindValue="_name"
                          [addTag]="true">
@@ -62,7 +62,7 @@
           <div class="mb-3" *ngFor="let step of steps.controls; let i = index">
             <label class="form-label">Step {{ i + 1 }}</label>
             <div class="input-group">
-              <input type="text" formControlName="step" class="form-control">
+              <input type="text" [formControlName]="i"  class="form-control">
               <button class="btn btn-danger" (click)="removeStep(i, $event)">-</button>
             </div>
           </div>

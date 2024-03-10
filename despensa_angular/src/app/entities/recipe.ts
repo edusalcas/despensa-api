@@ -2,23 +2,23 @@ import {Ingredient} from "./ingredient";
 
 export class Recipe {
 
-  private db_id:number;
+  private db_id: number;
 
-  private name:string;
+  private name: string;
 
-  private num_people:number;
+  private num_people: number;
 
-  private ingredients:Ingredient[];
+  private ingredients: Ingredient[];
 
-  private steps:string[];
+  private steps: string[];
 
-  private category:string;
+  private category: string;
 
-  private tags:string[];
+  private tags: string[];
 
-  private time:number;
+  private time: number;
 
-  constructor(db_id: number, name: string, num_people: number, ingredients:Ingredient[], steps: string[], category: string, tags: string[], time: number) {
+  constructor(db_id: number, name: string, num_people: number, ingredients: Ingredient[], steps: string[], category: string, tags: string[], time: number) {
     this.db_id = db_id;
     this.name = name;
     this.num_people = num_people;
@@ -98,10 +98,19 @@ export class Recipe {
     return this._db_id === recipe._db_id && this._name === recipe._name;
   }
 
-  static cast(data: { db_id: any; name: any; num_people: any; ingredients: any; steps: any; category: any; tags: any; time: any; }) {
+  static cast(data: {
+    db_id: any;
+    name: any;
+    num_people: any;
+    ingredients: any;
+    steps: any;
+    category: any;
+    tags: any;
+    time: any;
+  }) {
     let {db_id, name, num_people, ingredients, steps, category, tags, time} = data;
-    db_id = db_id? db_id : 0;
-    time = time? time.toString().concat("mins") : "0mins";
+    db_id = db_id ? db_id : 0;
+    time = time ? ( time.toString().endsWith("min") ? time : time.toString().endsWith("mins") ? time : time.toString().concat("min") ): "0mins";
     ingredients = this.castAsArrayIngredients(ingredients);
     return new Recipe(db_id,
       name,

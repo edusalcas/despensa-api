@@ -26,7 +26,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   protected isEditing: boolean;
   protected ingredientsList: Food[] = [];
-  protected subscribeIngredient: Subscription | undefined;
+  protected subscribeIngredient!: Subscription;
   @Output() close = new EventEmitter<any>();
   @Output() confirm = new EventEmitter<any>();
   @ViewChild('modal')
@@ -66,6 +66,13 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.modalService.open(this.modal, {centered: true, scrollable: true}).result.then(
       result => {
         try {
+          result.ingredients.forEach((ingredient: { aliment: { name: string; db_id: string; }; }) => {
+            const db_id = this.ingredientsList.findIndex(food => food._name === ingredient.aliment.name);
+            ingredient.aliment.db_id = db_id.toString();
+          })
+
+          console.log(result)
+
           result = Recipe.cast(result)
         } catch (err) {
           console.error(err);
@@ -97,7 +104,6 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
       quantity: '',
       quantity_type: ''
     });
-
     this.ingredients.push(ingredientGroup);
   }
 
@@ -108,9 +114,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   addStep(event: any) {
     event?.preventDefault();
-    const stepGroup = this.fb.group({
-      step: ''
-    });
+    const stepGroup = this.fb.control('');
 
     this.steps.push(stepGroup);
   }

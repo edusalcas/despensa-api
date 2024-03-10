@@ -1,8 +1,10 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {map} from "rxjs/operators";
-import {Observable} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {Recipe} from "../../entities/recipe";
+import {AlimentsService} from "../aliments_service/aliments.service";
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +19,7 @@ export class RecipesService {
 
   constructor(
     private http: HttpClient,
+    private alimentService: AlimentsService
   ) {
   }
 
@@ -29,7 +32,6 @@ export class RecipesService {
   }
 
 
-
   getAllRecipes(): Observable<Recipe[]> {
     return this.http.get<any[]>(this.url, {headers: {Accept: 'application/json'}})
       .pipe(map(data => data.map(data => {
@@ -37,7 +39,7 @@ export class RecipesService {
       })));
   }
 
-  insertRecipe(recipe: unknown): Observable<boolean> {
+  async insertRecipe(recipe: unknown): Promise<Observable<boolean>> {
     if (!(recipe instanceof Recipe)) {
       throw new Error('Invalid argument: recipe must be an instance of Recipe class');
     }
