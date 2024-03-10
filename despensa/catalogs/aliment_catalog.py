@@ -1,13 +1,13 @@
 from typing import List, Union
 
+from despensa.abstract_connector import AbstractConnector
 from despensa.classes import Aliment
 from despensa.singleton_meta import WeakSingletonMeta
-from despensa.sqlite_connector import SQLiteConnector
 
 
 class AlimentCatalog(metaclass=WeakSingletonMeta):
-    def __init__(self, db_connector: SQLiteConnector):
-        self.db_connector: SQLiteConnector = db_connector
+    def __init__(self, db_connector: AbstractConnector):
+        self.db_connector: AbstractConnector = db_connector
         self.__aliment_list: list[Aliment] = db_connector.get_all_aliments()
         self.__aliment_id_map: dict[int, Aliment] = dict(zip([a.db_id for a in self.__aliment_list], self.__aliment_list))
         self.__aliment_name_map: dict[str, Aliment] = dict(zip([a.name for a in self.__aliment_list], self.__aliment_list))
@@ -61,6 +61,6 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
         self.__aliment_list.remove(aliment)
         self.__aliment_id_map.pop(id_aliment)
         self.__aliment_name_map.pop(aliment.name)
-        self.db_connector.delete_aliment(id_aliment)
+        self.db_connector.remove_aliment(aliment)
 
 

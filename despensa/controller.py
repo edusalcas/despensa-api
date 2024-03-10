@@ -1,3 +1,4 @@
+from despensa.abstract_connector import AbstractConnector
 from despensa.catalogs.aliment_catalog import AlimentCatalog
 from despensa.catalogs.pantry import Pantry
 from despensa.catalogs.recipe_catalog import RecipeCatalog
@@ -5,14 +6,14 @@ from despensa.catalogs.shopping_list import ShoppingList
 from despensa.classes import Aliment, Ingredient, Recipe
 from despensa.singleton_meta import WeakSingletonMeta
 
-from despensa.sqlite_connector import SQLiteConnector
+from despensa.database_connector_factory import DatabaseConnectorFactory
 
 from typing import List, Union
 
 
 class Controller(metaclass=WeakSingletonMeta):
     def __init__(self):
-        self.__db_connector: SQLiteConnector = SQLiteConnector()
+        self.__db_connector: AbstractConnector = DatabaseConnectorFactory.get_database_connector()
 
         self.__aliments_catalog = AlimentCatalog(self.__db_connector)
         self.__recipes_catalog = RecipeCatalog(self.__db_connector)

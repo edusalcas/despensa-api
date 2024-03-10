@@ -1,11 +1,15 @@
 import pytest
-import os
 
 from despensa.classes import Aliment, Ingredient, Recipe
+from despensa.abstract_connector import AbstractConnector
+from despensa.database_connector_factory import DatabaseConnectorFactory
+from despensa.postgres_connector import PostgresConnector
 from despensa.sqlite_connector import SQLiteConnector
 from environment import Environment
+import definitions as d
 
 Environment().working_is_test()
+
 
 @pytest.fixture
 def sample_aliment() -> Aliment:
@@ -26,82 +30,97 @@ def sample_recipe(sample_ingredient) -> Recipe:
     yield recipe
 
 
-@pytest.fixture
-def sqlite_con():
-    sqlite_con = SQLiteConnector()
+@pytest.fixture(scope='function')
+def sqlite_connector() -> SQLiteConnector:
+    connector: SQLiteConnector = SQLiteConnector()
+    connector.clear_all_tables()
+    connector.create_all_tables()
+    yield connector
+    connector.clear_all_tables()
 
-    yield sqlite_con
-    if os.path.exists(sqlite_con.db_path):
-        os.remove(sqlite_con.db_path)
+
+@pytest.fixture(scope='function')
+def postgres_connector() -> PostgresConnector:
+    connector: PostgresConnector = PostgresConnector()
+    connector.clear_all_tables()
+    connector.create_all_tables()
+    yield connector
+    connector.clear_all_tables()
 
 
-class TestSQLiteConnectorAliment:
-    def test_aliment_to_sqlite(self, sqlite_con: SQLiteConnector, sample_aliment: Aliment):
-        sqlite_con.add_aliment(aliment=sample_aliment)
-        db_aliment = sqlite_con.get_aliment_by_id(sample_aliment.db_id)
+@pytest.mark.parametrize('connector_fixture_name', ["sqlite_connector", "postgres_connector"])
+class TestConnectorAliment:
+    def test_aliment_to_database(self, connector_fixture_name: str, sample_aliment: Aliment, request):
+        connector: AbstractConnector = request.getfixturevalue(connector_fixture_name)
+        connector.add_aliment(aliment=sample_aliment)
+        db_aliment = connector.get_aliment_by_id(sample_aliment.db_id)
         assert sample_aliment == db_aliment
 
-    def test_get_aliment_catalog(self, sqlite_con: SQLiteConnector):
+    def test_get_aliment_catalog(self, connector_fixture_name: str, request):
+        connector: AbstractConnector = request.getfixturevalue(connector_fixture_name)
         al0 = Aliment(name='onion', tags=['vegetable', 'favorite'])
         al1 = Aliment(name='chicken', tags=['meat'])
         al2 = Aliment(name='olive oil', tags=['oil'])
 
-        sqlite_con.add_aliment(al0)
-        sqlite_con.add_aliment(al1)
-        sqlite_con.add_aliment(al2)
+        connector.add_aliment(al0)
+        connector.add_aliment(al1)
+        connector.add_aliment(al2)
 
-        db_aliments = sqlite_con.get_all_aliments()
+        db_aliments = connector.get_all_aliments()
 
         assert [al0, al1, al2] == db_aliments
 
-    def test_add_aliment_to_pantry(self, sqlite_con: SQLiteConnector):
+    @staticmethod
+    def add_aliments_to_pantry(connector):
         al0 = Aliment(name='onion', tags=['vegetable', 'favorite'])
         al1 = Aliment(name='chicken', tags=['meat'])
+        connector.add_aliment(al0)
+        connector.add_aliment(al1)
+        connector.add_aliment_to_pantry(al0)
+        connector.add_aliment_to_pantry(al1)
+        return al0, al1
 
-        sqlite_con.add_aliment(al0)
-        sqlite_con.add_aliment(al1)
+    def test_add_aliment_to_pantry(self, connector_fixture_name: str, request):
+        connector: AbstractConnector = request.getfixturevalue(connector_fixture_name)
+        al0, al1 = self.add_aliments_to_pantry(connector)
 
-        sqlite_con.add_ingredient_to_pantry(al0)
-        sqlite_con.add_ingredient_to_pantry(al1)
-
-        pantry = sqlite_con.get_pantry()
+        pantry = connector.get_pantry()
 
         assert [al0, al1] == pantry
 
-    def test_remove_aliment_from_pantry(self, sqlite_con: SQLiteConnector):
-        al0 = Aliment(name='onion', tags=['vegetable', 'favorite'])
-        al1 = Aliment(name='chicken', tags=['meat'])
+    def test_remove_aliment_from_pantry(self, connector_fixture_name: str, request):
+        connector: AbstractConnector = request.getfixturevalue(connector_fixture_name)
+        al0, al1 = self.add_aliments_to_pantry(connector)
 
-        sqlite_con.add_aliment(al0)
-        sqlite_con.add_aliment(al1)
-
-        sqlite_con.add_ingredient_to_pantry(al0)
-        sqlite_con.add_ingredient_to_pantry(al1)
-
-        sqlite_con.remove_aliment_from_pantry(al0)
-        pantry = sqlite_con.get_pantry()
+        connector.remove_aliment_from_pantry(al0)
+        pantry = connector.get_pantry()
 
         assert [al1] == pantry
 
 
-class TestSQLiteConnectionIngredient:
-    def test_ingredient_to_sqlite(self, sqlite_con: SQLiteConnector, sample_ingredient: Ingredient):
-        sqlite_con.add_aliment(aliment=sample_ingredient.aliment)
-        sqlite_con.add_ingredient(ingredient=sample_ingredient)
-        db_aliment = sqlite_con.get_ingredient_by_id(sample_ingredient.db_id)
+@pytest.mark.parametrize('connector_fixture_name', ["sqlite_connector", "postgres_connector"])
+class TestConnectorIngredient:
+    def test_ingredient_to_database(self, connector_fixture_name: str, sample_ingredient: Ingredient, request):
+        connector: AbstractConnector = request.getfixturevalue(connector_fixture_name)
+        connector.add_aliment(aliment=sample_ingredient.aliment)
+        connector.add_ingredient(ingredient=sample_ingredient)
+        db_aliment = connector.get_ingredient_by_id(sample_ingredient.db_id)
         assert sample_ingredient == db_aliment
 
 
-class TestSQLiteConnectorRecipe:
-    def test_recipe_to_sqlite(self, sqlite_con: SQLiteConnector, sample_recipe):
+@pytest.mark.parametrize('connector_fixture_name', ["sqlite_connector", "postgres_connector"])
+class TestAbstractConnectorRecipe:
+    def test_recipe_to_database(self, connector_fixture_name: str, sample_recipe, request):
+        connector: AbstractConnector = request.getfixturevalue(connector_fixture_name)
         for ingredient in sample_recipe.ingredients:
-            sqlite_con.add_aliment(ingredient.aliment)
-        sqlite_con.add_recipe_and_ingredients(sample_recipe)
-        db_recipe = sqlite_con.get_recipe_by_id(sample_recipe.db_id)
+            connector.add_aliment(ingredient.aliment)
+        connector.add_recipe(sample_recipe)
+        db_recipe = connector.get_recipe_by_id(sample_recipe.db_id)
 
         assert sample_recipe == db_recipe
 
-    def test_get_recipes_catalog(self, sqlite_con: SQLiteConnector):
+    def test_get_recipes_catalog(self, connector_fixture_name: str, request):
+        connector: AbstractConnector = request.getfixturevalue(connector_fixture_name)
         al0 = Aliment(name='onion', tags=['vegetable', 'favorite'])
         al1 = Aliment(name='chicken', tags=['meat'])
         al2 = Aliment(name='olive oil', tags=['oil'])
@@ -125,20 +144,22 @@ class TestSQLiteConnectorRecipe:
             time=30
         )
 
-        sqlite_con.add_aliment(al0)
-        sqlite_con.add_aliment(al1)
-        sqlite_con.add_aliment(al2)
-        sqlite_con.add_recipe_and_ingredients(re0)
-        sqlite_con.add_recipe_and_ingredients(re1)
+        connector.add_aliment(al0)
+        connector.add_aliment(al1)
+        connector.add_aliment(al2)
+        connector.add_recipe(re0)
+        connector.add_recipe(re1)
 
-        db_recipes = sqlite_con.get_all_recipes()
+        db_recipes = connector.get_all_recipes()
 
         assert db_recipes == [re0, re1]
 
 
-class TestSQLiteConnectorShoppingList:
-    def test_add_item_to_shopping_list(self, sqlite_con: SQLiteConnector):
-        sqlite_con.insert_item_in_shopping_list("Oranges")
-        sqlite_con.insert_item_in_shopping_list("Onion")
+@pytest.mark.parametrize('connector_fixture_name', ["sqlite_connector", "postgres_connector"])
+class TestAbstractConnectorShoppingList:
+    def test_add_item_to_shopping_list(self, connector_fixture_name: str, request):
+        connector: AbstractConnector = request.getfixturevalue(connector_fixture_name)
+        connector.insert_item_in_shopping_list("Oranges")
+        connector.insert_item_in_shopping_list("Onion")
 
-        assert sqlite_con.get_shopping_list() == ['Oranges', 'Onion']
+        assert connector.get_shopping_list() == ['Oranges', 'Onion']
