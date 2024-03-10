@@ -96,13 +96,12 @@ export class AlimentsMainComponent implements OnInit, OnDestroy {
    */
   fetchNewFood(food: Food): Promise<boolean> {
     food._tags = food._tags ? this.tagsArray : food._tags = [""];
-    // @ts-ignore
-    return new Promise((resolve: (arg0: any) => void, reject: (arg0: any) => void) => {
+    return new Promise((resolve, reject) => {
       this.subFood.push(this.alimentsService.insertFood(food).subscribe({
-          next: (data: any) => {
+          next: (data) => {
             resolve(data);
           },
-          error: (error: any) => {
+          error: (error) => {
             reject(error);
           }
         }
@@ -112,15 +111,17 @@ export class AlimentsMainComponent implements OnInit, OnDestroy {
 
   retrieveFoodData() {
     return this.alimentsService.getAllFood().subscribe({
-      next: (data: { forEach: (arg0: (food: Food, index: number) => void) => void; }) => {
-        data.forEach((food: Food, index: number) => {
-          const equals = this.foodList[index]?.aliment.equals(food);
-          if (!this.foodList[index]) {
-            this.foodList.push({aliment: food, editable: false});
-          } else if (!equals) {
-            this.foodList[index].aliment = food;
-          }
-        });
+      next: data => {
+
+          data.forEach((food: Food, index: number) => {
+            const equals = this.foodList[index]?.aliment.equals(food);
+            if (!this.foodList[index]) {
+              this.foodList.push({aliment: food, editable: false});
+            } else if (!equals) {
+              this.foodList[index].aliment = food;
+            }
+          });
+
       },
       error: err => {
         console.error("Error occurred while fetching food data:", err);

@@ -79,7 +79,7 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
       next: data => {
         data.forEach((recipe: Recipe, index: number) => {
           if (this.recipeList) {
-            const equals = this.recipeList[index].equals(recipe);
+            const equals = this.recipeList[index]?.equals(recipe);
             if (!this.recipeList[index]) {
               this.recipeList.push(recipe);
             } else if (!equals) {

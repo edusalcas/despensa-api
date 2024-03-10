@@ -7,6 +7,7 @@ import {AlimentsService} from "../../../../services/aliments_service/aliments.se
 import {NgSelectModule} from "@ng-select/ng-select";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {Recipe} from "../../../../entities/recipe";
+import {Ingredient} from "../../../../entities/ingredient";
 
 
 @Component({
@@ -26,7 +27,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   protected isEditing: boolean;
   protected ingredientsList: Food[] = [];
-  protected subscribeIngredient!: Subscription;
+  protected subs: Subscription[] = [];
   @Output() close = new EventEmitter<any>();
   @Output() confirm = new EventEmitter<any>();
   @ViewChild('modal')
@@ -51,11 +52,11 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.subscribeIngredient = this.retriveIngredients();
+    this.subs.push(this.retrieveIngredients());
   }
 
   ngOnDestroy(): void {
-    this.subscribeIngredient?.unsubscribe();
+    this.subs?.forEach(sub => sub.unsubscribe());
   }
 
   ngAfterViewInit(): void {
@@ -64,14 +65,17 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   open() {
     this.modalService.open(this.modal, {centered: true, scrollable: true}).result.then(
-      result => {
+      async result => {
         try {
-          result.ingredients.forEach((ingredient: { aliment: { name: string; db_id: string; }; }) => {
-            const db_id = this.ingredientsList.findIndex(food => food._name === ingredient.aliment.name);
-            ingredient.aliment.db_id = db_id.toString();
-          })
+          for (const ingredient of result.ingredients) {
+            const index = this.ingredientsList.findIndex(food => food._name === ingredient.aliment.name);
+            const db_id = index !== -1 ? this.ingredientsList[index]._db_id : await this.getDbId(ingredient).then(result => {
+              if (result) return this.ingredientsList[this.ingredientsList.length - 1]._db_id;
+              return -1;
+            });
 
-          console.log(result)
+            ingredient.aliment.db_id = db_id.toString();
+          }
 
           result = Recipe.cast(result)
         } catch (err) {
@@ -81,6 +85,27 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       () => {
         this.close.emit();
+      }
+    );
+  }
+
+  private async getDbId(ingredient: { aliment: { name: string; db_id: string; }; }): Promise<boolean> {
+    const food = (Ingredient.cast(ingredient)._aliment);
+    return new Promise<boolean>((resolve, reject) => {
+      this.subs.push(this.alimentsService.insertFood(food).subscribe({
+          next: (data) => {
+            resolve(data);
+          },
+          error: (error) => {
+            reject(error);
+          }
+        }
+      ));
+    }).then((r) => {
+        return new Promise<boolean>((resolve) => {
+          this.subs.push(this.retrieveIngredients())
+          resolve(r);
+        })
       }
     );
   }
@@ -124,7 +149,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.steps.removeAt(index);
   }
 
-  retriveIngredients() {
+  retrieveIngredients() {
     return this.alimentsService.getAllFood().subscribe({
       next: data => {
         data.forEach((food: Food, index: number) => {
@@ -134,6 +159,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
           } else if (!equals) {
             this.ingredientsList[index] = food;
           }
+          console.log(this.ingredientsList.length)
         });
       }
     });
