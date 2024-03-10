@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, List
 
 from despensa.abstract_connector import AbstractConnector
 from despensa.catalogs.aliment_catalog import AlimentCatalog
@@ -15,15 +15,15 @@ class Pantry(metaclass=WeakSingletonMeta):
     def is_present(self, aliment: Aliment) -> bool:
         return aliment in self.__pantry_list
 
-    def add_aliment_to_pantry(self, aliment_name: str) -> bool:
+    def add_aliment_to_pantry(self, aliment_name: str) -> List[Aliment]:
         aliment = AlimentCatalog(self.__db_connector).get_aliment_by_name(aliment_name)
 
         if aliment and aliment not in self.__pantry_list:
             self.__db_connector.add_aliment_to_pantry(aliment)
             self.__pantry_list.append(aliment)
-            return True
+            return self.__pantry_list
 
-        return False
+        raise Exception('Aliment is already in pantry')
 
     def get_aliment(self, name: str) -> Union[Aliment, None]:
         return self.__aliment_name_map.get(name, None)

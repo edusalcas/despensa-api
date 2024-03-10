@@ -1,3 +1,5 @@
+from typing import Union, Tuple
+
 from flask import Blueprint, jsonify, Response, request
 from despensa.controller import Controller
 from despensa.classes import Recipe, Aliment
@@ -20,9 +22,12 @@ def get_aliment(aliment_id: str) -> Response:
 
 
 @bp.route('/aliments', methods=['POST'])
-def create_aliment() -> Response:
-    aliment = Controller().create_aliment_from_json(request.json)
-    return jsonify(aliment)
+def create_aliment() -> Union[Response, tuple[Response, int]]:
+    try:
+        aliment = Controller().create_aliment_from_json(request.json)
+        return jsonify(aliment)
+    except Exception as e:
+        return jsonify(e), 400
 
 
 @bp.route('/aliments/<aliment_id>', methods=['PUT'])
@@ -52,9 +57,12 @@ def get_recipe(recipe_id: int) -> Response:
 
 
 @bp.route('/recipes', methods=['POST'])
-def create_recipe() -> Response:
-    recipe = Controller().create_recipe_from_json(request.json)
-    return jsonify(recipe)
+def create_recipe() -> Union[Response, tuple[Response, int]]:
+    try:
+        recipe = Controller().create_recipe_from_json(request.json)
+        return jsonify(recipe)
+    except Exception as e:
+        return jsonify(e), 400
 
 
 @bp.route('/recipes/<recipe_id>', methods=['PUT'])
