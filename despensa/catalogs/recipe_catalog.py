@@ -15,15 +15,15 @@ class RecipeCatalog(metaclass=WeakSingletonMeta):
     def get_all(self) -> list[Recipe]:
         return self.__recipe_list.copy()
 
-    def add_recipe(self, recipe: Recipe) -> bool:
+    def add_recipe(self, recipe: Recipe) -> Recipe:
         if recipe in self.__recipe_list:
-            return False
+            raise Exception('Recipe already exists')
 
         self.__db_connector.add_recipe(recipe)
         self.__recipe_list.append(recipe)
         self.__recipe_id_map[recipe.db_id] = recipe
 
-        return True
+        return recipe
 
     def get_recipes_from_pantry(self) -> List[Recipe]:
         aliments_in_pantry = Pantry(self.__db_connector).get_all()
@@ -33,15 +33,15 @@ class RecipeCatalog(metaclass=WeakSingletonMeta):
     def get_recipe_by_id(self, recipe_id: int) -> Union[Recipe, None]:
         return self.__recipe_id_map.get(recipe_id, None)
 
-    def create_recipe_from_json(self, json: dict) -> bool:
+    def create_recipe_from_json(self, json: dict) -> Recipe:
         recipe: Recipe = Recipe.from_json(json)
         if recipe in self.__recipe_list:
-            return False
+            raise Exception('Recipe already exists')
 
         self.__db_connector.add_recipe(recipe)
         self.__recipe_list.append(recipe)
         self.__recipe_id_map[recipe.db_id] = recipe
-        return True
+        return recipe
 
     def update_recipe_from_json(self, recipe_id: int, json: dict):
         recipe = self.get_recipe_by_id(recipe_id)

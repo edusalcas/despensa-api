@@ -21,25 +21,25 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
     def get_aliment_by_id(self, bd_id: int) -> Union[Aliment, None]:
         return self.__aliment_id_map.get(bd_id)
 
-    def create_aliment(self, name: str, tags: List[str]) -> bool:
+    def create_aliment(self, name: str, tags: List[str]) -> Aliment:
         aliment = Aliment(name.lower(), tags)
         if self.is_present(aliment):
-            return False
+            raise Exception('Aliment already exists')
 
         self.db_connector.add_aliment(aliment)
         self.__aliment_list.append(aliment)
         self.__aliment_id_map[aliment.db_id] = aliment
-        return True
+        return aliment
 
-    def create_aliment_from_json(self, json: dict) -> bool:
+    def create_aliment_from_json(self, json: dict) -> Aliment:
         aliment: Aliment = Aliment.from_json(json)
         if self.is_present(aliment):
-            return False
+            raise Exception('Aliment already exists')
 
         self.db_connector.add_aliment(aliment)
         self.__aliment_list.append(aliment)
         self.__aliment_id_map[aliment.db_id] = aliment
-        return True
+        return aliment
 
     def update_aliment(self, name, tags):
         aliment = self.get_aliment_by_name(name)

@@ -70,13 +70,13 @@ class TestAliment:
 
         assert aliments + [aliment] == aliments_new
 
-    def test_create_aliment_(self, client):
-        aliment: Aliment = Aliment(name='Oil', tags=['good', 'healthy'])
-        aliments = Controller().get_all_aliments()
-        client.post(self.base_url, json={'name': 'Oil', 'tags': ['good', 'healthy']})
-        aliments_new = Controller().get_all_aliments()
+    def test_create_aliment_response(self, client):
+        aliment: Aliment = Aliment(name='Aliment_name', tags=['good'])
+        response = client.post(self.base_url, json={'name': aliment.name, 'tags': aliment.tags})
+        aliment_json = Aliment.from_json(response.json)
+        aliment_new = Controller().get_aliment_by_id(aliment_json.db_id)
 
-        assert aliments + [aliment] == aliments_new
+        assert aliment_json == aliment_new
 
     def test_delete_aliment(self, client):
         db_id: int = 1
@@ -130,6 +130,18 @@ class TestRecipe:
         recipes_new = Controller().get_recipes_catalog()
 
         assert recipes + [recipe] == recipes_new
+
+    def test_create_recipe_response(self, client):
+        new_ingredients = [
+            Ingredient(aliment=Controller().get_aliment_by_id(1), quantity=1, quantity_type='unit')
+        ]
+        recipe = Recipe(name='Test recipe name', num_people=4, ingredients=new_ingredients,
+                        steps=['Chop the onion', 'Fry it!'], category='Main')
+        response = client.post(self.base_url, json=recipe.__dict__)
+        recipe_json = Recipe.from_json(response.json)
+        recipe_new = Controller().get_recipe_by_id(recipe_json.db_id)
+
+        assert recipe_new == recipe_json
 
     def test_delete_recipe(self, client):
         db_id: int = 1

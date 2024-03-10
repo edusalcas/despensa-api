@@ -72,8 +72,8 @@ class Aliment(BDInstance):
     def from_json(json: dict[str, Any]) -> Aliment:
         return Aliment(
             json['name'],
-            json['tags'],
-            json['db_id']
+            json.get('tags', []),
+            json.get('db_id', 0)
         )
 
 
