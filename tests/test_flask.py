@@ -70,6 +70,14 @@ class TestAliment:
 
         assert aliments + [aliment] == aliments_new
 
+    def test_create_aliment_(self, client):
+        aliment: Aliment = Aliment(name='Oil', tags=['good', 'healthy'])
+        aliments = Controller().get_all_aliments()
+        client.post(self.base_url, json={'name': 'Oil', 'tags': ['good', 'healthy']})
+        aliments_new = Controller().get_all_aliments()
+
+        assert aliments + [aliment] == aliments_new
+
     def test_delete_aliment(self, client):
         db_id: int = 1
         aliments = [al for al in Controller().get_all_aliments() if al.db_id != db_id]

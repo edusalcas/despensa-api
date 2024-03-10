@@ -46,11 +46,11 @@ class Environment(metaclass=SingletonMeta):
     )
 
     __sqlite_config_dev: SQLiteConfig = SQLiteConfig(
-        db_path=str(os.path.join(d.MAIN_DIR, d.SQLITE_DB)),
+        db_path=d.SQLITE_DEV_DB,
     )
 
     __sqlite_config_test: SQLiteConfig = SQLiteConfig(
-        db_path=str(os.path.join(d.TEST_DIR, d.SQLITE_DB)),
+        db_path=d.SQLITE_TEST_DB,
     )
 
     def __init__(self):

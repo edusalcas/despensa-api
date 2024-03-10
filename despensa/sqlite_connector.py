@@ -1,6 +1,5 @@
 from despensa.abstract_connector import AbstractConnector
 from despensa.classes import Aliment, Ingredient, Recipe
-from definitions import SQLITE_DB, MAIN_DIR, SQLITE_SAMPLE_DATA
 from environment import Environment, SQLiteConfig
 
 import os
