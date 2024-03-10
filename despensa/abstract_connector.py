@@ -25,6 +25,13 @@ class AbstractConnector(ABC, Singleton):
 
         print("All tables deleted")
 
+    def generate_sample_data(self):
+        with open(self.config.generate_samples_sql_path, 'r') as generate_samples_sql_file:
+            generate_samples_sql_commands = generate_samples_sql_file.read().split(';')
+            for command in [c.strip() for c in generate_samples_sql_commands if c.strip() != '']:
+                self.execute(command)
+        print("Sample data generated")
+
     # region CRUD Aliment
     @abstractmethod
     def add_aliment(self, aliment: Aliment):

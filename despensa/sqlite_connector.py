@@ -347,11 +347,3 @@ class SQLiteConnector(AbstractConnector):
         cur = self.con.cursor()
         res = cur.execute(sql)
         return res.fetchall()
-
-    @clean_connection
-    def generate_sample_data(self):
-        if Environment().get_current_env() == 1:
-            with open(SQLITE_SAMPLE_DATA, 'r') as sample_data_sql_file:
-                sample_data_sql_commands = sample_data_sql_file.read().split(';')
-                for command in sample_data_sql_commands:
-                    self.execute(command)

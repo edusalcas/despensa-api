@@ -67,7 +67,7 @@ class PostgresConnector(AbstractConnector):
             row = self.cursor.fetchone()
             if row:
                 name, tags = row
-                return Aliment(name=name, tags=tags)
+                return Aliment(name=name, tags=tags, db_id=aliment_id)
             else:
                 print("Aliment not found")
         except psycopg2.Error as e:
@@ -212,13 +212,16 @@ class PostgresConnector(AbstractConnector):
             sql = f"DELETE FROM ingredient WHERE ingredient_id IN (SELECT ingredient_id FROM recipe_ingredient WHERE recipe_id = {recipe.db_id})"
             self.cursor.execute(sql)
 
-            sql = "UPDATE recipe SET name = %s, num_people = %s, steps = %s, category = %s, tags = %s, time = %s WHERE recipe_id = %s"
-            self.cursor.execute(sql, (
-                recipe.name, recipe.num_people, recipe.steps, recipe.category, recipe.tags, recipe.time, recipe.db_id))
-
             # Update recipe_ingredient relationships
             sql = "DELETE FROM recipe_ingredient WHERE recipe_id = %s"
             self.cursor.execute(sql, (recipe.db_id,))
+
+            for ingredient in recipe.ingredients:
+                self.add_ingredient(ingredient)
+
+            sql = "UPDATE recipe SET name = %s, num_people = %s, steps = %s, category = %s, tags = %s, time = %s WHERE recipe_id = %s"
+            self.cursor.execute(sql, (
+                recipe.name, recipe.num_people, recipe.steps, recipe.category, recipe.tags, recipe.time, recipe.db_id))
 
             for ingredient in recipe.ingredients:
                 sql = "INSERT INTO recipe_ingredient (recipe_id, ingredient_id) VALUES (%s, %s)"
