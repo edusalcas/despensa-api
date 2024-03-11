@@ -58,8 +58,8 @@ export class AlimentsMainComponent implements OnInit, OnDestroy {
    * a class is dynamically added to or removed from the modal, thereby changing its visibility.
    * If the modal is hidden, the associated form is reset.
    */
-  openModal(modal:any) {
-    this.modalReference = this.modalService.open(modal , {centered: true});
+  openModal(modal: any) {
+    this.modalReference = this.modalService.open(modal, {centered: true});
   }
 
   closeModal() {
@@ -114,14 +114,16 @@ export class AlimentsMainComponent implements OnInit, OnDestroy {
     return this.alimentsService.getAllFood().subscribe({
       next: data => {
 
-          data.forEach((food: Food, index: number) => {
-            const equals = this.foodList[index]?.aliment.equals(food);
-            if (!this.foodList[index]) {
-              this.foodList.push({aliment: food, editable: false});
-            } else if (!equals) {
-              this.foodList[index].aliment = food;
-            }
-          });
+        data.forEach((food: Food, index: number) => {
+          const equals = this.foodList[index]?.aliment.equals(food);
+          if (!this.foodList[index]) {
+            this.foodList.push({aliment: food, editable: false});
+          } else if (!equals) {
+            this.foodList[index].aliment = food;
+          }
+        });
+
+        this.foodList.sort((a, b) => a.aliment._db_id - b.aliment._db_id)
 
       },
       error: err => {
