@@ -83,8 +83,8 @@ export class AlimentsMainComponent implements OnInit, OnDestroy {
 
     } catch (err) {
       this.hasErrors = true;
-      this.errorMessage = err?.toString();
-      console.log(err);
+      const {error}: any = err;
+      this.errorMessage = error.error;
     }
   }
 
