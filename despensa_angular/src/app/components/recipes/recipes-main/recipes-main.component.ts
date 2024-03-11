@@ -12,6 +12,8 @@ import {AddRecipeComponent} from "./add-recipe/add-recipe.component";
 import {AddRecipeService} from "../../../services/modal-service/add-recipe.service";
 import {Ingredient} from '../../../entities/ingredient';
 import {AlimentsService} from "../../../services/aliments_service/aliments.service";
+import {response} from "express";
+import {Food} from "../../../entities/food";
 
 
 /**
@@ -46,7 +48,7 @@ import {AlimentsService} from "../../../services/aliments_service/aliments.servi
 })
 export class RecipesMainComponent implements OnInit, OnDestroy {
 
-  protected recipeList: Recipe[] | undefined;
+  protected recipeList: Recipe[] = [];
   protected filterList: { name: string, options: string[] }[] =
     [{name: "Type", options: ["Rica", "Guy"]}, {name: "Difficulty", options: [""]}, {
       name: "Num of guests",
@@ -60,6 +62,7 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
   @ViewChild('modal', {read: ViewContainerRef})
   private entry!: ViewContainerRef;
   private subs: Subscription[] = [];
+  private alimentsList: Food[] = [];
 
   constructor(private recipeService: RecipesService,
               private alimentService: AlimentsService,
@@ -81,17 +84,13 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
     return this.recipeService.getAllRecipes().subscribe({
       next: data => {
         data.forEach((recipe: Recipe, index: number) => {
-          if (this.recipeList) {
-            const equals = this.recipeList[index]?.equals(recipe);
-            if (!this.recipeList[index]) {
-              this.recipeList.push(recipe);
-            } else if (!equals) {
-              this.recipeList[index] = recipe;
-            }
-          } else {
-            this.recipeList = [];
+          const equals = this.recipeList[index]?.equals(recipe);
+          if (!this.recipeList[index]) {
             this.recipeList.push(recipe);
+          } else if (!equals) {
+            this.recipeList[index] = recipe;
           }
+
         });
       }
     })
@@ -107,7 +106,11 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
       next: async value => {
         value = Recipe.cast(value);
         let ingredients: Ingredient[] = [];
-        if (value instanceof Recipe) ingredients = value._ingredients;
+        if (value instanceof Recipe){
+          value._tags = value._tags.toString().split(',').map((tag: { trim: () => any; }) => tag.trim());
+          ingredients = value._ingredients;
+        }
+        await this.aliments;
         await this.insertIngredients(ingredients);
         this.recipeService.insertRecipe(value).subscribe({
           next: value1 => {
@@ -121,17 +124,32 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
     }));
   }
 
-  private insertIngredients(ingredients: Ingredient[]) {
+  private get aliments(){
+    return new Promise((resolve, reject) => {
+      this.subs.push(this.alimentService.getAllFood().subscribe({
+        next: value => {
+          this.alimentsList = value;
+          resolve(value);
+        },
+        error: err => {
+          reject(err);
+        }
+      }))
+    })
+  }
+
+  private async insertIngredients(ingredients: Ingredient[]) {
     const promises = ingredients.map(ingredient =>
-      new Promise((resolve, reject) => {
+      new Promise((resolve) => {
         this.subs.push(this.alimentService.insertFood(ingredient._aliment).subscribe({
           next: value1 => {
             ingredient._aliment = value1;
             resolve(value1);
           },
           error: err => {
-            console.warn(err, err.status);
-            reject(err);
+            const index = this.alimentsList.findIndex(aliment => aliment._name === ingredient._aliment._name);
+            ingredient._aliment._db_id = this.alimentsList[index]?._db_id;
+            resolve(err);
           }
         }))
       })

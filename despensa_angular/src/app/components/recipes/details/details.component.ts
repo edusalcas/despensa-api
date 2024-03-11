@@ -60,6 +60,8 @@ export class DetailsComponent implements OnInit, OnDestroy{
 
     this.subRecServ = this.recipeService.get(id).subscribe({
       next: data => {
+        const time = data._time;
+        data._time = time ? (time.toString().endsWith("min") ? time : time.toString().endsWith("mins") ? time : time.toString().concat("min")) : "0mins";
         this.recipe = data;
       },
       error: err => {

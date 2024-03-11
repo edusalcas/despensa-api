@@ -19,6 +19,7 @@ export class Recipe {
   private time: number | string;
 
   constructor(db_id: number, name: string, num_people: number, ingredients: Ingredient[], steps: string[], category: string, tags: string[], time: number | string) {
+
     this.db_id = db_id;
     this.name = name;
     this.num_people = num_people;
@@ -98,10 +99,9 @@ export class Recipe {
     return this._db_id === recipe._db_id && this._name === recipe._name;
   }
 
-  static cast(data:any) {
+  static cast(data: any) {
     let {db_id, name, num_people, ingredients, steps, category, tags, time} = data;
     db_id = db_id ? db_id : 0;
-    time = time ? ( time.toString().endsWith("min") ? time : time.toString().endsWith("mins") ? time : time.toString().concat("min") ): "0mins";
     ingredients = this.castAsArrayIngredients(ingredients);
     return new Recipe(db_id,
       name,
