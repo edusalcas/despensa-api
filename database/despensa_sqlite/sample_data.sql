@@ -44,7 +44,7 @@ INSERT INTO main.recipe (name, num_people, steps, category, tags, time) VALUES
     (
      1,
      1,
-     'step1\nstep2',
+     'step1%_%step2',
      'main',
      'healthy,quick',
      '15min'

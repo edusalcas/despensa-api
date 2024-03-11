@@ -16,3 +16,5 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+database/despensa_postgres/postgres_data/

@@ -1,3 +1,4 @@
+from despensa.abstract_connector import AbstractConnector
 from despensa.catalogs.aliment_catalog import AlimentCatalog
 from despensa.catalogs.pantry import Pantry
 from despensa.catalogs.recipe_catalog import RecipeCatalog
@@ -5,27 +6,27 @@ from despensa.catalogs.shopping_list import ShoppingList
 from despensa.classes import Aliment, Ingredient, Recipe
 from despensa.singleton_meta import WeakSingletonMeta
 
-from despensa.sqlite_connector import SQLiteConnector
+from despensa.database_connector_factory import DatabaseConnectorFactory
 
 from typing import List, Union
 
 
 class Controller(metaclass=WeakSingletonMeta):
     def __init__(self):
-        self.__db_connector: SQLiteConnector = SQLiteConnector()
+        self.__db_connector: AbstractConnector = DatabaseConnectorFactory.get_database_connector()
 
         self.__aliments_catalog = AlimentCatalog(self.__db_connector)
         self.__recipes_catalog = RecipeCatalog(self.__db_connector)
         self.__pantry = Pantry(self.__db_connector)
         self.__shopping_list = ShoppingList(self.__db_connector)
 
-    def create_aliment(self, name: str, tags: List[str]) -> bool:
-        return self.__aliments_catalog.create_aliment_from_params(name, tags)
+    def create_aliment(self, name: str, tags: List[str]) -> Aliment:
+        return self.__aliments_catalog.create_aliment(name, tags)
 
-    def create_aliment_from_json(self, json: dict) -> bool:
+    def create_aliment_from_json(self, json: dict) -> Aliment:
         return self.__aliments_catalog.create_aliment_from_json(json)
 
-    def insert_aliment_in_pantry(self, name: str) -> bool:
+    def insert_aliment_in_pantry(self, name: str) -> List[Aliment]:
         return self.__pantry.add_aliment_to_pantry(name)
 
     def remove_aliment_in_pantry(self, name: str) -> None:
@@ -50,13 +51,12 @@ class Controller(metaclass=WeakSingletonMeta):
         return ingredient
 
     @staticmethod
-    def create_recipe(recipe_name: str, num_people: int, ingredients: List[Ingredient], steps: List[str], category: str,
-                      tags: List[str], time: int) -> Recipe:
+    def create_recipe(recipe_name: str, num_people: int, ingredients: List[Ingredient], steps: List[str], category: str, tags: List[str], time: int) -> Recipe:
         recipe = Recipe(recipe_name, num_people, ingredients, steps, category, tags, time)
 
         return recipe
 
-    def create_recipe_from_json(self, json) -> bool:
+    def create_recipe_from_json(self, json) -> Recipe:
         return self.__recipes_catalog.create_recipe_from_json(json)
 
     def update_recipe_from_json(self, recipe_id: int, json: dict):
@@ -65,7 +65,7 @@ class Controller(metaclass=WeakSingletonMeta):
     def delete_recipe(self, recipe_id):
         self.__recipes_catalog.delete_recipe(recipe_id)
 
-    def insert_recipe(self, recipe: Recipe) -> bool:
+    def insert_recipe(self, recipe: Recipe) -> Recipe:
         return self.__recipes_catalog.add_recipe(recipe)
 
     def get_recipes_from_pantry(self) -> List[Recipe]:

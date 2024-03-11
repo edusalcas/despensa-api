@@ -1,14 +1,13 @@
 import pytest
-import json
 
+from despensa.abstract_connector import AbstractConnector
 from despensa.classes import Aliment, Recipe, Ingredient
 from despensa.controller import Controller
-from despensa.sqlite_connector import SQLiteConnector
 from despensa_flask import create_app
 from environment import Environment
+from despensa.database_connector_factory import DatabaseConnectorFactory
 
-
-@pytest.fixture()
+@pytest.fixture(scope="class")
 def app():
     app = create_app()
     app.config.update({
@@ -16,12 +15,13 @@ def app():
     })
 
     Environment().working_is_test()
-    # TODO: Add sample data to database
-    SQLiteConnector().generate_sample_data()
+    db_connector: AbstractConnector = DatabaseConnectorFactory.get_database_connector()
 
+    db_connector.clear_all_tables()
+    db_connector.create_all_tables()
+    db_connector.generate_sample_data()
     yield app
-
-    # TODO: Clean database
+    db_connector.clear_all_tables()
 
 
 @pytest.fixture()
@@ -69,6 +69,14 @@ class TestAliment:
         aliments_new = Controller().get_all_aliments()
 
         assert aliments + [aliment] == aliments_new
+
+    def test_create_aliment_response(self, client):
+        aliment: Aliment = Aliment(name='Aliment_name', tags=['good'])
+        response = client.post(self.base_url, json={'name': aliment.name, 'tags': aliment.tags})
+        aliment_json = Aliment.from_json(response.json)
+        aliment_new = Controller().get_aliment_by_id(aliment_json.db_id)
+
+        assert aliment_json == aliment_new
 
     def test_delete_aliment(self, client):
         db_id: int = 1
@@ -123,6 +131,18 @@ class TestRecipe:
 
         assert recipes + [recipe] == recipes_new
 
+    def test_create_recipe_response(self, client):
+        new_ingredients = [
+            Ingredient(aliment=Controller().get_aliment_by_id(1), quantity=1, quantity_type='unit')
+        ]
+        recipe = Recipe(name='Test recipe name', num_people=4, ingredients=new_ingredients,
+                        steps=['Chop the onion', 'Fry it!'], category='Main')
+        response = client.post(self.base_url, json=recipe.__dict__)
+        recipe_json = Recipe.from_json(response.json)
+        recipe_new = Controller().get_recipe_by_id(recipe_json.db_id)
+
+        assert recipe_new == recipe_json
+
     def test_delete_recipe(self, client):
         db_id: int = 1
         recipes = [r for r in Controller().get_recipes_catalog() if r.db_id != db_id]
@@ -150,7 +170,7 @@ class TestPantry:
 
         assert pantry + [new_aliment] == pantry_new
 
-    def test_delete_recipe(self, client):
+    def test_delete_aliment_from_pantry(self, client):
         old_aliment = Controller().get_aliment_by_id(1)
         pantry = [p for p in Controller().get_pantry() if p.name != old_aliment.name]
         client.delete(f"{self.base_url}/{old_aliment.name}")
@@ -169,7 +189,7 @@ class TestShoppingList:
 
         assert shopping_list == shopping_list_flask
 
-    def test_add_aliment_to_shopping_list(self, client):
+    def test_add_item_to_shopping_list(self, client):
         new_item = 'item_new'
         shopping_list = Controller().get_shopping_list()
         client.post(f"{self.base_url}/{new_item}")
@@ -177,7 +197,7 @@ class TestShoppingList:
 
         assert shopping_list + [new_item] == shopping_list_new
 
-    def test_delete_recipe(self, client):
+    def test_delete_item_from_shopping_list(self, client):
         old_item = 'item1'
         shopping_list = [p for p in Controller().get_shopping_list() if p != old_item]
         client.delete(f"{self.base_url}/{old_item}")
