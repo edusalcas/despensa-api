@@ -29,7 +29,7 @@ def create_aliment() -> Union[Response, tuple[Response, int]]:
         aliment = Controller().create_aliment_from_json(request.json)
         return jsonify(aliment)
     except Exception as e:
-        return jsonify(e), 400
+        return jsonify({'error': str(e)}), 400
 
 
 @bp.route('/aliments/<aliment_id>', methods=['PUT'])
@@ -64,7 +64,7 @@ def create_recipe() -> Union[Response, tuple[Response, int]]:
         recipe = Controller().create_recipe_from_json(request.json)
         return jsonify(recipe)
     except Exception as e:
-        return jsonify(e), 400
+        return jsonify({'error': str(e)}), 400
 
 
 @bp.route('/recipes/<recipe_id>', methods=['PUT'])
