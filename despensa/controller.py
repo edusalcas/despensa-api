@@ -24,7 +24,10 @@ class Controller(metaclass=WeakSingletonMeta):
         return self.__aliments_catalog.create_aliment(name, tags)
 
     def create_aliment_from_json(self, json: dict) -> Aliment:
-        return self.__aliments_catalog.create_aliment_from_json(json)
+        try:
+            return self.__aliments_catalog.create_aliment_from_json(json)
+        except Exception as e:
+            raise e
 
     def insert_aliment_in_pantry(self, name: str) -> List[Aliment]:
         return self.__pantry.add_aliment_to_pantry(name)
@@ -57,7 +60,10 @@ class Controller(metaclass=WeakSingletonMeta):
         return recipe
 
     def create_recipe_from_json(self, json) -> Recipe:
-        return self.__recipes_catalog.create_recipe_from_json(json)
+        try:
+            return self.__recipes_catalog.create_recipe_from_json(json)
+        except Exception as e:
+            raise e
 
     def update_recipe_from_json(self, recipe_id: int, json: dict):
         self.__recipes_catalog.update_recipe_from_json(recipe_id, json)
