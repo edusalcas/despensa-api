@@ -30,7 +30,7 @@ export class AlimentsMainComponent implements OnInit, OnDestroy {
 
   protected hasErrors: boolean = false;
 
-  protected errorMessage: string = 'The food name is already in use';
+  protected errorMessage: string | undefined;
 
   private subFood: Subscription[] = [];
 
@@ -74,15 +74,16 @@ export class AlimentsMainComponent implements OnInit, OnDestroy {
   async validateForm(data: any) {
     try {
       const {db_id, name, tags} = data;
-      const isInsert: boolean = await this.fetchNewFood(new Food(db_id, name, tags));
-      if (isInsert) {
-        this.hasErrors = false;
-        this.subFood?.push(this.retrieveFoodData());
-        this.modalReference?.close();
-      } else {
-        this.hasErrors = true;
-      }
+
+      await this.fetchNewFood(new Food(db_id, name, tags));
+
+      this.hasErrors = false;
+      this.subFood?.push(this.retrieveFoodData());
+      this.modalReference?.close();
+
     } catch (err) {
+      this.hasErrors = true;
+      this.errorMessage = err?.toString();
       console.log(err);
     }
   }
@@ -94,7 +95,7 @@ export class AlimentsMainComponent implements OnInit, OnDestroy {
    * by rejecting the Promise.
    * @param food {Food}
    */
-  fetchNewFood(food: Food): Promise<boolean> {
+  fetchNewFood(food: Food): Promise<Food> {
     food._tags = food._tags ? this.tagsArray : food._tags = [""];
     return new Promise((resolve, reject) => {
       this.subFood.push(this.alimentsService.insertFood(food).subscribe({

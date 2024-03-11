@@ -119,7 +119,6 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
           } else if (!equals) {
             this.ingredientsList[index] = food;
           }
-          console.log(this.ingredientsList.length)
         });
       }
     });
