@@ -6,9 +6,6 @@ import {Subscription} from "rxjs";
 import {AlimentsService} from "../../../../services/aliments_service/aliments.service";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {Recipe} from "../../../../entities/recipe";
-import {Ingredient} from "../../../../entities/ingredient";
-
 
 @Component({
   selector: 'app-add-recipe',
@@ -65,22 +62,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   open() {
     this.modalService.open(this.modal, {centered: true, scrollable: true}).result.then(
-      async result => {
-        try {
-          for (const ingredient of result.ingredients) {
-            const index = this.ingredientsList.findIndex(food => food._name === ingredient.aliment.name);
-            const db_id = index !== -1 ? this.ingredientsList[index]._db_id : await this.getDbId(ingredient).then(result => {
-              if (result) return this.ingredientsList[this.ingredientsList.length - 1]._db_id;
-              return -1;
-            });
-
-            ingredient.aliment.db_id = db_id.toString();
-          }
-
-          result = Recipe.cast(result)
-        } catch (err) {
-          console.error(err);
-        }
+      result => {
         this.confirm.emit(result);
       },
       () => {
@@ -88,28 +70,6 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     );
   }
-
-  private async getDbId(ingredient: { aliment: { name: string; db_id: string; }; }): Promise<boolean> {
-    const food = (Ingredient.cast(ingredient)._aliment);
-    return new Promise<boolean>((resolve, reject) => {
-      this.subs.push(this.alimentsService.insertFood(food).subscribe({
-          next: (data) => {
-            resolve(data);
-          },
-          error: (error) => {
-            reject(error);
-          }
-        }
-      ));
-    }).then((r) => {
-        return new Promise<boolean>((resolve) => {
-          this.subs.push(this.retrieveIngredients())
-          resolve(r);
-        })
-      }
-    );
-  }
-
   get ingredients() {
     return this.form.get('ingredients') as FormArray;
   }

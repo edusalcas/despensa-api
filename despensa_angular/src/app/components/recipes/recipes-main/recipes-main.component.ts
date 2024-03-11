@@ -10,6 +10,8 @@ import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {AddRecipeComponent} from "./add-recipe/add-recipe.component";
 import {AddRecipeService} from "../../../services/modal-service/add-recipe.service";
+import {Ingredient} from '../../../entities/ingredient';
+import {AlimentsService} from "../../../services/aliments_service/aliments.service";
 
 
 /**
@@ -60,6 +62,7 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
   private subs: Subscription[] = [];
 
   constructor(private recipeService: RecipesService,
+              private alimentService: AlimentsService,
               private modalService: AddRecipeService,
               private router: Router
   ) {
@@ -99,22 +102,40 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
   }
 
 
-  showModalAddRecipe() {
-    this.subs.push(this.modalService.openModal(this.entry).subscribe(
-      async value => {
-        await this.recipeService.insertRecipe(value).then(resp => resp.subscribe({
-          next: () => {
-
+  async showModalAddRecipe() {
+    this.subs.push(this.modalService.openModal(this.entry).subscribe({
+      next: async value => {
+        value = Recipe.cast(value);
+        let ingredients: Ingredient[] = [];
+        if (value instanceof Recipe) ingredients = value._ingredients;
+        await this.insertIngredients(ingredients);
+        this.recipeService.insertRecipe(value).subscribe({
+          next: value1 => {
+            this.recipeList?.push(value1);
           },
-          error: (error: any) => {
-            console.error(error);
+          error: err => {
+            console.log(err, err.status);
           }
-
-        })).then(r => {
-          if (r) this.subs.push(this.retriveRecipesFromData())
-        }).catch(error => console.error(error));
-      })
-    )
+        })
+      }
+    }));
   }
 
+  private insertIngredients(ingredients: Ingredient[]) {
+    const promises = ingredients.map(ingredient =>
+      new Promise((resolve, reject) => {
+        this.subs.push(this.alimentService.insertFood(ingredient._aliment).subscribe({
+          next: value1 => {
+            ingredient._aliment = value1;
+            resolve(value1);
+          },
+          error: err => {
+            console.warn(err, err.status);
+            reject(err);
+          }
+        }))
+      })
+    )
+    return Promise.all(promises);
+  }
 }

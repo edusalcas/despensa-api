@@ -19,7 +19,7 @@ export class RecipesService {
 
   constructor(
     private http: HttpClient,
-    private alimentService: AlimentsService
+    private alimentService: AlimentsService,
   ) {
   }
 
@@ -39,12 +39,14 @@ export class RecipesService {
       })));
   }
 
-  async insertRecipe(recipe: unknown): Promise<Observable<boolean>> {
+  insertRecipe(recipe: unknown): Observable<Recipe> {
     if (!(recipe instanceof Recipe)) {
       throw new Error('Invalid argument: recipe must be an instance of Recipe class');
     }
-    console.log(recipe)
-    return this.http.post<boolean>(this.url, recipe, this.httpOptions);
+
+    return this.http.post<Recipe>(this.url, recipe, this.httpOptions).pipe(map(data => {
+      return Recipe.cast(data);
+    }));
   }
 
   updateRecipe(recipe: Recipe): Observable<any> {

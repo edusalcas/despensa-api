@@ -26,12 +26,14 @@ export class AlimentsService {
       })))
   }
 
-  insertFood(food: unknown): Observable<boolean> {
+  insertFood(food: unknown): Observable<Food> {
     if (!(food instanceof Food)) {
       throw new Error('Invalid argument: food must be an instance of Food class');
     }
 
-    return this.http.post<boolean>(this.url, food, this.httpOptions);
+    return this.http.post<Food>(this.url, food, this.httpOptions).pipe(map(data => {
+      return Food.cast(data);
+    }));
   }
 
   updateFood(food: Food): Observable<any> {
