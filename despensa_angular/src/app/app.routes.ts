@@ -6,7 +6,8 @@ export const routes: Routes = [
   {path: 'recipes',
     children: [
       {path: '', loadComponent: () => import('./components/recipes/recipes-main/recipes-main.component').then(m => m.RecipesMainComponent)},
-      { path: 'details/:id' , loadComponent: () => import('./components/recipes/details/details.component').then(m => m.DetailsComponent)}
+      { path: 'details/:id' , loadComponent: () => import('./components/recipes/details/details.component').then(m => m.DetailsComponent)},
+      { path: 'edit/:id' , loadComponent: () => import('./components/recipes/edit-recipe/edit-recipe.component').then(m => m.EditRecipeComponent)}
     ]
   },
   {path: '', redirectTo: '/index', pathMatch: 'full' as const}

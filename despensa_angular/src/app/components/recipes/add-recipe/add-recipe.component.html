@@ -4,7 +4,7 @@
     <button type="button" class="btn-close" aria-label="Close" (click)="mod.dismiss()"></button>
   </div>
   <div class="modal-body">
-    <form id="add-edit-recipe" [formGroup]="form" (submit)="mod.close(form.value)">
+    <form id="add-edit-recipe" [formGroup]="form" (submit)="validateForm($event,form.value,mod)">
       <div class="mb-3">
         <label for="name" class="form-label">Name</label>
         <div class="input-group">
@@ -22,7 +22,7 @@
       </div>
       <div class="mb-3">
         <label for="num_people" class="form-label">Number of people</label>
-        <input type="number" class="form-control" formControlName="num_people" id="num_people" min="1">
+        <input type="number" class="form-control" formControlName="num_people" id="num_people" min="1" required>
       </div>
 
       <div class="mb-3">
@@ -32,21 +32,10 @@
           <div class="mb-3" *ngFor="let ingredient of ingredients.controls; let i = index">
             <label class="form-label">Ingredient {{ i + 1 }}</label>
             <div class="input-group" [formGroupName]="i">
-              <div class="form-control" formGroupName="aliment">
-                <input type="hidden" formControlName="db_id" value="">
-                <ng-select class="d-flex justify-content-center" formControlName="name" [items]="ingredientsList"
-                           bindLabel="_name"
-                           bindValue="_name"
-                           [addTag]="true">
-                </ng-select>
-                <input type="hidden" formControlName="tags" value="">
-              </div>
+              <input class="form-control" type="text" formControlName="aliment" [ngbTypeahead]="searchIngr"
+                     [inputFormatter]="inputFormatIngredient" [resultFormatter]="resultFormatIngredient">
               <input formControlName="quantity" type="number" class="form-control" min="0">
-              <ng-select class="form-control" formControlName="quantity_type" [items]="units"
-                         bindLabel="_name"
-                         bindValue="_name"
-                         [addTag]="true">
-              </ng-select>
+              <input class="form-control" type="text" formControlName="quantity_type" [ngbTypeahead]="searchQuantUnit">
               <button class="btn btn-danger" (click)="removeIngredient(i, $event)">-</button>
             </div>
           </div>

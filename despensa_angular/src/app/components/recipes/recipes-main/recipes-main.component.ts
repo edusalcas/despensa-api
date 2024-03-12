@@ -61,10 +61,8 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
   @ViewChild('modal', {read: ViewContainerRef})
   private entry!: ViewContainerRef;
   private subs: Subscription[] = [];
-  private alimentsList: Food[] = [];
 
   constructor(private recipeService: RecipesService,
-              private alimentService: AlimentsService,
               private modalService: ModalService,
               private router: Router
   ) {
@@ -99,60 +97,15 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
     this.router.navigate(["/recipes/details", indexDb]).catch(err => console.error(err));
   }
 
-
   async showModalAddRecipe() {
     this.subs.push(this.modalService.openModal(this.entry, AddRecipeComponent).subscribe({
-      next: async value => {
+      next: value => {
         value = Recipe.cast(value);
-        let ingredients: Ingredient[] = [];
         if (value instanceof Recipe) {
-          value._tags = value._tags.toString().split(',').map((tag: { trim: () => any; }) => tag.trim());
-          ingredients = value._ingredients;
+          this.recipeList.push(value);
         }
-        await this.aliments;
-        await this.insertIngredients(ingredients);
-        this.recipeService.insertRecipe(value).subscribe({
-          next: value1 => {
-            this.recipeList?.push(value1);
-          },
-          error: err => {
-            console.log(err, err.status);
-          }
-        })
       }
     }));
   }
 
-  private get aliments() {
-    return new Promise((resolve, reject) => {
-      this.subs.push(this.alimentService.getAllFood().subscribe({
-        next: value => {
-          this.alimentsList = value;
-          resolve(value);
-        },
-        error: err => {
-          reject(err);
-        }
-      }))
-    })
-  }
-
-  private async insertIngredients(ingredients: Ingredient[]) {
-    const promises = ingredients.map(ingredient =>
-      new Promise((resolve) => {
-        this.subs.push(this.alimentService.insertFood(ingredient._aliment).subscribe({
-          next: value1 => {
-            ingredient._aliment = value1;
-            resolve(value1);
-          },
-          error: err => {
-            const index = this.alimentsList.findIndex(aliment => aliment._name === ingredient._aliment._name);
-            ingredient._aliment._db_id = this.alimentsList[index]?._db_id;
-            resolve(err);
-          }
-        }))
-      })
-    )
-    return Promise.all(promises);
-  }
 }

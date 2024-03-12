@@ -1,11 +1,23 @@
-import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  OnDestroy,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
-import {NgForOf, NgIf} from "@angular/common";
+import {JsonPipe, NgForOf, NgIf} from "@angular/common";
 import {Food} from "../../../entities/food";
-import {Subscription} from "rxjs";
+import {debounceTime, distinctUntilChanged, merge, Observable, OperatorFunction, Subject, Subscription} from "rxjs";
 import {AlimentsService} from "../../../services/aliments_service/aliments.service";
 import {NgSelectModule} from "@ng-select/ng-select";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
+import {NgbModal, NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
+import {map} from "rxjs/operators";
+import {Recipe} from "../../../entities/recipe";
+import {RecipesService} from "../../../services/recipes_service/recipes.service";
 
 @Component({
   selector: 'app-add-recipe',
@@ -15,7 +27,9 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
     NgForOf,
     NgIf,
     NgSelectModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbTypeahead,
+    JsonPipe
   ],
   templateUrl: './add-recipe.component.html',
   styleUrl: './add-recipe.component.css'
@@ -31,9 +45,10 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   protected form: FormGroup;
   protected units = ["gr", "mL", "L"];
 
-
   constructor(private alimentsService: AlimentsService,
+              private recipeService: RecipesService,
               private modalService: NgbModal,
+              private cdr: ChangeDetectorRef,
               private fb: FormBuilder) {
 
     this.form = this.fb.group({
@@ -62,12 +77,31 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   open() {
     this.modalService.open(this.modal, {centered: true, scrollable: true, backdrop: "static"}).result.then(
       result => {
+        console.log(result);
         this.confirm.emit(result);
       },
       () => {
         this.close.emit();
       }
     );
+  }
+
+  async validateForm(event: any, value: any, form: any) {
+    event.preventDefault();
+    await this.insertNewIngredients(value.ingredients);
+    value = Recipe.cast(value);
+    console.log(value);
+    if (value instanceof Recipe) {
+      value._tags = value._tags.toString().split(',').map((tag: { trim: () => any; }) => tag.trim());
+    }
+    this.recipeService.insertRecipe(value).subscribe({
+      next: value1 => {
+        form.close(value1);
+      },
+      error: err => {
+        console.log(err, err.error);
+      }
+    })
   }
 
   get ingredients() {
@@ -81,11 +115,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   addIngredient(event?: Event) {
     event?.preventDefault();
     const ingredientGroup = this.fb.group({
-      aliment: this.fb.group({
-        db_id: '',
-        name: '',
-        tags: ''
-      }),
+      aliment: '',
       quantity: '',
       quantity_type: ''
     });
@@ -120,7 +150,50 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
             this.ingredientsList[index] = food;
           }
         });
+        this.cdr.detectChanges();
       }
     });
   }
+
+  insertNewIngredients(ingredients: any[]) {
+    let promises = ingredients.map(ingredient => {
+        return new Promise((resolve) => {
+          if (typeof ingredient.aliment === 'string') {
+            this.alimentsService.insertFood(new Food(-1, ingredient.aliment, [])).subscribe({
+              next: value => {
+                ingredient.aliment = value
+                this.ingredientsList.push(value);
+                this.cdr.detectChanges();
+                resolve(value);
+              },
+              error: err => {
+                console.log(err);
+                resolve(err);
+              }
+            })
+          }else {
+            resolve(true);
+          }
+        })
+      }
+    );
+    return Promise.all(promises);
+  }
+
+  searchIngr: OperatorFunction<string, readonly any[]> = (text$: Observable<string>) => {
+    const tratedtext$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+    return merge(tratedtext$).pipe(
+      map((term) => typeof term === "string" ? this.ingredientsList.filter((v) => v._name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10) : []));
+  }
+  inputFormatIngredient = (result: Food) => result._name;
+  resultFormatIngredient = (result: Food) => result._name;
+  searchQuantUnit: OperatorFunction<string, readonly any[]> = (text$: Observable<string>) => {
+    const tratedtext$ = text$.pipe(debounceTime(200), distinctUntilChanged());
+
+    return merge(tratedtext$).pipe(
+      map((term) => this.units.filter((unit) => unit.toLowerCase().includes(<string>term)).slice(0, 10))
+    );
+  };
+
+
 }
