@@ -5,16 +5,13 @@
   </div>
   <div class="modal-body">
     <form id="add-edit-recipe" [formGroup]="form" (submit)="mod.close(form.value)">
-      <div *ngIf="isEditing" class="mb-3">
-        <label for="db_id" class="form-label">DB ID</label>
-        <input type="number" class="form-control" id="db_id">
-      </div>
       <div class="mb-3">
         <label for="name" class="form-label">Name</label>
         <div class="input-group">
           <input type="text" class="form-control position-relative" formControlName="name" id="name"
                  required>
-          <svg *ngIf="form.controls['name'].invalid && (form.controls['name'].dirty || form.controls['name'].touched)" class="svg-invalid"
+          <svg *ngIf="form.controls['name'].invalid && (form.controls['name'].dirty || form.controls['name'].touched)"
+               class="svg-invalid"
                xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
           >
             <path d="M11.001 10h2v5h-2zM11 16h2v2h-2z"></path>
@@ -62,7 +59,7 @@
           <div class="mb-3" *ngFor="let step of steps.controls; let i = index">
             <label class="form-label">Step {{ i + 1 }}</label>
             <div class="input-group">
-              <input type="text" [formControlName]="i"  class="form-control">
+              <input type="text" [formControlName]="i" class="form-control">
               <button class="btn btn-danger" (click)="removeStep(i, $event)">-</button>
             </div>
           </div>

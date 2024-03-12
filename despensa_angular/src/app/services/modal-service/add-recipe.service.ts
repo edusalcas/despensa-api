@@ -1,6 +1,5 @@
 import { ComponentRef, Injectable, Type, ViewContainerRef} from '@angular/core';
 import {Subject} from "rxjs";
-import {AddRecipeComponent} from "../../components/recipes/recipes-main/add-recipe/add-recipe.component";
 
 @Injectable({
   providedIn: 'root'
@@ -13,8 +12,8 @@ export class AddRecipeService {
   constructor() {
   }
 
-  openModal(entry: ViewContainerRef) {
-    this.componentRef = entry.createComponent(AddRecipeComponent);
+  openModal(entry: ViewContainerRef, component: Type<any>) {
+    this.componentRef = entry.createComponent(component);
 
     this.componentRef.instance.close?.subscribe(() => this.closeModal());
     this.componentRef.instance.confirm?.subscribe((data: object) => this.confirm(data));

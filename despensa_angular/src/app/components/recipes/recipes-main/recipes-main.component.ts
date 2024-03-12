@@ -8,11 +8,10 @@ import {
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
-import {AddRecipeComponent} from "./add-recipe/add-recipe.component";
+import {AddRecipeComponent} from "../add-recipe/add-recipe.component";
 import {AddRecipeService} from "../../../services/modal-service/add-recipe.service";
 import {Ingredient} from '../../../entities/ingredient';
 import {AlimentsService} from "../../../services/aliments_service/aliments.service";
-import {response} from "express";
 import {Food} from "../../../entities/food";
 
 
@@ -102,7 +101,7 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
 
 
   async showModalAddRecipe() {
-    this.subs.push(this.modalService.openModal(this.entry).subscribe({
+    this.subs.push(this.modalService.openModal(this.entry, AddRecipeComponent).subscribe({
       next: async value => {
         value = Recipe.cast(value);
         let ingredients: Ingredient[] = [];

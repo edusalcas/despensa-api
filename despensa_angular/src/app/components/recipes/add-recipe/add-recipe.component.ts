@@ -1,9 +1,9 @@
 import {AfterViewInit, Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {NgForOf, NgIf} from "@angular/common";
-import {Food} from "../../../../entities/food";
+import {Food} from "../../../entities/food";
 import {Subscription} from "rxjs";
-import {AlimentsService} from "../../../../services/aliments_service/aliments.service";
+import {AlimentsService} from "../../../services/aliments_service/aliments.service";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 
@@ -22,7 +22,6 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 })
 export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  protected isEditing: boolean;
   protected ingredientsList: Food[] = [];
   protected subs: Subscription[] = [];
   @Output() close = new EventEmitter<any>();
@@ -36,7 +35,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(private alimentsService: AlimentsService,
               private modalService: NgbModal,
               private fb: FormBuilder) {
-    this.isEditing = false;
+
     this.form = this.fb.group({
       name: '',
       num_people: '',
@@ -61,7 +60,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   open() {
-    this.modalService.open(this.modal, {centered: true, scrollable: true}).result.then(
+    this.modalService.open(this.modal, {centered: true, scrollable: true, backdrop: "static"}).result.then(
       result => {
         this.confirm.emit(result);
       },
@@ -70,6 +69,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
       }
     );
   }
+
   get ingredients() {
     return this.form.get('ingredients') as FormArray;
   }
