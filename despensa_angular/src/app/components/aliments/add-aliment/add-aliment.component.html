@@ -1,38 +1,11 @@
-<div class="container-fluid">
-  <div class="text-center">
-    <button type="button" class="btn btn-primary m-2" (click)="openModal(modal)">Add Food</button>
-  </div>
-  <div class="row  justify-content-center">
-    <div class="col-10">
-      <table class="table table-bordered table-hover table-striped">
-        <thead>
-        <tr class="text-center">
-          <th>Name</th>
-          <th>Tags</th>
-        </tr>
-        </thead>
-        <tbody id="food-table-body">
-        <tr *ngFor="let food of foodList;">
-          <td>{{ food.aliment._name }}</td>
-          <td [contentEditable]="food.editable" [ngClass]="{'bg-warning' : food.editable}"
-              (dblclick)="editTags(food.aliment._db_id)"
-              (keydown.enter)="saveData(food.aliment._db_id,$event)">{{ food.aliment._tags }}
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-<ng-template #modal>
-
+<ng-template #modal let-form>
   <div class="modal-header">
     <h5 class="modal-title">Add Food</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+    <button type="button" class="btn-close" aria-label="Close" (click)="form.dismiss()"></button>
   </div>
   <div class="modal-body">
     <div *ngIf="hasErrors" class="alert alert-danger">{{ errorMessage }}</div>
-    <form id="add-food-form" #addFoodForm="ngForm" (submit)="validateForm(addFoodForm.value)">
+    <form id="add-food-form" #addFoodForm="ngForm" (submit)="validateForm($event,form,addFoodForm.value)">
       <div class="mb-3 position-relative">
         <label for="food-name" class="form-label">Name:</label>
         <div class="input-group">
@@ -56,4 +29,3 @@
   </div>
 
 </ng-template>
-

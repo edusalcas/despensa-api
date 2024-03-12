@@ -52,9 +52,12 @@ export class Food {
   }
 
   static cast(aliment: any) {
+    if (!Object.hasOwn(aliment, 'name') || !Object.hasOwn(aliment, 'tags')) {
+      throw new Error('Impossible to cast object to Food');
+    }
     const {db_id, name, tags} = aliment;
-        return new Food(db_id,
-          name,
-          tags);
+    return new Food(db_id,
+      name,
+      tags);
   }
 }

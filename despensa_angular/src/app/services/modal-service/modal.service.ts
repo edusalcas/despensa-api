@@ -4,7 +4,7 @@ import {Subject} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class AddRecipeService {
+export class ModalService {
   private componentRef!: ComponentRef<any>;
   private componentSubscriber!: Subject<object>;
 

@@ -9,7 +9,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {AddRecipeComponent} from "../add-recipe/add-recipe.component";
-import {AddRecipeService} from "../../../services/modal-service/add-recipe.service";
+import {ModalService} from "../../../services/modal-service/modal.service";
 import {Ingredient} from '../../../entities/ingredient';
 import {AlimentsService} from "../../../services/aliments_service/aliments.service";
 import {Food} from "../../../entities/food";
@@ -65,7 +65,7 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
 
   constructor(private recipeService: RecipesService,
               private alimentService: AlimentsService,
-              private modalService: AddRecipeService,
+              private modalService: ModalService,
               private router: Router
   ) {
 
@@ -105,7 +105,7 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
       next: async value => {
         value = Recipe.cast(value);
         let ingredients: Ingredient[] = [];
-        if (value instanceof Recipe){
+        if (value instanceof Recipe) {
           value._tags = value._tags.toString().split(',').map((tag: { trim: () => any; }) => tag.trim());
           ingredients = value._ingredients;
         }
@@ -123,7 +123,7 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
     }));
   }
 
-  private get aliments(){
+  private get aliments() {
     return new Promise((resolve, reject) => {
       this.subs.push(this.alimentService.getAllFood().subscribe({
         next: value => {
