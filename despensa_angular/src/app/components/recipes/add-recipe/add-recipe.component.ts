@@ -11,7 +11,7 @@ import {
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {JsonPipe, NgForOf, NgIf} from "@angular/common";
 import {Food} from "../../../entities/food";
-import {debounceTime, distinctUntilChanged, merge, Observable, OperatorFunction, Subject, Subscription} from "rxjs";
+import {debounceTime, distinctUntilChanged, merge, Observable, OperatorFunction, Subscription} from "rxjs";
 import {AlimentsService} from "../../../services/aliments_service/aliments.service";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {NgbModal, NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
@@ -155,7 +155,16 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
-  insertNewIngredients(ingredients: any[]) {
+  /**
+   * Inserts new ingredients into the ingredients list.
+   * If the ingredient is a string, it creates a new Food object and inserts it into the aliments service.
+   * After the insertion, it pushes the new ingredient into the ingredients list and triggers change detection.
+   * If the ingredient is not a string, it simply resolves the promise.
+   *
+   * @param {any[]} ingredients - The array of ingredients to be inserted.
+   * @returns {Promise} - A promise that resolves when all the ingredients have been processed.
+   */
+  insertNewIngredients(ingredients: any[]): Promise<any> {
     let promises = ingredients.map(ingredient => {
         return new Promise((resolve) => {
           if (typeof ingredient.aliment === 'string') {
@@ -171,7 +180,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
                 resolve(err);
               }
             })
-          }else {
+          } else {
             resolve(true);
           }
         })

@@ -80,15 +80,35 @@ export class AddAlimentComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  /**
+   * Validates the form and submits the new food item.
+   *
+   * This function is responsible for validating the form and submitting the new food item.
+   * It first prevents the default action of the submit event.
+   * Then, it checks if the tags are provided in the form value. If the tags are provided, it sets the tags to an array.
+   * If the tags are not provided, it sets the tags to an empty array.
+   * It then tries to cast the form value to a Food instance.
+   * If the casting is successful, it fetches the new food item from the alimentsService.
+   * If the fetching is successful, it sets the hasErrors property to false and closes the form with the new food item.
+   * If the fetching fails, it sets the hasErrors property to true and sets the errorMessage to the error message.
+   * If the casting is not successful, it sets the errorMessage to 'Unexpected error occurred'.
+   *
+   * @async
+   * @param $event SubmitEvent - The submit event of the form.
+   * @param form any - The form that is being submitted.
+   * @param form_value any - The value of the form.
+   * @throws Will set the errorMessage to the error message if the fetchNewFood function fails.
+   * @throws Will set the errorMessage to 'Unexpected error occurred' if the casting of the form value to a Food instance fails.
+   */
   async validateForm($event: SubmitEvent, form: any, form_value: any) {
     $event.preventDefault();
     form_value.tags = form_value.tags ? this.tagsArray : form_value.tags = [""];
     form_value = Food.cast(form_value);
     if (form_value instanceof Food) {
       try {
-        await this.fetchNewFood(form_value);
+        const newFood = await this.fetchNewFood(form_value);
         this.hasErrors = false;
-        form.close(form_value);
+        form.close(newFood);
       } catch (err) {
         const {error}: any = err;
         this.hasErrors = true;

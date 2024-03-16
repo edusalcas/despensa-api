@@ -27,7 +27,6 @@
 
       <div class="mb-3">
         <label class="form-label">Ingredients</label>
-        <button class="btn btn-success  btn-sm mx-3" (click)="addIngredient($event)">+</button>
         <div class="input-group" formArrayName="ingredients">
           <div class="mb-3" *ngFor="let ingredient of ingredients.controls; let i = index">
             <label class="form-label">Ingredient {{ i + 1 }}</label>
@@ -40,10 +39,10 @@
             </div>
           </div>
         </div>
+        <button class="btn btn-success" (click)="addIngredient($event)">+</button>
       </div>
       <div class="mb-3">
         <label class="form-label">Steps</label>
-        <button class="btn btn-success btn-sm mx-3" (click)="addStep($event)">+</button>
         <div class="input-group" formArrayName="steps">
           <div class="mb-3" *ngFor="let step of steps.controls; let i = index">
             <label class="form-label">Step {{ i + 1 }}</label>
@@ -53,6 +52,7 @@
             </div>
           </div>
         </div>
+        <button class="btn btn-success" (click)="addStep($event)">+</button>
       </div>
       <div class="mb-3">
         <label for="category" class="form-label">Category</label>
