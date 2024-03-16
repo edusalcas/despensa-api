@@ -1,9 +1,45 @@
-<div class="container-fluid" >
+<div class="container-fluid">
   <div class="row justify-content-center align-items-center">
     <div class="col col-sm-8">
-      <form>
-
-
+      <form #editForm [formGroup]="form">
+        <div class="input-group">
+          <label for="db_id">ID:</label>
+          <input type="text" id="db_id" readonly [value]="recipe?._db_id">
+        </div>
+        <div class="input-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" [value]="recipe?._name">
+        </div>
+        <div class="input-group">
+          <label for="num_people">Number of people</label>
+          <input type="number" min="1" id="num_people" [valueAsNumber]="recipe?._num_people">
+        </div>
+        <div class="input-group">
+          <label for="category">Category</label>
+          <input type="text" id="category" [value]="recipe?._category">
+          <div class="input-group">
+            <label for="ingredients">Ingredients</label>
+            <div class="table-striped" *ngFor="let ingr of recipe?._ingredients">
+              <input type="text" id="ingredients" [value]="ingr._aliment._name">
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="steps">Steps</label>
+            <div class="table-striped" *ngFor="let step of recipe?._steps">
+              <input type="text" id="steps" [value]="step">
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="time">Time</label>
+            <input type="number" id="time" min="0" [valueAsNumber]="recipe?._time">
+          </div>
+          <div class="input-group">
+            <label for="tags">Tags</label>
+            <div class="table-striped" *ngFor="let tag of recipe?._tags">
+              <input type="text" id="tags" [value]="tag">
+            </div>
+          </div>
+        </div>
       </form>
     </div>
   </div>

@@ -1,6 +1,7 @@
 <main class="container-fluid">
   <div class="row d-flex justify-content-center align-content-center">
     <div class="col col-lg-6 col-sm-8">
+      <button class="btn btn-light" routerLink="/recipes/edit/{{recipe?._db_id}}">Edit</button>
       <div *ngIf="recipe" class="card card-custom mt-5 mb-5">
         <img class="card-img-top" id="image" ngSrc="#" alt="Image" height="100" width="100">
         <div class="card-body">
