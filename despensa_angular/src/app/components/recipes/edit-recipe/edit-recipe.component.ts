@@ -42,7 +42,7 @@ export class EditRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   @Output() confirm = new EventEmitter<any>();
   @ViewChild('modal') private modal: any;
   protected form: FormGroup;
-  protected units = ["gr", "mL", "L"];
+  protected units = ["gr", "mL", "L", 'units'];
   public data: Recipe | undefined;
 
   constructor(private alimentsService: AlimentsService,

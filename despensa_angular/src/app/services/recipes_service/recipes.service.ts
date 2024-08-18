@@ -50,7 +50,9 @@ export class RecipesService {
   }
 
   updateRecipe(recipe: Recipe): Observable<any> {
-    return this.http.put(this.url.concat(`/${recipe._db_id}`), recipe, this.httpOptions);
+    return this.http.put(this.url.concat(`/${recipe._db_id}`), recipe, this.httpOptions).pipe(map(data => {
+      return data;
+    }));
   }
 
 }

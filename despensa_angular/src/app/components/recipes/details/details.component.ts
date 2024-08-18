@@ -90,13 +90,22 @@ export class DetailsComponent implements OnInit, OnDestroy{
         next: value => {
           value = Recipe.cast(value);
           if (value instanceof Recipe) {
-            console.log(value)
-            this.recipe = Recipe.cast(value)
+            let new_recipe = Recipe.cast(value)
+            new_recipe._db_id = this.recipe!._db_id
+            this.recipe = new_recipe
           }
+          console.log(this.recipe);
+          this.recipeService.updateRecipe(this.recipe!).subscribe({
+            next: value1 => {
+              console.log(value1);
+            },
+            error: err => {
+              console.log(err, err.error);
+            }
+          })
         }
       }));
     }
-    
   }
 
 }
