@@ -112,6 +112,28 @@ export class AlimentsMainComponent implements OnInit, OnDestroy {
     });
   }
 
+  async deleteFood(food_id: number) {
+    //TODO: Check if aliment is in any recipe before delete it
+    this.alimentsService.deleteFood(food_id).subscribe({
+      next: value1 => {
+        console.log(value1);
+      },
+      error: err => {
+        console.log(err, err.error);
+      }
+    });
+    console.log(food_id)
+    for (var i = 0; i < this.foodList.length; i++) {
+      console.log(this.foodList[i])
+      if (this.foodList[i].aliment._db_id == food_id) {
+        const deleted = this.foodList.splice(i, i);
+        console.log(deleted);
+        console.log(this.foodList);
+        break;
+      }
+    }
+  }
+
   /**
    * Asynchronously saves data.
    *

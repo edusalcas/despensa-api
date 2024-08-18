@@ -40,5 +40,9 @@ export class AlimentsService {
     return this.http.put(this.url.concat(`/${food._db_id}`), food, this.httpOptions);
   }
 
+  deleteFood(food_id: Number): Observable<any> {
+    return this.http.delete(this.url.concat(`/${food_id}`), this.httpOptions);
+  }
+
 
 }

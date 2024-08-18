@@ -9,7 +9,8 @@
         <tr class="text-center">
           <th>Name</th>
           <th>Tags</th>
-        </tr>
+          <th></th>
+        </tr> 
         </thead>
         <tbody id="food-table-body">
         <tr *ngFor="let food of foodList;">
@@ -17,6 +18,9 @@
           <td [contentEditable]="food.editable" [ngClass]="{'bg-warning' : food.editable}"
               (dblclick)="editTags(food.aliment._db_id)"
               (keydown.enter)="saveData(food.aliment._db_id,$event)">{{ food.aliment._tags }}
+          </td>
+          <td>
+            <button class="button" (click)="deleteFood(food.aliment._db_id)">Delete</button>
           </td>
         </tr>
         </tbody>
