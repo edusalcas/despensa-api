@@ -1,46 +1,75 @@
-<div class="container-fluid">
-  <div class="row justify-content-center align-items-center">
-    <div class="col col-sm-8">
-      <form #editForm [formGroup]="form">
-        <div class="input-group">
-          <label for="db_id">ID:</label>
-          <input type="text" id="db_id" readonly [value]="recipe?._db_id">
-        </div>
-        <div class="input-group">
-          <label for="name">Name</label>
-          <input type="text" id="name" [value]="recipe?._name">
-        </div>
-        <div class="input-group">
-          <label for="num_people">Number of people</label>
-          <input type="number" min="1" id="num_people" [valueAsNumber]="recipe?._num_people">
-        </div>
-        <div class="input-group">
-          <label for="category">Category</label>
-          <input type="text" id="category" [value]="recipe?._category">
-          <div class="input-group">
-            <label for="ingredients">Ingredients</label>
-            <div class="table-striped" *ngFor="let ingr of recipe?._ingredients">
-              <input type="text" id="ingredients" [value]="ingr._aliment._name">
-            </div>
-          </div>
-          <div class="input-group">
-            <label for="steps">Steps</label>
-            <div class="table-striped" *ngFor="let step of recipe?._steps">
-              <input type="text" id="steps" [value]="step">
-            </div>
-          </div>
-          <div class="input-group">
-            <label for="time">Time</label>
-            <input type="number" id="time" min="0" [valueAsNumber]="recipe?._time">
-          </div>
-          <div class="input-group">
-            <label for="tags">Tags</label>
-            <div class="table-striped" *ngFor="let tag of recipe?._tags">
-              <input type="text" id="tags" [value]="tag">
-            </div>
-          </div>
-        </div>
-      </form>
-    </div>
+<ng-template #modal let-mod>
+  <div class="modal-header">
+    <h5 class="modal-title">Add Recipe</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="mod.dismiss()"></button>
   </div>
-</div>
+  <div class="modal-body">
+    <form id="add-edit-recipe" [formGroup]="form" (submit)="validateForm($event,form.value,mod)">
+      <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <div class="input-group">
+          <input type="text" class="form-control position-relative" formControlName="name" id="name"
+                 required>
+          <svg *ngIf="form.controls['name'].invalid && (form.controls['name'].dirty || form.controls['name'].touched)"
+               class="svg-invalid"
+               xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+          >
+            <path d="M11.001 10h2v5h-2zM11 16h2v2h-2z"></path>
+            <path
+              d="M13.768 4.2C13.42 3.545 12.742 3.138 12 3.138s-1.42.407-1.768 1.063L2.894 18.064a1.986 1.986 0 0 0 .054 1.968A1.984 1.984 0 0 0 4.661 21h14.678c.708 0 1.349-.362 1.714-.968a1.989 1.989 0 0 0 .054-1.968L13.768 4.2zM4.661 19 12 5.137 19.344 19H4.661z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="num_people" class="form-label">Number of people</label>
+        <input type="number" class="form-control" formControlName="num_people" id="num_people" min="1" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Ingredients</label>
+        <div class="input-group" formArrayName="ingredients">
+          <div class="mb-3" *ngFor="let ingredient of ingredients.controls; let i = index">
+            <label class="form-label">Ingredient {{ i + 1 }}</label>
+            <div class="input-group" [formGroupName]="i">
+              <input class="form-control" type="text" formControlName="aliment" [ngbTypeahead]="searchIngr"
+                     [inputFormatter]="inputFormatIngredient" [resultFormatter]="resultFormatIngredient">
+              <input formControlName="quantity" type="number" class="form-control" min="0">
+              <input class="form-control" type="text" formControlName="quantity_type" [ngbTypeahead]="searchQuantUnit">
+              <button class="btn btn-danger" (click)="removeIngredient(i, $event)">-</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-success" (click)="addIngredient($event)">+</button>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Steps</label>
+        <div class="input-group" formArrayName="steps">
+          <div class="mb-3" *ngFor="let step of steps.controls; let i = index">
+            <label class="form-label">Step {{ i + 1 }}</label>
+            <div class="input-group">
+              <input type="text" [formControlName]="i" class="form-control">
+              <button class="btn btn-danger" (click)="removeStep(i, $event)">-</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn btn-success" (click)="addStep($event)">+</button>
+      </div>
+      <div class="mb-3">
+        <label for="category" class="form-label">Category</label>
+        <input type="text" class="form-control" formControlName="category" id="category">
+      </div>
+      <div class="mb-3">
+        <label for="tags" class="form-label">Tags</label>
+        <input type="text" class="form-control" formControlName="tags" id="tags">
+      </div>
+      <div class="mb-3">
+        <label for="time" class="form-label">Time</label>
+        <div class="input-group">
+          <input type="number" class="form-control" id="time" formControlName="time" min="0" required>
+          <span class="input-group-text">mins</span>
+        </div>
+      </div>
+      <button type="submit" [disabled]="!form.valid" class="btn btn-primary">Save</button>
+    </form>
+  </div>
+</ng-template>

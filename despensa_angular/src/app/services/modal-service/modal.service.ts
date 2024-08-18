@@ -12,8 +12,12 @@ export class ModalService {
   constructor() {
   }
 
-  openModal(entry: ViewContainerRef, component: Type<any>) {
+  openModal(entry: ViewContainerRef, component: Type<any>, data?: any) {
     this.componentRef = entry.createComponent(component);
+
+    if (data) {
+      this.componentRef.instance['data'] = data;
+    }
 
     this.componentRef.instance.close?.subscribe(() => this.closeModal());
     this.componentRef.instance.confirm?.subscribe((data: object) => this.confirm(data));

@@ -1,11 +1,20 @@
 <main class="container-fluid">
   <div class="row d-flex justify-content-center align-content-center">
     <div class="col col-lg-6 col-sm-8">
-      <button class="btn btn-light" routerLink="/recipes/edit/{{recipe?._db_id}}">Edit</button>
+      <div *ngIf="recipe"
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">{{ recipe._name }}</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group mr-2">
+            <button class="btn btn-sm btn-outline-secondary" (click)="showModalEditRecipe()">Edit New</button>
+          </div>
+        </div>
+      </div>
+      <!-- <button class="btn btn-sm btn-outline-secondary" routerLink="/recipes/edit/{{recipe?._db_id}}">Edit</button> -->
       <div *ngIf="recipe" class="card card-custom mt-5 mb-5">
         <img class="card-img-top" id="image" ngSrc="#" alt="Image" height="100" width="100">
         <div class="card-body">
-          <h5 class="card-title" id="name">{{ recipe._name }}</h5>
+          <!-- <h5 class="card-title" id="name">{{ recipe._name }}</h5> -->
           <h6 class="card-subtitle mb-2 text-muted" id="category">{{ recipe._category }}</h6>
           <div ngbAccordion>
             <div ngbAccordionItem class="accordion-custom">
@@ -55,10 +64,12 @@
           <ul class="list-group list-group-flush">
             <li class="list-group-item">Number of people: <span id="num_people">{{ recipe._num_people }}</span></li>
             <li class="list-group-item">Tags: <span id="tags">{{ recipe._tags }}</span></li>
-            <li class="list-group-item">Time: <span id="time">{{ recipe._time }}</span></li>
+            <li class="list-group-item">Time: <span id="time">{{ recipe._time }} min</span></li>
           </ul>
         </div>
       </div>
     </div>
   </div>
 </main>
+
+<div #modal></div>

@@ -62,12 +62,11 @@ export class RecipesMainComponent implements OnInit, OnDestroy {
   private entry!: ViewContainerRef;
   private subs: Subscription[] = [];
 
-  constructor(private recipeService: RecipesService,
-              private modalService: ModalService,
-              private router: Router
-  ) {
-
-  }
+  constructor(
+    private recipeService: RecipesService,
+    private modalService: ModalService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     this.subs.push(this.retriveRecipesFromData());

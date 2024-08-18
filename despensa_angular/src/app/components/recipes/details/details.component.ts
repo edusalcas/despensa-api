@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {HeaderComponent} from "../../header/header.component";
 import {FooterComponent} from "../../footer/footer.component";
 import {NgClass, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
@@ -14,6 +14,9 @@ import {
   NgbAccordionItem, NgbAccordionToggle, NgbCollapse,
   NgbDropdownAnchor
 } from "@ng-bootstrap/ng-bootstrap";
+
+import {EditRecipeComponent} from "../edit-recipe/edit-recipe.component";
+import {ModalService} from "../../../services/modal-service/modal.service";
 
 @Component({
   selector: 'app-details',
@@ -33,7 +36,9 @@ import {
     NgbCollapse,
     NgClass,
     NgbAccordionToggle,
-    RouterLink
+    RouterLink,
+
+    EditRecipeComponent,
   ],
   templateUrl: './details.component.html',
   styleUrl: './details.component.css'
@@ -45,10 +50,15 @@ export class DetailsComponent implements OnInit, OnDestroy{
   protected isPanelIngOpen: boolean = false;
   protected isPanelStpsOpen: boolean = false;
 
-  constructor(private router:ActivatedRoute,
-              private recipeService: RecipesService,
-              ) {
-  }
+  @ViewChild('modal', {read: ViewContainerRef})
+  private entry!: ViewContainerRef;
+  private subs: Subscription[] = [];
+  
+  constructor(
+    private router:ActivatedRoute,
+    private recipeService: RecipesService,  
+    private modalService: ModalService,
+  ) {}
 
   ngOnInit() {
     let id = -1;
@@ -60,8 +70,6 @@ export class DetailsComponent implements OnInit, OnDestroy{
 
     this.subRecServ = this.recipeService.get(id).subscribe({
       next: data => {
-        const time = data._time;
-        data._time = time ? (time.toString().endsWith(" min") ? time : time.toString().concat(" min")) : "0 min";
         this.recipe = data;
       },
       error: err => {
@@ -73,6 +81,22 @@ export class DetailsComponent implements OnInit, OnDestroy{
   ngOnDestroy() {
     this.subRouter?.unsubscribe();
     this.subRecServ?.unsubscribe();
+  }
+
+  async showModalEditRecipe() {
+    console.log(this.recipe)
+    if (this.recipe) {
+      this.subs.push(this.modalService.openModal(this.entry, EditRecipeComponent, this.recipe).subscribe({
+        next: value => {
+          value = Recipe.cast(value);
+          if (value instanceof Recipe) {
+            console.log(value)
+            this.recipe = Recipe.cast(value)
+          }
+        }
+      }));
+    }
+    
   }
 
 }
