@@ -3,7 +3,7 @@ import {HeaderComponent} from "../../header/header.component";
 import {FooterComponent} from "../../footer/footer.component";
 import {NgClass, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {Recipe} from "../../../entities/recipe";
-import {ActivatedRoute, RouterLink} from "@angular/router";
+import {ActivatedRoute, RouterLink, Router} from "@angular/router";
 import {RecipesService} from "../../../services/recipes_service/recipes.service";
 import {Subscription} from "rxjs";
 import {
@@ -55,14 +55,15 @@ export class DetailsComponent implements OnInit, OnDestroy{
   private subs: Subscription[] = [];
   
   constructor(
-    private router:ActivatedRoute,
+    private activatedRouter: ActivatedRoute,
+    private router: Router,
     private recipeService: RecipesService,  
     private modalService: ModalService,
   ) {}
 
   ngOnInit() {
     let id = -1;
-    this.subRouter = this.router.params.subscribe({
+    this.subRouter = this.activatedRouter.params.subscribe({
       next: value => {
         id = value["id"];
       }
@@ -106,6 +107,20 @@ export class DetailsComponent implements OnInit, OnDestroy{
         }
       }));
     }
+  }
+
+  async deleteRecipe() {
+    if (this.recipe) {
+      this.recipeService.deleteRecipe(this.recipe!._db_id).subscribe({
+        next: value1 => {
+          console.log(value1);
+        },
+        error: err => {
+          console.log(err, err.error);
+        }
+      });
+    }
+    this.router.navigate(["/index"]).catch(err => console.error(err));
   }
 
 }

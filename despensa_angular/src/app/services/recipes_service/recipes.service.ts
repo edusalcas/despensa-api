@@ -5,6 +5,7 @@ import {Observable, Subscription} from "rxjs";
 import {Recipe} from "../../entities/recipe";
 import {AlimentsService} from "../aliments_service/aliments.service";
 import {error} from "@angular/compiler-cli/src/transformers/util";
+import { NumericLiteral } from 'typescript';
 
 @Injectable({
   providedIn: 'root'
@@ -51,6 +52,12 @@ export class RecipesService {
 
   updateRecipe(recipe: Recipe): Observable<any> {
     return this.http.put(this.url.concat(`/${recipe._db_id}`), recipe, this.httpOptions).pipe(map(data => {
+      return data;
+    }));
+  }
+
+  deleteRecipe(recipe_id: Number): Observable<any> {
+    return this.http.delete(this.url.concat(`/${recipe_id}`), this.httpOptions).pipe(map(data => {
       return data;
     }));
   }
