@@ -9,9 +9,9 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {AddRecipeComponent} from "../add-recipe/add-recipe.component";
-import {ModalService} from "../../../services/modal-service/modal.service";
+import {ModalService} from "../../../services/modal.service";
 import {Ingredient} from '../../../entities/ingredient';
-import {AlimentsService} from "../../../services/aliments_service/aliments.service";
+import {AlimentsService} from "../../../services/aliments.service";
 import {Food} from "../../../entities/food";
 
 

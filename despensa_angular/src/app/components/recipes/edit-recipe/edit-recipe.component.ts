@@ -12,7 +12,7 @@ import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} fro
 import {JsonPipe, NgForOf, NgIf} from "@angular/common";
 import {Food} from "../../../entities/food";
 import {debounceTime, distinctUntilChanged, merge, Observable, OperatorFunction, Subscription} from "rxjs";
-import {AlimentsService} from "../../../services/aliments_service/aliments.service";
+import {AlimentsService} from "../../../services/aliments.service";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {NgbModal, NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
 import {map} from "rxjs/operators";
@@ -42,7 +42,7 @@ export class EditRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   @Output() confirm = new EventEmitter<any>();
   @ViewChild('modal') private modal: any;
   protected form: FormGroup;
-  protected units = ["gr", "mL", "L", 'units'];
+  protected units = ["gr", "mL", "L", "units", "pinch"];
   public data: Recipe | undefined;
 
   constructor(private alimentsService: AlimentsService,

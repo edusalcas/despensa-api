@@ -12,7 +12,7 @@ import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} fro
 import {JsonPipe, NgForOf, NgIf} from "@angular/common";
 import {Food} from "../../../entities/food";
 import {debounceTime, distinctUntilChanged, merge, Observable, OperatorFunction, Subscription} from "rxjs";
-import {AlimentsService} from "../../../services/aliments_service/aliments.service";
+import {AlimentsService} from "../../../services/aliments.service";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {NgbModal, NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
 import {map} from "rxjs/operators";
@@ -43,8 +43,8 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('modal')
   private modal: any;
   protected form: FormGroup;
-  protected units = ["gr", "mL", "L"];
-
+  protected units = ["gr", "mL", "L", "units", "pinch"];
+  
   constructor(private alimentsService: AlimentsService,
               private recipeService: RecipesService,
               private modalService: NgbModal,

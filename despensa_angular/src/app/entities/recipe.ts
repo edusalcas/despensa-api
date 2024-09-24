@@ -102,7 +102,7 @@ export class Recipe {
   static cast(data: any) {
     let {db_id, name, num_people, ingredients, steps, category, tags, time} = data;
     db_id = db_id ? db_id : 0;
-    ingredients = this.castAsArrayIngredients(ingredients);
+    ingredients = Ingredient.castAsArrayIngredients(ingredients);
     return new Recipe(db_id,
       name,
       num_people,
@@ -113,9 +113,4 @@ export class Recipe {
       time);
   }
 
-  private static castAsArrayIngredients(ingredients: any[]) {
-    return ingredients.map(ingredient => {
-      return Ingredient.cast(ingredient);
-    });
-  }
 }

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
-import {Food} from "../../entities/food";
+import {Food} from "../entities/food";
 import {map, Observable} from "rxjs";
 
 @Injectable({
@@ -26,6 +26,12 @@ export class AlimentsService {
       })))
   }
 
+  getFood(food_id: Number): Observable<Food> {
+    return this.http.get(this.url.concat(`/${food_id}`), this.httpOptions).pipe(map(data => {
+      return Food.cast(data);
+    }));
+  }
+
   insertFood(food: unknown): Observable<Food> {
     if (!(food instanceof Food)) {
       throw new Error('Invalid argument: food must be an instance of Food class');
@@ -43,6 +49,4 @@ export class AlimentsService {
   deleteFood(food_id: Number): Observable<any> {
     return this.http.delete(this.url.concat(`/${food_id}`), this.httpOptions);
   }
-
-
 }

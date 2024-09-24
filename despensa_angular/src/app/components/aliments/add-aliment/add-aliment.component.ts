@@ -4,7 +4,7 @@ import {NgIf} from "@angular/common";
 import {Subscription} from "rxjs";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {Food} from "../../../entities/food";
-import {AlimentsService} from "../../../services/aliments_service/aliments.service";
+import {AlimentsService} from "../../../services/aliments.service";
 
 @Component({
   selector: 'app-add-aliment',

@@ -3,7 +3,7 @@ import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {map} from "rxjs/operators";
 import {Observable, Subscription} from "rxjs";
 import {Recipe} from "../../entities/recipe";
-import {AlimentsService} from "../aliments_service/aliments.service";
+import {AlimentsService} from "../aliments.service";
 import {error} from "@angular/compiler-cli/src/transformers/util";
 import { NumericLiteral } from 'typescript';
 

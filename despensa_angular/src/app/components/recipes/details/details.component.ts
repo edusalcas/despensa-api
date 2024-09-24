@@ -16,7 +16,7 @@ import {
 } from "@ng-bootstrap/ng-bootstrap";
 
 import {EditRecipeComponent} from "../edit-recipe/edit-recipe.component";
-import {ModalService} from "../../../services/modal-service/modal.service";
+import {ModalService} from "../../../services/modal.service";
 
 @Component({
   selector: 'app-details',

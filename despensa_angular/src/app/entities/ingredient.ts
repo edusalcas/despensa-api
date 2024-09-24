@@ -71,4 +71,10 @@ export class Ingredient {
 
     return new Ingredient(aliment, quantity, quantity_type, optional, db_id);
   }
+
+  static castAsArrayIngredients(ingredients: any[]) {
+    return ingredients.map(ingredient => {
+      return this.cast(ingredient);
+    });
+  }
 }

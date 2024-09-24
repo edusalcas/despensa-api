@@ -1,11 +1,11 @@
 import {Component, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
-import {AlimentsService} from "../../../services/aliments_service/aliments.service";
+import {AlimentsService} from "../../../services/aliments.service";
 import {FormsModule} from "@angular/forms";
 import {Food} from "../../../entities/food";
 import {NgClass, NgForOf, NgIf} from "@angular/common";
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
 import {Subscription} from "rxjs";
-import {ModalService} from "../../../services/modal-service/modal.service";
+import {ModalService} from "../../../services/modal.service";
 import {AddAlimentComponent} from "../add-aliment/add-aliment.component";
 
 @Component({
