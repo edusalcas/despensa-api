@@ -32,10 +32,10 @@ export class ModalService {
     this.componentRef.destroy();
   }
 
- confirm(data: object) {
-  if (this.componentSubscriber) {
-    this.componentSubscriber.next(data);
+  confirm(data: object) {
+    if (this.componentSubscriber) {
+      this.componentSubscriber.next(data);
+    }
+    this.closeModal();
   }
-  this.closeModal();
-}
 }
