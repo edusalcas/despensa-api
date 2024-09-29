@@ -85,7 +85,6 @@ export class DetailsComponent implements OnInit, OnDestroy{
   }
 
   async showModalEditRecipe() {
-    console.log(this.recipe)
     if (this.recipe) {
       this.subs.push(this.modalService.openModal(this.entry, EditRecipeComponent, this.recipe).subscribe({
         next: value => {
@@ -95,7 +94,6 @@ export class DetailsComponent implements OnInit, OnDestroy{
             new_recipe._db_id = this.recipe!._db_id
             this.recipe = new_recipe
           }
-          console.log(this.recipe);
           this.recipeService.updateRecipe(this.recipe!).subscribe({
             next: value1 => {
               console.log(value1);

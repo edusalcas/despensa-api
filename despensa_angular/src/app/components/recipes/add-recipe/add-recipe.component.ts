@@ -77,7 +77,6 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   open() {
     this.modalService.open(this.modal, {centered: true, scrollable: true, backdrop: "static"}).result.then(
       result => {
-        console.log(result);
         this.confirm.emit(result);
       },
       () => {
@@ -90,7 +89,6 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
     event.preventDefault();
     await this.insertNewIngredients(value.ingredients);
     value = Recipe.cast(value);
-    console.log(value);
     if (value instanceof Recipe) {
       value._tags = value._tags.toString().split(',').map((tag: { trim: () => any; }) => tag.trim());
     }

@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {map} from "rxjs/operators";
 import {Observable, Subscription} from "rxjs";
-import {Recipe} from "../../entities/recipe";
-import {AlimentsService} from "../aliments.service";
+import {Recipe} from "../entities/recipe";
+import {AlimentsService} from "./aliments.service";
 import {error} from "@angular/compiler-cli/src/transformers/util";
 import { NumericLiteral } from 'typescript';
 
@@ -40,11 +40,7 @@ export class RecipesService {
       })));
   }
 
-  insertRecipe(recipe: unknown): Observable<Recipe> {
-    if (!(recipe instanceof Recipe)) {
-      throw new Error('Invalid argument: recipe must be an instance of Recipe class');
-    }
-
+  insertRecipe(recipe: Recipe): Observable<Recipe> {
     return this.http.post<Recipe>(this.url, recipe, this.httpOptions).pipe(map(data => {
       return Recipe.cast(data);
     }));

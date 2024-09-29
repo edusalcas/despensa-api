@@ -32,7 +32,7 @@ export class AlimentsService {
     }));
   }
 
-  insertFood(food: unknown): Observable<Food> {
+  insertFood(food: Food): Observable<Food> {
     if (!(food instanceof Food)) {
       throw new Error('Invalid argument: food must be an instance of Food class');
     }

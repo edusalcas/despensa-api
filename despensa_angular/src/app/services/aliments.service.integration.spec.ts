@@ -2,8 +2,9 @@ import { TestBed } from '@angular/core/testing';
 import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { AlimentsService } from './aliments.service';
 import { Food } from '../entities/food';
+import { firstValueFrom } from 'rxjs';
 
-fdescribe('AlimentsService Integration', () => {
+describe('AlimentsService Integration', () => {
   let service: AlimentsService;
   const apiUrl = 'http://localhost:5000/rest/aliments'; // URL de la API real
 
@@ -19,7 +20,6 @@ fdescribe('AlimentsService Integration', () => {
   it('should fetch all food from the API', (done: DoneFn) => {
     service.getAllFood().subscribe({
       next: (foods) => {
-        console.log(foods.map(food => {return food._name}));
         expect(foods.length).toBeGreaterThan(0); // Verifica que al menos haya un alimento
         expect(foods[0]._name).toBeTruthy(); // Verifica que el primer alimento tenga nombre
         done();
@@ -39,7 +39,6 @@ fdescribe('AlimentsService Integration', () => {
     const db_id = 2;
     service.getFood(db_id).subscribe({
         next: (food) => {
-            console.log(food._name);
             expect(food._db_id).toBe(db_id)
             done();
         },
@@ -54,94 +53,59 @@ fdescribe('AlimentsService Integration', () => {
     })
   });
 
-  fit('should fail for not existing food', (done: DoneFn) => {
+  it('should fail for not existing food', (done: DoneFn) => {
     const db_id = 99;
     service.getFood(db_id).subscribe({
         next: (food) => {
             fail(`Should fail, food should be deleted, but got ${food}`);
+            done();
         },
         error: (error) => {
-            done(); //TODO: Manejar el error con más precisión
+          done(); //TODO: Manejar el error con más precisión
         }
     })
   });
 
-  it('should delete a food by id from the API', (done: DoneFn) => {
-    const db_id = 3;
-    service.deleteFood(db_id).subscribe({
-      next: (response) => {
-        expect(response).toBeTruthy(); // Verifica que la respuesta sea positiva
-        service.getFood(db_id).subscribe({
-            next: (food) => {
-                fail(`Should fail, food should be deleted, but got ${food}`);
-            },
-            error: (error) => {}
-        })
-        done();
-      },
-      error: (error) => {
-        if (error instanceof HttpErrorResponse) {
-          fail(`Delete failed with error: ${error.message}`);
-        } else {
-          fail(`Unknown error: ${error}`);
-        }
-        done();
-      }
-    });
+
+  it('should insert a food, verify it exists, and delete it', async () => {
+    const testFood = new Food(0, 'Test Food', ['Tag1', 'Tag2']);
+    // Paso 1: Insertar el alimento
+    const insertedFood = await firstValueFrom(service.insertFood(testFood));
+    expect(insertedFood._name).toBe(testFood._name.toLowerCase());
+
+    // Paso 2: Verificar que el alimento existe
+    const foods = await firstValueFrom(service.getAllFood());
+    const foundFood = foods.find(food => food._db_id === insertedFood._db_id);
+    expect(foundFood).toBeTruthy(); // Verifica que el alimento fue encontrado
+    expect(foundFood?._name).toBe(testFood._name.toLowerCase()); // Verifica que el nombre coincide
+
+    // Paso 3: Borrar el alimento
+    await firstValueFrom(service.deleteFood(insertedFood._db_id));
+
+    // Paso 4: Verificar que fue eliminado
+    const foodsAfterDelete = await firstValueFrom(service.getAllFood());
+    const foodStillExists = foodsAfterDelete.find(food => food._db_id === insertedFood._db_id);
+    expect(foodStillExists).toBeUndefined(); // Verifica que el alimento ya no existe
   });
 
 
-  it('should insert a food into the API', (done: DoneFn) => {
-    const newFood = new Food(0, 'Integration Test Food', ['Test']);
-    
-    service.insertFood(newFood).subscribe({
-      next: (response) => {
-        expect(response._name).toBe('Integration Test Food'); // Verifica el nombre del alimento insertado
-        done();
-      },
-      error: (error) => {
-        if (error instanceof HttpErrorResponse) {
-          fail(`Insert failed with error: ${error.message}`);
-        } else {
-          fail(`Unknown error: ${error}`);
-        }
-        done();
-      }
-    });
-  });
+  it('should insert a food, update, and delete it', async () => {
+    const testFood = new Food(0, 'Test Food', ['Tag1', 'Tag2']);
+    // Paso 1: Insertar el alimento
+    const insertedFood = await firstValueFrom(service.insertFood(testFood));
+    expect(insertedFood._name).toBe(testFood._name.toLowerCase());
 
-  it('should update a food in the API', (done: DoneFn) => {
-    const updatedFood = new Food(1, 'Updated Food', ['Test']);
+    // Paso 2: Verificar que el alimento existe
+    insertedFood._name = 'Updated Food'
+    insertedFood._tags = ['Tag1', 'Tag3']
+    const result = await firstValueFrom(service.updateFood(insertedFood));
+    expect(result).toBeTruthy();
 
-    service.updateFood(updatedFood).subscribe({
-      next: (response) => {
-        expect(response).toBeTruthy(); // Verifica que la respuesta sea positiva
-        done();
-      },
-      error: (error) => {
-        if (error instanceof HttpErrorResponse) {
-          fail(`Update failed with error: ${error.message}`);
-        } else {
-          fail(`Unknown error: ${error}`);
-        }
-        done();
-      }
-    });
-  });
+    const updatedFood = await firstValueFrom(service.getFood(insertedFood._db_id));
+    expect(updatedFood._name).toBe('Updated Food'.toLowerCase()); // Verifica que el nombre coincide
+    expect(updatedFood._tags).toEqual(['Tag1'.toLowerCase(), 'Tag3'.toLowerCase()]); // Verifica que el nombre coincide
 
-  it('should handle error on invalid insert', (done: DoneFn) => {
-    const invalidFood = { name: 'Invalid Food', tags: [] }; // No es instancia de Food
-
-    // Esto lanza un error sin hacer la solicitud HTTP real
-    try {
-      service.insertFood(invalidFood).subscribe();
-    } catch (error) {
-      if (error instanceof Error) {
-        expect(error.message).toBe('Invalid argument: food must be an instance of Food class');
-      } else {
-        fail(`Unknown error: ${error}`);
-      }
-      done();
-    }
+    // Paso 3: Borrar el alimento
+    await firstValueFrom(service.deleteFood(insertedFood._db_id));
   });
 });

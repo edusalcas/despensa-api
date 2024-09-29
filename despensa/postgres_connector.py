@@ -107,6 +107,7 @@ class PostgresConnector(AbstractConnector):
             print("Ingredient added successfully")
         except psycopg2.Error as e:
             print("Error adding ingredient:", e)
+            raise e
 
     @clean_connection
     def get_ingredient_by_id(self, ingredient_id: int) -> Ingredient:
@@ -174,6 +175,7 @@ class PostgresConnector(AbstractConnector):
             print("Recipe added successfully")
         except psycopg2.Error as e:
             print("Error adding recipe:", e)
+            raise e
 
     @clean_connection
     def get_recipe_by_id(self, recipe_id: int) -> Recipe:
