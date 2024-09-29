@@ -17,7 +17,7 @@ import {NgSelectModule} from "@ng-select/ng-select";
 import {NgbModal, NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
 import {map} from "rxjs/operators";
 import {Recipe} from "../../../entities/recipe";
-import {RecipesService} from "../../../services/recipes_service/recipes.service";
+import {RecipesService} from "../../../services/recipes.service";
 
 @Component({
   selector: 'app-add-recipe',

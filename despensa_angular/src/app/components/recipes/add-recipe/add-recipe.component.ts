@@ -10,14 +10,14 @@ import {
 } from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {JsonPipe, NgForOf, NgIf} from "@angular/common";
-import {Food} from "../../../entities/food";
 import {debounceTime, distinctUntilChanged, merge, Observable, OperatorFunction, Subscription} from "rxjs";
-import {AlimentsService} from "../../../services/aliments.service";
 import {NgSelectModule} from "@ng-select/ng-select";
 import {NgbModal, NgbTypeahead} from "@ng-bootstrap/ng-bootstrap";
 import {map} from "rxjs/operators";
+import {Food} from "../../../entities/food";
 import {Recipe} from "../../../entities/recipe";
-import {RecipesService} from "../../../services/recipes_service/recipes.service";
+import {AlimentsService} from "../../../services/aliments.service";
+import {RecipesService} from "../../../services/recipes.service";
 
 @Component({
   selector: 'app-add-recipe',

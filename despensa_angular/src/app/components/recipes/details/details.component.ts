@@ -2,9 +2,9 @@ import {Component, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angula
 import {HeaderComponent} from "../../header/header.component";
 import {FooterComponent} from "../../footer/footer.component";
 import {NgClass, NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
-import {Recipe} from "../../../entities/recipe";
 import {ActivatedRoute, RouterLink, Router} from "@angular/router";
-import {RecipesService} from "../../../services/recipes_service/recipes.service";
+import {Recipe} from "../../../entities/recipe";
+import {RecipesService} from "../../../services/recipes.service";
 import {Subscription} from "rxjs";
 import {
   NgbAccordionBody,
