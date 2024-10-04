@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
 import {NgForOf, NgIf, NgOptimizedImage} from "@angular/common";
 import {Recipe} from "../../../entities/recipe";
-import {RecipesService} from "../../../services/recipes_service/recipes.service";
 import {
   NgbAccordionModule,
 } from "@ng-bootstrap/ng-bootstrap";
@@ -10,6 +9,7 @@ import {Router} from "@angular/router";
 import {Subscription} from "rxjs";
 import {AddRecipeComponent} from "../add-recipe/add-recipe.component";
 import {ModalService} from "../../../services/modal.service";
+import {RecipesService} from "../../../services/recipes.service";
 import {Ingredient} from '../../../entities/ingredient';
 import {AlimentsService} from "../../../services/aliments.service";
 import {Food} from "../../../entities/food";

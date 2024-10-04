@@ -14,7 +14,7 @@ class MockModalComponent {
   data: any;  // propiedad de datos, usada en el test para inyectar data
 }
 
-fdescribe('ModalService', () => {
+describe('ModalService', () => {
   let service: ModalService;
   let viewContainerRefSpy: jasmine.SpyObj<ViewContainerRef>;
   let componentRefSpy: ComponentRef<MockModalComponent>; // Define correctamente el ComponentRef con el mock del componente

@@ -61,8 +61,10 @@ export class AlimentsMainComponent implements OnInit, OnDestroy {
   retrieveFoodData(): Subscription {
     return this.alimentsService.getAllFood().subscribe({
       next: data => {
-
+        console.log(data)
         data.forEach((food: Food, index: number) => {
+          console.log(food, index)
+          console.log(this.foodList)
           const equals = this.foodList[index]?.aliment.equals(food);
           if (!this.foodList[index]) {
             this.foodList.push({aliment: food, editable: false});
@@ -204,5 +206,9 @@ export class AlimentsMainComponent implements OnInit, OnDestroy {
         }
       }
     }));
+  }
+
+  public getFoodList() {
+    return this.foodList;
   }
 }
