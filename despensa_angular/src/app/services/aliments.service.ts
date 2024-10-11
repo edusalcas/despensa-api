@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Food} from "../entities/food";
 import {map, Observable} from "rxjs";
+import { LogService } from './log.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,11 @@ export class AlimentsService {
 
   constructor(
     private http: HttpClient,
-  ) {
+    private logger: LogService) {
+  }
+
+  private log(msg: string): void {
+    this.logger.log("[AlimentsService] " + msg)
   }
 
   getAllFood(): Observable<Food[]> {
@@ -33,11 +38,12 @@ export class AlimentsService {
   }
 
   insertFood(food: Food): Observable<Food> {
+    this.log('[insertFood] ' + this.url + ' - ' + JSON.stringify(food))
     if (!(food instanceof Food)) {
       throw new Error('Invalid argument: food must be an instance of Food class');
     }
-
     return this.http.post<Food>(this.url, food, this.httpOptions).pipe(map(data => {
+      this.log(`[insertFood] Resultado consulta: ${JSON.stringify(data)}`);
       return Food.cast(data);
     }));
   }

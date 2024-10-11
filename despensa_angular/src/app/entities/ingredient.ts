@@ -63,6 +63,7 @@ export class Ingredient {
   }
 
   static cast(ingredient: any) {
+    console.log('[Ingredient] [cast] -> ' + JSON.stringify(ingredient))
 
     let {aliment, quantity, quantity_type, optional, db_id} = ingredient;
     optional = optional === 1;
@@ -73,6 +74,7 @@ export class Ingredient {
   }
 
   static castAsArrayIngredients(ingredients: any[]) {
+    console.log('[Ingredient] [castAsArrayIngredients] -> ' + JSON.stringify(ingredients))
     return ingredients.map(ingredient => {
       return this.cast(ingredient);
     });

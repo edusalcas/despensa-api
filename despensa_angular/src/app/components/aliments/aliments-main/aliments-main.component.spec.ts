@@ -6,7 +6,7 @@ import { ModalService } from '../../../services/modal.service';
 import { Food } from '../../../entities/food';
 import { of } from 'rxjs';
 
-fdescribe('AlimentsMainComponent Integration Tests', () => {
+describe('AlimentsMainComponent Integration Tests', () => {
   let component: AlimentsMainComponent;
   let fixture: ComponentFixture<AlimentsMainComponent>;
   let alimentsService: AlimentsService;

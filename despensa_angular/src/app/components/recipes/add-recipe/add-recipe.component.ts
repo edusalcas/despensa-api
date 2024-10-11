@@ -18,6 +18,7 @@ import {Food} from "../../../entities/food";
 import {Recipe} from "../../../entities/recipe";
 import {AlimentsService} from "../../../services/aliments.service";
 import {RecipesService} from "../../../services/recipes.service";
+import { LogService } from '../../../services/log.service';
 
 @Component({
   selector: 'app-add-recipe',
@@ -32,11 +33,12 @@ import {RecipesService} from "../../../services/recipes.service";
     JsonPipe
   ],
   templateUrl: './add-recipe.component.html',
-  styleUrl: './add-recipe.component.css'
+  styleUrl: './add-recipe.component.css',
+  providers: [LogService]  // Añadir el servicio aquí
 })
 export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  protected ingredientsList: Food[] = [];
+  protected foodList: Food[] = [];
   protected subs: Subscription[] = [];
   @Output() close = new EventEmitter<any>();
   @Output() confirm = new EventEmitter<any>();
@@ -49,7 +51,8 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
               private recipeService: RecipesService,
               private modalService: NgbModal,
               private cdr: ChangeDetectorRef,
-              private fb: FormBuilder) {
+              private fb: FormBuilder,
+              private logger: LogService) {
 
     this.form = this.fb.group({
       name: '',
@@ -59,15 +62,59 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
       category: '',
       tags: '',
       time: ''
-    })
+    });
+  }
+
+  getFoodList(): Food[] {
+    return [...this.foodList];
+  }
+
+  getForm(): FormGroup {
+    return this.form;
+  }
+
+  setForm(recipeData: any): void {
+    this.form.setValue({
+      name: recipeData.name,
+      num_people: recipeData.num_people,
+      foods: [],  // Inicializa el FormArray vacío
+      steps: [],
+      category: recipeData.category,
+      tags: recipeData.tags,
+      time: recipeData.time
+    });
+  }
+
+  private log(msg: string): void {
+    this.logger.log("[AddRecipeComponent] " + msg);
   }
 
   ngOnInit(): void {
-    this.subs.push(this.retrieveIngredients());
+    this.log("[ngOnInit]");
+    this.subs.push(this.retrieveFoods());
+    this.log("[ngOnInit] Nº Foods = " + this.foodList.length.toString());
   }
 
   ngOnDestroy(): void {
+    this.log("[ngOnDestroy]");
     this.subs?.forEach(sub => sub.unsubscribe());
+  }
+
+  retrieveFoods() {
+    this.log('[retrieveFoods]')
+    return this.alimentsService.getAllFood().subscribe({
+      next: data => {
+        data.forEach((food: Food, index: number) => {
+          const equals = this.foodList[index]?.equals(food);
+          if (!this.foodList[index]) {
+            this.foodList.push(food);
+          } else if (!equals) {
+            this.foodList[index] = food;
+          }
+        });
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -86,8 +133,11 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   async validateForm(event: any, value: any, form: any) {
+    this.log('[validateForm]' + JSON.stringify(value))
     event.preventDefault();
-    await this.insertNewIngredients(value.ingredients);
+    const newIngredients = await this.updateIngredientsWithFoodObject(value.ingredients);
+    value.ingredients = newIngredients
+    this.log('[validateForm]' + JSON.stringify(value))
     value = Recipe.cast(value);
     if (value instanceof Recipe) {
       value._tags = value._tags.toString().split(',').map((tag: { trim: () => any; }) => tag.trim());
@@ -125,7 +175,7 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.ingredients.removeAt(index);
   }
 
-  addStep(event: any) {
+  addStep(event?: any) {
     event?.preventDefault();
     const stepGroup = this.fb.control('');
 
@@ -137,22 +187,6 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.steps.removeAt(index);
   }
 
-  retrieveIngredients() {
-    return this.alimentsService.getAllFood().subscribe({
-      next: data => {
-        data.forEach((food: Food, index: number) => {
-          const equals = this.ingredientsList[index]?.equals(food);
-          if (!this.ingredientsList[index]) {
-            this.ingredientsList.push(food);
-          } else if (!equals) {
-            this.ingredientsList[index] = food;
-          }
-        });
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
   /**
    * Inserts new ingredients into the ingredients list.
    * If the ingredient is a string, it creates a new Food object and inserts it into the aliments service.
@@ -162,35 +196,51 @@ export class AddRecipeComponent implements OnInit, OnDestroy, AfterViewInit {
    * @param {any[]} ingredients - The array of ingredients to be inserted.
    * @returns {Promise} - A promise that resolves when all the ingredients have been processed.
    */
-  insertNewIngredients(ingredients: any[]): Promise<any> {
+  updateIngredientsWithFoodObject(ingredients: any[]): Promise<any> {
     let promises = ingredients.map(ingredient => {
-        return new Promise((resolve) => {
-          if (typeof ingredient.aliment === 'string') {
+      this.log(`[updateIngredientsWithFoodObject] Ingredient antes: ${JSON.stringify(ingredient)}`);
+  
+      return new Promise((resolve) => {
+        if (typeof ingredient.aliment === 'string') {
+          const existingFood = this.foodList.find(food => food._name.toLowerCase() === ingredient.aliment.toLowerCase());
+  
+          if (existingFood) {
+            this.log(`[updateIngredientsWithFoodObject] El alimento ya existe en foodList: ${JSON.stringify(existingFood)}`);
+            ingredient.aliment = existingFood;
+            resolve(ingredient);
+          } else {
+            // Si no existe, lo insertamos en la base de datos
             this.alimentsService.insertFood(new Food(-1, ingredient.aliment, [])).subscribe({
               next: value => {
-                ingredient.aliment = value
-                this.ingredientsList.push(value);
+                this.log(`[updateIngredientsWithFoodObject] Insertado en la BD: ${JSON.stringify(value)}`);
+                ingredient.aliment = value;
+                // Añadimos el nuevo alimento a foodList
+                this.foodList.push(value);
                 this.cdr.detectChanges();
-                resolve(value);
+                resolve(ingredient);
               },
               error: err => {
                 console.log(err);
                 resolve(err);
               }
-            })
-          } else {
-            resolve(true);
+            });
           }
-        })
-      }
-    );
+        } else {
+          // Si el ingrediente ya es un objeto (no un string), simplemente resolvemos la promesa
+          resolve(ingredient);
+        }
+      });
+    });
+  
+    // Esperamos a que todas las promesas se resuelvan y las devolvemos
     return Promise.all(promises);
   }
+  
 
   searchIngr: OperatorFunction<string, readonly any[]> = (text$: Observable<string>) => {
     const tratedtext$ = text$.pipe(debounceTime(200), distinctUntilChanged());
     return merge(tratedtext$).pipe(
-      map((term) => typeof term === "string" ? this.ingredientsList.filter((v) => v._name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10) : []));
+      map((term) => typeof term === "string" ? this.foodList.filter((v) => v._name.toLowerCase().indexOf(term.toLowerCase()) > -1).slice(0, 10) : []));
   }
   inputFormatIngredient = (result: Food) => result._name;
   resultFormatIngredient = (result: Food) => result._name;

@@ -100,6 +100,7 @@ export class Recipe {
   }
 
   static cast(data: any) {
+    console.log('[Recipe] [cast] -> ' + JSON.stringify(data))
     let {db_id, name, num_people, ingredients, steps, category, tags, time} = data;
     db_id = db_id ? db_id : 0;
     ingredients = Ingredient.castAsArrayIngredients(ingredients);

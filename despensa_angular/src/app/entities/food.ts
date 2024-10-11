@@ -52,6 +52,7 @@ export class Food {
   }
 
   static cast(aliment: any) {
+    console.log('[Food] [cast] -> ' + JSON.stringify(aliment))
     if (!Object.hasOwn(aliment, 'name') || !Object.hasOwn(aliment, 'tags')) {
       throw new Error('Impossible to cast object to Food');
     }
