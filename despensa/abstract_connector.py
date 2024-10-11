@@ -2,13 +2,28 @@ from abc import ABC, abstractmethod
 from typing import Callable, List
 
 from despensa.classes import Aliment, Ingredient, Recipe
-from despensa.singleton_meta import Singleton
 
 
-class AbstractConnector(ABC, Singleton):
+class AbstractConnector(ABC):
 
     def __init__(self):
         self.config = None
+
+    def __enter__(self):
+        self.connect()
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.disconnect(exc_type, exc_value, traceback)
+        pass
+
+    @abstractmethod
+    def connect(self):
+        pass
+
+    @abstractmethod
+    def disconnect(self, exc_type, exc_value, traceback):
+        pass
 
     def create_all_tables(self):
         with open(self.config.create_tables_sql_path, 'r') as create_tables_sql_file:

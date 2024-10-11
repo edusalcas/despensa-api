@@ -44,8 +44,7 @@ class Controller(metaclass=WeakSingletonMeta):
     def delete_aliment(self, aliment_id: int):
         self.__aliments_catalog.delete_aliment(aliment_id)
 
-    def create_ingredient(self, aliments_name: str, quantity: float, quantity_type: str,
-                          optional: bool) -> Ingredient or None:
+    def create_ingredient(self, aliments_name: str, quantity: float, quantity_type: str, optional: bool) -> Union[Ingredient, None]:
         aliment = self.get_aliment_by_name(aliments_name)
         if aliment is None:
             return None

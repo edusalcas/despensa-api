@@ -9,7 +9,8 @@ from despensa.catalogs.pantry import Pantry
 class RecipeCatalog(metaclass=WeakSingletonMeta):
     def __init__(self, db_connector: AbstractConnector):
         self.__db_connector: AbstractConnector = db_connector
-        self.__recipe_list: list[Recipe] = db_connector.get_all_recipes()
+        with self.__db_connector() as connector:
+            self.__recipe_list: list[Recipe] = connector.get_all_recipes()
         self.__recipe_id_map: dict[int, Recipe] = dict(zip([a.db_id for a in self.__recipe_list], self.__recipe_list))
 
     def get_all(self) -> list[Recipe]:
@@ -19,7 +20,8 @@ class RecipeCatalog(metaclass=WeakSingletonMeta):
         if recipe in self.__recipe_list:
             raise Exception('Recipe already exists')
 
-        self.__db_connector.add_recipe(recipe)
+        with self.__db_connector() as connector:
+            connector.add_recipe(recipe)
         self.__recipe_list.append(recipe)
         self.__recipe_id_map[recipe.db_id] = recipe
 
@@ -38,7 +40,8 @@ class RecipeCatalog(metaclass=WeakSingletonMeta):
         if recipe in self.__recipe_list:
             raise Exception('Recipe already exists')
 
-        self.__db_connector.add_recipe(recipe)
+        with self.__db_connector() as connector:
+            connector.add_recipe(recipe)
         self.__recipe_list.append(recipe)
         self.__recipe_id_map[recipe.db_id] = recipe
         return recipe
@@ -47,10 +50,12 @@ class RecipeCatalog(metaclass=WeakSingletonMeta):
         recipe = self.get_recipe_by_id(recipe_id)
         if recipe:
             recipe = recipe.update_from_json(json)
-            self.__db_connector.update_recipe(recipe)
+            with self.__db_connector() as connector:
+                connector.update_recipe(recipe)
 
     def delete_recipe(self, recipe_id):
         recipe = self.get_recipe_by_id(recipe_id)
         self.__recipe_list.remove(recipe)
         self.__recipe_id_map.pop(recipe_id)
-        self.__db_connector.remove_recipe(recipe)
+        with self.__db_connector() as connector:
+            connector.remove_recipe(recipe)

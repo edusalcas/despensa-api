@@ -12,6 +12,6 @@ class DatabaseConnectorFactory(object):
         current_database: int = Environment().get_current_database()
 
         if current_database == d.SQLITE:
-            return SQLiteConnector()
+            return SQLiteConnector
         elif current_database == d.POSTGRES:
-            return PostgresConnector()
+            return PostgresConnector
