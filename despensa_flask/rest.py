@@ -5,42 +5,55 @@ from flask_cors import cross_origin
 
 from despensa.controller import Controller
 from despensa.classes import Recipe, Aliment
+from despensa.interfaces.logger import Logger, LOG_API_REST
 
 bp = Blueprint('rest', __name__, url_prefix='/rest')
 
+logger = Logger(log_file=LOG_API_REST)
 
 # CRUD Aliments
 
 @bp.route('/aliments', methods=['GET'])
 def get_all_aliments() -> Response:
+    logger.info("(get_all_aliments)")
     aliments: list[Aliment] = Controller().get_all_aliments()
+    logger.info(f"(get_all_aliments) Output: Sended {len(aliments)} aliments: {[al.name for al in aliments]}")
     return jsonify(aliments)
 
 
 @bp.route('/aliments/<aliment_id>', methods=['GET'])
 def get_aliment(aliment_id: str) -> Response:
+    logger.info(f"(get_aliment) Input: aliment_id={aliment_id}")
     aliment: Aliment = Controller().get_aliment_by_id(int(aliment_id))
+    logger.info(f"(get_aliment) Output: {aliment}")
     return jsonify(aliment)
 
 
 @bp.route('/aliments', methods=['POST'])
 def create_aliment() -> Union[Response, tuple[Response, int]]:
+    logger.info(f"(create_aliment) Input: json_data={request.json}")
     try:
         aliment = Controller().create_aliment_from_json(request.json)
+        logger.info(f"(create_aliment) Output: {aliment}")
         return jsonify(aliment)
     except Exception as e:
+        logger.error(f"(create_aliment): {e}")
         return jsonify({'error': str(e)}), 400
 
 
 @bp.route('/aliments/<aliment_id>', methods=['PUT'])
 def update_aliment(aliment_id: str) -> Response:
+    logger.info(f"(update_aliment) Input: aliment_id={aliment_id}")
     Controller().update_aliment_from_json(int(aliment_id), request.json)
+    logger.info(f"(update_aliment) Output: Success")
     return jsonify(success=True)
 
 
 @bp.route('/aliments/<aliment_id>', methods=['DELETE'])
 def delete_aliment(aliment_id: int) -> Response:
+    logger.info(f"(delete_aliment) Input: aliment_id={aliment_id}")
     Controller().delete_aliment(int(aliment_id))
+    logger.info(f"(delete_aliment) Output: Success")
     return jsonify(success=True)
 
 
