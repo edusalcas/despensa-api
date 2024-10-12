@@ -8,7 +8,8 @@ from despensa.singleton_meta import WeakSingletonMeta
 class AlimentCatalog(metaclass=WeakSingletonMeta):
     def __init__(self, db_connector: AbstractConnector):
         self.db_connector: AbstractConnector = db_connector
-        self.__aliment_list: list[Aliment] = db_connector.get_all_aliments()
+        with self.db_connector() as connector:
+            self.__aliment_list: list[Aliment] = connector.get_all_aliments()
         self.__aliment_id_map: dict[int, Aliment] = dict(zip([a.db_id for a in self.__aliment_list], self.__aliment_list))
         self.__aliment_name_map: dict[str, Aliment] = dict(zip([a.name for a in self.__aliment_list], self.__aliment_list))
 
@@ -25,8 +26,8 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
         aliment = Aliment(name.lower(), tags)
         if self.is_present(aliment):
             raise Exception('Aliment already exists')
-
-        self.db_connector.add_aliment(aliment)
+        with self.db_connector() as connector:
+            connector.add_aliment(aliment)
         self.__aliment_list.append(aliment)
         self.__aliment_id_map[aliment.db_id] = aliment
         return aliment
@@ -36,7 +37,8 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
         if self.is_present(aliment):
             raise Exception('Aliment already exists')
 
-        self.db_connector.add_aliment(aliment)
+        with self.db_connector() as connector:
+            connector.add_aliment(aliment)
         self.__aliment_list.append(aliment)
         self.__aliment_id_map[aliment.db_id] = aliment
         return aliment
@@ -45,13 +47,15 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
         aliment = self.get_aliment_by_name(name)
         if aliment:
             aliment.tags = tags
-            self.db_connector.update_aliment(aliment)
+            with self.db_connector() as connector:
+                connector.update_aliment(aliment)
 
     def update_aliment_from_json(self, id_aliment: int, json: dict):
         aliment = self.get_aliment_by_id(id_aliment)
         if aliment:
             aliment = aliment.update_from_json(json)
-            self.db_connector.update_aliment(aliment)
+            with self.db_connector() as connector:
+                connector.update_aliment(aliment)
 
     def get_all(self) -> list[Aliment]:
         return self.__aliment_list.copy()
@@ -61,6 +65,7 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
         self.__aliment_list.remove(aliment)
         self.__aliment_id_map.pop(id_aliment)
         self.__aliment_name_map.pop(aliment.name)
-        self.db_connector.remove_aliment(aliment)
+        with self.db_connector() as connector:
+            connector.remove_aliment(aliment)
 
 

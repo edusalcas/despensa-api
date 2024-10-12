@@ -1,26 +1,10 @@
 from typing import List
-from environment import Environment
 
 import psycopg2
 
 from despensa.abstract_connector import AbstractConnector
 from despensa.classes import Aliment, Ingredient, Recipe
-from environment import PostgresConfig
-
-
-def clean_connection(func):
-    def wrapper(self, *args, **kwargs):
-        close_connection = False
-        if not self.connection:
-            self.connect()
-            close_connection = True
-        result = func(self, *args, **kwargs)
-        if close_connection:
-            self.disconnect()
-            self.connection = None
-        return result
-
-    return wrapper
+from environment import PostgresConfig, Environment
 
 
 class PostgresConnector(AbstractConnector):
@@ -43,13 +27,27 @@ class PostgresConnector(AbstractConnector):
         except psycopg2.Error as e:
             print("Error connecting to PostgreSQL:", e)
 
-    def disconnect(self):
-        if self.connection:
-            self.cursor.close()
-            self.connection.close()
+    def disconnect(self, exc_type, exc_value, traceback):
+        """
+        Método que se ejecuta al finalizar el context manager.
+        Se encarga de cerrar la conexión y el cursor, y manejar excepciones si las hay.
+        """
+        try:
+            if exc_type is None:
+                # Si no hay excepciones, hacer commit
+                self.connection.commit()
+            else:
+                # Si hay alguna excepción, hacer rollback
+                print(f"Excepción atrapada: {exc_value}")
+                self.connection.rollback()
+        finally:
+            # Cerrar el cursor y la conexión
+            if self.cursor:
+                self.cursor.close()
+            if self.connection:
+                self.connection.close()
 
     # region CRUD Aliment
-    @clean_connection
     def add_aliment(self, aliment: Aliment):
         try:
             sql = "INSERT INTO aliment (name, tags) VALUES (%s, %s) RETURNING aliment_id;"
@@ -59,7 +57,6 @@ class PostgresConnector(AbstractConnector):
         except psycopg2.Error as e:
             print("Error adding aliment:", e)
 
-    @clean_connection
     def get_aliment_by_id(self, aliment_id: int) -> Aliment:
         try:
             sql = "SELECT name, tags FROM aliment WHERE aliment_id = %s"
@@ -73,7 +70,6 @@ class PostgresConnector(AbstractConnector):
         except psycopg2.Error as e:
             print("Error getting aliment by ID:", e)
 
-    @clean_connection
     def remove_aliment(self, aliment: Aliment):
         try:
             sql = "DELETE FROM aliment WHERE aliment_id = %s"
@@ -83,7 +79,6 @@ class PostgresConnector(AbstractConnector):
         except psycopg2.Error as e:
             print("Error removing aliment:", e)
 
-    @clean_connection
     def update_aliment(self, aliment: Aliment):
         try:
             sql = "UPDATE aliment SET name = %s, tags = %s WHERE aliment_id = %s"
@@ -96,7 +91,6 @@ class PostgresConnector(AbstractConnector):
     # endregion
 
     # region CRUD Ingredient
-    @clean_connection
     def add_ingredient(self, ingredient: Ingredient):
         try:
             sql = "INSERT INTO ingredient (aliment_id, quantity, quantity_type, optional) VALUES (%s, %s, %s, %s) RETURNING ingredient_id"
@@ -107,8 +101,8 @@ class PostgresConnector(AbstractConnector):
             print("Ingredient added successfully")
         except psycopg2.Error as e:
             print("Error adding ingredient:", e)
+            raise e
 
-    @clean_connection
     def get_ingredient_by_id(self, ingredient_id: int) -> Ingredient:
         try:
             sql = "SELECT aliment_id, quantity, quantity_type, optional FROM ingredient WHERE ingredient_id = %s"
@@ -124,7 +118,6 @@ class PostgresConnector(AbstractConnector):
         except psycopg2.Error as e:
             print("Error getting ingredient by ID:", e)
 
-    @clean_connection
     def remove_ingredient(self, ingredient: Ingredient):
         try:
             sql = "DELETE FROM ingredient WHERE ingredient_id = %s"
@@ -134,7 +127,6 @@ class PostgresConnector(AbstractConnector):
         except psycopg2.Error as e:
             print("Error removing ingredient:", e)
 
-    @clean_connection
     def update_ingredient(self, ingredient: Ingredient):
         try:
             # Update the aliment if necessary
@@ -153,7 +145,6 @@ class PostgresConnector(AbstractConnector):
 
     # region CRUD Recipe
 
-    @clean_connection
     def add_recipe(self, recipe: Recipe):
         try:
             # Add the ingredients and aliments if they don't exist
@@ -174,8 +165,8 @@ class PostgresConnector(AbstractConnector):
             print("Recipe added successfully")
         except psycopg2.Error as e:
             print("Error adding recipe:", e)
+            raise e
 
-    @clean_connection
     def get_recipe_by_id(self, recipe_id: int) -> Recipe:
         try:
             sql = "SELECT name, num_people, steps, category, tags, time FROM recipe WHERE recipe_id = %s"
@@ -196,7 +187,6 @@ class PostgresConnector(AbstractConnector):
         except psycopg2.Error as e:
             print("Error getting recipe by ID:", e)
 
-    @clean_connection
     def remove_recipe(self, recipe: Recipe):
         try:
             sql = "DELETE FROM recipe WHERE recipe_id = %s"
@@ -206,7 +196,6 @@ class PostgresConnector(AbstractConnector):
         except psycopg2.Error as e:
             print("Error removing recipe:", e)
 
-    @clean_connection
     def update_recipe(self, recipe: Recipe):
         try:
             sql = f"DELETE FROM ingredient WHERE ingredient_id IN (SELECT ingredient_id FROM recipe_ingredient WHERE recipe_id = {recipe.db_id})"
@@ -235,22 +224,22 @@ class PostgresConnector(AbstractConnector):
     # endregion
 
     # region Catalgos
-    @clean_connection
-    def get_all_aliments(self) -> List[Aliment]:
-        aliments = []
-        try:
-            sql = "SELECT name, tags, aliment_id FROM aliment"
-            self.cursor.execute(sql)
-            rows = self.cursor.fetchall()
-            for row in rows:
-                name, tags, db_id = row
-                aliments.append(Aliment(name=name, tags=tags, db_id=db_id))
-            return aliments
-        except psycopg2.Error as e:
-            print("Error getting all aliments:", e)
-            return []
 
-    @clean_connection
+    def get_all_aliments(self) -> List[Aliment]:
+        with self.connection.cursor() as cursor:
+            aliments = []
+            try:
+                sql = "SELECT name, tags, aliment_id FROM aliment"
+                cursor.execute(sql)
+                rows = cursor.fetchall()
+                for row in rows:
+                    name, tags, db_id = row
+                    aliments.append(Aliment(name=name, tags=tags, db_id=db_id))
+                return aliments
+            except psycopg2.Error as e:
+                print("Error getting all aliments:", e)
+                raise e
+
     def get_all_recipes(self) -> List[Recipe]:
         recipes = []
         try:
@@ -269,7 +258,6 @@ class PostgresConnector(AbstractConnector):
             print("Error getting all recipes:", e)
             return []
 
-    @clean_connection
     def get_shopping_list(self) -> List[str]:
         shopping_list = []
         try:
@@ -284,7 +272,6 @@ class PostgresConnector(AbstractConnector):
             print("Error getting shopping list:", e)
             return []
 
-    @clean_connection
     def get_pantry(self) -> List[Aliment]:
         pantry = []
         try:
@@ -297,12 +284,11 @@ class PostgresConnector(AbstractConnector):
             return pantry
         except psycopg2.Error as e:
             print("Error getting pantry:", e)
-            return []
+            raise e
 
     # endregion
 
     # region Shopping list
-    @clean_connection
     def insert_item_in_shopping_list(self, item: str):
         try:
             sql = "INSERT INTO shopping_list (item) VALUES (%s)"
@@ -312,7 +298,6 @@ class PostgresConnector(AbstractConnector):
         except psycopg2.Error as e:
             print("Error inserting item into shopping list:", e)
 
-    @clean_connection
     def remove_item_in_shopping_list(self, item: str):
         try:
             sql = "DELETE FROM shopping_list WHERE item = %s"
@@ -325,7 +310,6 @@ class PostgresConnector(AbstractConnector):
     # endregion
 
     # region Pantry
-    @clean_connection
     def add_aliment_to_pantry(self, aliment: Aliment):
         try:
             sql = "INSERT INTO pantry (aliment_id) VALUES (%s)"
@@ -335,7 +319,6 @@ class PostgresConnector(AbstractConnector):
         except psycopg2.Error as e:
             print("Error adding aliment to pantry:", e)
 
-    @clean_connection
     def remove_aliment_from_pantry(self, aliment: Aliment):
         try:
             sql = "DELETE FROM pantry WHERE aliment_id = %s"
@@ -347,7 +330,6 @@ class PostgresConnector(AbstractConnector):
 
     # endregion
 
-    @clean_connection
     def execute(self, sql: str):
         try:
             self.cursor.execute(sql)
@@ -355,7 +337,6 @@ class PostgresConnector(AbstractConnector):
         except psycopg2.Error as e:
             print("Error executing SQL query:", e, '\n', sql)
 
-    @clean_connection
     def query(self, sql: str) -> List[str]:
         try:
             self.cursor.execute(sql)

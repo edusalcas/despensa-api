@@ -1,6 +1,6 @@
 *.sqlite
 *.xml
-/.idea/despensa-api.iml
+.idea/*
 
 venv/
 
@@ -17,4 +17,6 @@ dist/
 build/
 *.egg-info/
 
-database/despensa_postgres/postgres_data/
+database/despensa_postgres/postgres_data/*
+database/despensa_postgres/postgres_data_pro/*
+despensa_postgres/*

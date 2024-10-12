@@ -31,25 +31,6 @@ class RecipeTable:
     TAGS: int = 5
     TIME: int = 6
 
-
-def clean_connection(func: Callable) -> Callable:
-    def inner(sqlite_ref, *args, **kwargs):
-        close_connection = False
-        if sqlite_ref.con is None:  # Create the connection if it is not already created
-            sqlite_ref.con = sqlite3.connect(sqlite_ref.config.db_path)
-            close_connection = True
-
-        res = func(sqlite_ref, *args, **kwargs)
-
-        if close_connection:  # If the creation has been created in this function call, close it
-            sqlite_ref.con.close()
-            sqlite_ref.con = None
-
-        return res
-
-    return inner
-
-
 # noinspection PyArgumentList
 class SQLiteConnector(AbstractConnector):
     def __init__(self):
@@ -57,8 +38,13 @@ class SQLiteConnector(AbstractConnector):
         self.con: sqlite3.Connection = None
         self.config: SQLiteConfig = Environment().get_sqlite_config()
 
+    def connect(self):
+        self.con = sqlite3.connect(self.config.db_path)
+
+    def disconnect(self, exc_type, exc_value, traceback):
+        self.con.close()
+
     # region CRUD Aliment
-    @clean_connection
     def add_aliment(self, aliment: Aliment):
         name = aliment.name
         tags = ' '.join(aliment.tags)
@@ -70,7 +56,6 @@ class SQLiteConnector(AbstractConnector):
         aliment.set_db_id(cur.lastrowid)
         self.con.commit()
 
-    @clean_connection
     def get_aliment_by_id(self, aliment_id: int) -> Aliment:
         cur = self.con.cursor()
         aliment_raw = cur.execute(f"SELECT * FROM aliment WHERE aliment_id = {aliment_id}").fetchone()
@@ -78,27 +63,24 @@ class SQLiteConnector(AbstractConnector):
 
         return aliment
 
-    @clean_connection
     def remove_aliment(self, aliment: Aliment):
         cur = self.con.cursor()
         cur.execute(f"PRAGMA foreign_keys = ON")
         cur.execute(f"DELETE FROM aliment WHERE aliment_id = {aliment.db_id}")
         self.con.commit()
 
-    @clean_connection
     def update_aliment(self, aliment: Aliment):
-        name = aliment.name
+        db_id = aliment.db_id
         tags = ' '.join(aliment.tags)
 
         cur = self.con.cursor()
-        sql = f"UPDATE aliment SET tags = '{tags}' WHERE name = '{name}';"
+        sql = f"UPDATE aliment SET tags = '{tags}' WHERE aliment_id = '{db_id}';"
         cur.execute(sql)
         self.con.commit()
 
     # endregion
 
     # region CRUD Ingredient
-    @clean_connection
     def add_ingredient(self, ingredient: Ingredient):
         aliment_id = ingredient.aliment.db_id
         quantity = ingredient.quantity
@@ -115,7 +97,6 @@ class SQLiteConnector(AbstractConnector):
         ingredient.set_db_id(cur.lastrowid)
         self.con.commit()
 
-    @clean_connection
     def get_ingredient_by_id(self, ingredient_id: int) -> Ingredient:
         cur = self.con.cursor()
         ingredient_raw = cur.execute(f"SELECT * FROM ingredient WHERE ingredient_id = {ingredient_id}").fetchone()
@@ -123,18 +104,15 @@ class SQLiteConnector(AbstractConnector):
 
         return ingredient
 
-    @clean_connection
     def remove_ingredient(self, ingredient: Ingredient):
         pass
 
-    @clean_connection
     def update_ingredient(self, ingredient: Ingredient):
         pass
 
     # endregion
 
     # region CRUD Recipe
-    @clean_connection
     def add_recipe(self, recipe: Recipe):
         for ingredient in recipe.ingredients:
             self.add_ingredient(ingredient=ingredient)
@@ -165,7 +143,6 @@ class SQLiteConnector(AbstractConnector):
 
         self.con.commit()
 
-    @clean_connection
     def get_recipe_by_id(self, recipe_id: int) -> Recipe:
         cur = self.con.cursor()
         recipe_raw = cur.execute(f"SELECT * FROM recipe WHERE recipe_id = {recipe_id}").fetchone()
@@ -176,7 +153,6 @@ class SQLiteConnector(AbstractConnector):
 
         return recipe
 
-    @clean_connection
     def remove_recipe(self, recipe: Recipe):
         cur = self.con.cursor()
 
@@ -185,7 +161,6 @@ class SQLiteConnector(AbstractConnector):
         cur.execute(sql)
         self.con.commit()
 
-    @clean_connection
     def update_recipe(self, recipe: Recipe):
         cur = self.con.cursor()
         cur.execute(f"PRAGMA foreign_keys = ON")
@@ -222,7 +197,6 @@ class SQLiteConnector(AbstractConnector):
     # endregion
 
     # region Catalgos
-    @clean_connection
     def get_all_aliments(self) -> List[Aliment]:
         cur = self.con.cursor()
         res = cur.execute("SELECT * FROM aliment")
@@ -231,7 +205,6 @@ class SQLiteConnector(AbstractConnector):
         aliments = list(map(self.db_to_aliment, aliments_raw))
         return aliments
 
-    @clean_connection
     def get_all_recipes(self) -> List[Recipe]:
         cur = self.con.cursor()
         res = cur.execute("SELECT recipe_id FROM recipe")
@@ -242,7 +215,6 @@ class SQLiteConnector(AbstractConnector):
 
         return recipes
 
-    @clean_connection
     def get_shopping_list(self) -> List[str]:
         cur = self.con.cursor()
         res = cur.execute("SELECT * FROM shopping_list")
@@ -251,7 +223,6 @@ class SQLiteConnector(AbstractConnector):
 
         return items
 
-    @clean_connection
     def get_pantry(self) -> List[Aliment]:
         cur = self.con.cursor()
         res = cur.execute("SELECT aliment.* FROM pantry INNER JOIN aliment USING(aliment_id)")
@@ -263,7 +234,6 @@ class SQLiteConnector(AbstractConnector):
     # endregion
 
     # region Shopping list
-    @clean_connection
     def insert_item_in_shopping_list(self, item: str):
         cur = self.con.cursor()
         sql = f"INSERT INTO shopping_list (item) VALUES ('{item}')"
@@ -271,7 +241,6 @@ class SQLiteConnector(AbstractConnector):
 
         self.con.commit()
 
-    @clean_connection
     def remove_item_in_shopping_list(self, item: str):
         cur = self.con.cursor()
         sql = f"DELETE FROM shopping_list WHERE item = '{item}'"
@@ -282,7 +251,6 @@ class SQLiteConnector(AbstractConnector):
     # endregion
 
     # region Pantry
-    @clean_connection
     def add_aliment_to_pantry(self, ingredient: Ingredient):
         cur = self.con.cursor()
         sql = f"""
@@ -292,7 +260,6 @@ class SQLiteConnector(AbstractConnector):
         cur.execute(sql)
         self.con.commit()
 
-    @clean_connection
     def remove_aliment_from_pantry(self, ingredient: Ingredient):
         cur = self.con.cursor()
         cur.execute(f"DELETE FROM pantry WHERE aliment_id = {ingredient.db_id};")
@@ -335,13 +302,11 @@ class SQLiteConnector(AbstractConnector):
 
     # endregion
 
-    @clean_connection
     def execute(self, sql: str):
         cur = self.con.cursor()
         cur.execute(sql)
         self.con.commit()
 
-    @clean_connection
     def query(self, sql: str) -> List[str]:
         cur = self.con.cursor()
         res = cur.execute(sql)

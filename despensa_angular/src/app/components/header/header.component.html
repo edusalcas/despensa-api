@@ -1,0 +1,18 @@
+<header class="header">
+  <h1 class="display-4">{{headerContent}}</h1>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <ul class="navbar-nav mr-auto" *ngFor="let nav of navBar">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]= nav.page >{{nav.name}}</a>
+      </li>
+    </ul>
+  </nav>
+  <ul class="nav" *ngIf="login">
+    <li class="nav-item">
+      <a class="nav-link" href="#">Sign in</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">Sign Up</a>
+    </li>
+  </ul>
+</header>

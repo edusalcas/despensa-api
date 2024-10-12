@@ -1,0 +1,38 @@
+.container-fluid {
+  min-height: fit-content;
+}
+
+.optional::before {
+  content: "Optional";
+  padding-left: 1rem;
+  border-bottom: #ffff solid 1px;
+}
+.card-custom{
+  border: 0;
+}
+.btn{
+  border: 0;
+}
+.btn::before{
+  content: "-";
+  position: absolute;
+  left: -.05rem;
+}
+.plus{
+  position: absolute;
+  top: 27%;
+  right: -10%;
+  transition: transform 0.5s ease;
+}
+.plus-transform {
+  transform: rotate(45deg);
+  transition: transform 0.5s ease;
+}
+.list-group-item{
+  background: inherit;
+  color: inherit;
+}
+
+.accordion-custom{
+  border: 0;
+}

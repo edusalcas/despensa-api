@@ -1,0 +1,31 @@
+<ng-template #modal let-form>
+  <div class="modal-header">
+    <h5 class="modal-title">Add Food</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="form.dismiss()"></button>
+  </div>
+  <div class="modal-body">
+    <div *ngIf="hasErrors" class="alert alert-danger">{{ errorMessage }}</div>
+    <form id="add-food-form" #addFoodForm="ngForm" (submit)="validateForm($event,form,addFoodForm.value)">
+      <div class="mb-3 position-relative">
+        <label for="food-name" class="form-label">Name:</label>
+        <div class="input-group">
+          <input type="text" id="food-name" name="name" ngModel #name="ngModel" required class="form-control input-input-group">
+          <svg *ngIf="name.invalid && (name.dirty || name.touched)" class="svg-invalid"
+               xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+          >
+            <path d="M11.001 10h2v5h-2zM11 16h2v2h-2z"></path>
+            <path
+              d="M13.768 4.2C13.42 3.545 12.742 3.138 12 3.138s-1.42.407-1.768 1.063L2.894 18.064a1.986 1.986 0 0 0 .054 1.968A1.984 1.984 0 0 0 4.661 21h14.678c.708 0 1.349-.362 1.714-.968a1.989 1.989 0 0 0 .054-1.968L13.768 4.2zM4.661 19 12 5.137 19.344 19H4.661z"></path>
+          </svg>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="food-tags" class="form-label">Tags:</label>
+        <input type="text" id="food-tags" name="tags" [(ngModel)]="tags" class="form-control">
+      </div>
+      <input type="hidden" id="db_id" name="db_id" ngModel>
+      <button type="submit" [disabled]="!addFoodForm.valid" class="btn btn-primary">Add</button>
+    </form>
+  </div>
+
+</ng-template>

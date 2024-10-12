@@ -1,0 +1,32 @@
+<div class="container-fluid">
+  <div class="text-center">
+    <button type="button" class="btn btn-primary m-2" (click)="openModal()">Add Food</button>
+  </div>
+  <div class="row  justify-content-center">
+    <div class="col-10">
+      <table class="table table-bordered table-hover table-striped">
+        <thead>
+        <tr class="text-center">
+          <th>Name</th>
+          <th>Tags</th>
+          <th></th>
+        </tr> 
+        </thead>
+        <tbody id="food-table-body">
+        <tr *ngFor="let food of foodList;">
+          <td>{{ food.aliment._name }}</td>
+          <td [contentEditable]="food.editable" [ngClass]="{'bg-warning' : food.editable}"
+              (dblclick)="editTags(food.aliment._db_id)"
+              (keydown.enter)="saveData(food.aliment._db_id,$event)">{{ food.aliment._tags }}
+          </td>
+          <td>
+            <button class="button" (click)="deleteFood(food.aliment._db_id)">Delete</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div #modal></div>

@@ -9,7 +9,8 @@ from despensa.singleton_meta import WeakSingletonMeta
 class Pantry(metaclass=WeakSingletonMeta):
     def __init__(self, db_connector: AbstractConnector):
         self.__db_connector: AbstractConnector = db_connector
-        self.__pantry_list: list[Aliment] = db_connector.get_pantry()
+        with self.__db_connector() as connector:
+            self.__pantry_list: list[Aliment] = connector.get_pantry()
         self.__aliment_name_map: dict[str, Aliment] = dict(zip([a.name for a in self.__pantry_list], self.__pantry_list))
 
     def is_present(self, aliment: Aliment) -> bool:
@@ -19,7 +20,8 @@ class Pantry(metaclass=WeakSingletonMeta):
         aliment = AlimentCatalog(self.__db_connector).get_aliment_by_name(aliment_name)
 
         if aliment and aliment not in self.__pantry_list:
-            self.__db_connector.add_aliment_to_pantry(aliment)
+            with self.__db_connector() as connector:
+                connector.add_aliment_to_pantry(aliment)
             self.__pantry_list.append(aliment)
             return self.__pantry_list
 
@@ -31,7 +33,8 @@ class Pantry(metaclass=WeakSingletonMeta):
     def remove_aliment_from_pantry(self, name: str):
         aliment_to_remove = self.get_aliment(name)
         if aliment_to_remove:
-            self.__db_connector.remove_aliment_from_pantry(aliment_to_remove)
+            with self.__db_connector() as connector:
+                connector.remove_aliment_from_pantry(aliment_to_remove)
             self.__pantry_list.remove(aliment_to_remove)
             self.__aliment_name_map.pop(name)
 

@@ -1,6 +1,8 @@
 from typing import Union, Tuple
 
 from flask import Blueprint, jsonify, Response, request
+from flask_cors import cross_origin
+
 from despensa.controller import Controller
 from despensa.classes import Recipe, Aliment
 

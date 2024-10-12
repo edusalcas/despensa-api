@@ -1,0 +1,76 @@
+<main class="container-fluid">
+  <div class="row d-flex justify-content-center align-content-center">
+    <div class="col col-lg-6 col-sm-8">
+      <div *ngIf="recipe"
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">{{ recipe._name }}</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="btn-group mr-2">
+            <button class="btn btn-sm btn-outline-secondary" (click)="showModalEditRecipe()">Edit New</button>
+          </div>
+        </div>
+      </div>
+      <!-- <button class="btn btn-sm btn-outline-secondary" routerLink="/recipes/edit/{{recipe?._db_id}}">Edit</button> -->
+      <div *ngIf="recipe" class="card card-custom mt-5 mb-5">
+        <img class="card-img-top" id="image" ngSrc="#" alt="Image" height="100" width="100">
+        <div class="card-body">
+          <!-- <h5 class="card-title" id="name">{{ recipe._name }}</h5> -->
+          <h6 class="card-subtitle mb-2 text-muted" id="category">{{ recipe._category }}</h6>
+          <div ngbAccordion>
+            <div ngbAccordionItem class="accordion-custom">
+              <div ngbAccordionHeader>
+                <a ngbAccordionToggle (click)="isPanelIngOpen = !isPanelIngOpen" class="btn position-relative">Ingredients
+                  <img ngSrc="assets/svg/plus.svg" class="plus" [ngClass]="{'plus-transform': isPanelIngOpen}"
+                       height="16" width="16" alt="oct icon"/>
+                </a>
+              </div>
+              <div ngbAccordionCollapse>
+                <div ngbAccordionBody>
+                  <ng-template>
+                    <ul *ngFor="let ingredient of recipe._ingredients; let i = index"
+                        [ngClass]="{'optional': ingredient._optional,'bg-light': i % 2 === 0,
+                         'bg-secondary text-white': i % 2 !== 0}" class="list-group list-group-flush mb-3">
+                      <li class="list-group-item">Name: <span>{{ ingredient._aliment._name }}</span></li>
+                      <li class="list-group-item">Quantity: {{ ingredient._quantity }} {{ ingredient._quantity_type }}
+                      </li>
+                    </ul>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div ngbAccordion>
+            <div ngbAccordionItem class="accordion-custom">
+              <div ngbAccordionHeader>
+                <a ngbAccordionToggle (click)="isPanelStpsOpen = !isPanelStpsOpen" class="btn position-relative">Steps
+                  <img ngSrc="assets/svg/plus.svg" class="plus" [ngClass]="{'plus-transform': isPanelStpsOpen}"
+                       height="16" width="16" alt="oct icon"/>
+                </a>
+              </div>
+              <div ngbAccordionCollapse>
+                <div ngbAccordionBody>
+                  <ng-template>
+                    <ul *ngFor="let step of recipe._steps; let i = index"
+                        class="list-group list-group-flush mb-3">
+                      <li [ngClass]="{'bg-light': i % 2 === 0,
+                         'bg-secondary text-white': i % 2 !== 0}" class="list-group-item">Step {{ i + 1 }}:
+                        <span>{{ step }}</span></li>
+                    </ul>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item">Number of people: <span id="num_people">{{ recipe._num_people }}</span></li>
+            <li class="list-group-item">Tags: <span id="tags">{{ recipe._tags }}</span></li>
+            <li class="list-group-item">Time: <span id="time">{{ recipe._time }} min</span></li>
+          </ul>
+        </div>
+      </div>
+      <button class="button" (click)="deleteRecipe()">Delete</button>
+    </div>
+  </div>
+</main>
+
+<div #modal></div>
