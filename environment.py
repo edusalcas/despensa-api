@@ -24,11 +24,9 @@ class SQLiteConfig(object):
     drop_tables_sql_path: str = d.SQLITE_DROP_TABLES
     generate_samples_sql_path: str = d.SQLITE_SAMPLE_DATA
 
-
+DEV: int = 0
+TEST: int = 1
 class Environment(metaclass=SingletonMeta):
-    __DEV: int = 0
-    __TEST: int = 1
-
     __postgres_config_dev: PostgresConfig = PostgresConfig(
         host='localhost',
         port=5432,
@@ -54,17 +52,17 @@ class Environment(metaclass=SingletonMeta):
     )
 
     def __init__(self):
-        self.__current_env: int = self.__DEV
+        self.__current_env: int = DEV
         self.__use_database: int = d.POSTGRES
 
     def get_current_env(self):
         return self.__current_env
 
     def working_is_dev(self):
-        self.__current_env = self.__DEV
+        self.__current_env = DEV
 
     def working_is_test(self):
-        self.__current_env = self.__TEST
+        self.__current_env = TEST
 
     def get_current_database(self) -> int:
         return self.__use_database
@@ -73,13 +71,13 @@ class Environment(metaclass=SingletonMeta):
         self.__use_database = database
 
     def get_postgres_config(self) -> PostgresConfig:
-        if self.__current_env == self.__DEV:
+        if self.__current_env == DEV:
             return self.__postgres_config_dev
-        elif self.__current_env == self.__TEST:
+        elif self.__current_env == TEST:
             return self.__postgres_config_test
 
     def get_sqlite_config(self) -> SQLiteConfig:
-        if self.__current_env == self.__DEV:
+        if self.__current_env == DEV:
             return self.__sqlite_config_dev
-        elif self.__current_env == self.__TEST:
+        elif self.__current_env == TEST:
             return self.__sqlite_config_test

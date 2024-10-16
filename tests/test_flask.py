@@ -16,12 +16,13 @@ def app():
 
     Environment().working_is_test()
     db_connector: AbstractConnector = DatabaseConnectorFactory.get_database_connector()
-
-    db_connector.clear_all_tables()
-    db_connector.create_all_tables()
-    db_connector.generate_sample_data()
+    with db_connector() as connector:
+        connector.clear_all_tables()
+        connector.create_all_tables()
+        connector.generate_sample_data()
     yield app
-    db_connector.clear_all_tables()
+    with db_connector() as connector:
+        connector.clear_all_tables()
 
 
 @pytest.fixture()
