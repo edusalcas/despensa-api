@@ -2,3 +2,945 @@
 [2024-10-12 21:13:58] [INFO] (get_all_aliments) Output: Sended 3 aliments: ['onion', 'garlic', 'chicken']
 [2024-10-12 21:14:17] [INFO] (get_all_aliments)
 [2024-10-12 21:14:17] [INFO] (get_all_aliments) Output: Sended 3 aliments: ['onion', 'garlic', 'chicken']
+[2024-10-20 12:04:38] [INFO] (get_all_recipes)
+[2024-10-20 12:04:39] [INFO] (get_all_recipes) Output: Sended 8 recipes: ['Nutella', 'Tarta de Zanahoria', 'Natillas', 'Migas', 'Pollo Tikka Masala', 'Cookies con chocolate', 'Masa de pizza', 'Bebida isotónica de limón']
+[2024-10-20 12:04:50] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:04:50] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:05:21] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:05:21] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:05:47] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:05:47] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:07:20] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:07:20] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:07:37] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:07:37] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:08:06] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:08:06] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:08:12] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:08:12] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:09:51] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:09:51] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:10:13] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:10:13] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:10:32] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:10:32] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:10:35] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:10:35] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:11:33] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:11:33] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:11:37] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:11:37] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:13:19] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:13:20] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:15:09] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:15:09] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:15:21] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:15:21] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:16:01] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:16:01] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:16:29] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:16:29] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:19:56] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:19:57] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:20:01] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:20:01] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:20:59] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:20:59] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:21:01] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:21:01] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:21:17] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:21:17] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:21:59] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:21:59] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:22:12] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:22:13] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:23:12] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:23:12] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:23:41] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:23:42] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:25:12] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:25:12] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:26:56] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:26:56] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:26:59] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:26:59] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:27:49] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:27:50] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:28:03] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:28:03] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:28:17] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:28:17] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:29:54] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:29:55] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:30:07] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:30:07] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:30:22] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:30:22] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:33:03] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:33:03] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:33:26] [INFO] (get_recipe) Input: recipe_id=3
+[2024-10-20 12:33:26] [INFO] (get_recipe) Output:     Recipe name: Tarta de Zanahoria
+        Category: Postre
+        Tags: Dulce
+        Number of people: 12
+        Estimated time: 90
+
+        Ingredients: 
+                Azúcar Moreno: 300.0 gr
+		Huevo L: 3.0 units
+		Aceite De Girasol: 300.0 ml
+		Vainilla: 1.0 cdta
+		Harina: 300.0 gr
+		Levadura Química: 1.0 cdta
+		Bicarbonato De Sodio: 1.0 cdta
+		Canela: 2.0 cdta
+		Sal: 1.0 pinch
+		Zanahoria: 300.0 gr
+		Nuez: 100.0 gr
+		Mantequilla: 125.0 gr
+		Azúcar Glass: 300.0 gr
+		Queso Crema: 200.0 gr
+        
+[2024-10-20 12:42:07] [INFO] (get_all_recipes)
+[2024-10-20 12:42:08] [INFO] (get_all_recipes) Output: Sended 8 recipes: ['Nutella', 'Tarta de Zanahoria', 'Natillas', 'Migas', 'Pollo Tikka Masala', 'Cookies con chocolate', 'Masa de pizza', 'Bebida isotónica de limón']
+[2024-10-20 12:42:30] [INFO] (get_recipe) Input: recipe_id=4
+[2024-10-20 12:42:30] [INFO] (get_recipe) Output:     Recipe name: Natillas
+        Category: Postre
+        Tags: Dulce, Robot, Vegetariano
+        Number of people: 6
+        Estimated time: 20
+
+        Ingredients: 
+                Leche: 500.0 ml
+		Huevo: 3.0 units
+		Azúcar: 90.0 gr
+		Ázucar Avainillado: 1.0 units
+		Limón: 1.0 units
+        
+[2024-10-20 12:42:38] [INFO] (get_all_recipes)
+[2024-10-20 12:42:38] [INFO] (get_all_recipes) Output: Sended 8 recipes: ['Nutella', 'Tarta de Zanahoria', 'Natillas', 'Migas', 'Pollo Tikka Masala', 'Cookies con chocolate', 'Masa de pizza', 'Bebida isotónica de limón']
+[2024-10-20 12:42:41] [INFO] (get_recipe) Input: recipe_id=5
+[2024-10-20 12:42:41] [INFO] (get_recipe) Output:     Recipe name: Migas
+        Category: Principal
+        Tags: Vegano, Vegetariano, Español
+        Number of people: 4
+        Estimated time: 60
+
+        Ingredients: 
+                Cebolla: 1.0 units
+		Ajo: 8.0 units
+		Ñora: 2.0 units
+		Pimiento: 1.0 unit
+		Seitan: 250.0 gr
+		Harina De Migas: 500.0 gr
+		Agua: 610.0 ml
+		Aceite De Oliva: 100.0 ml
+        
+[2024-10-20 12:42:43] [INFO] (get_all_recipes)
+[2024-10-20 12:42:43] [INFO] (get_all_recipes) Output: Sended 8 recipes: ['Nutella', 'Tarta de Zanahoria', 'Natillas', 'Migas', 'Pollo Tikka Masala', 'Cookies con chocolate', 'Masa de pizza', 'Bebida isotónica de limón']
+[2024-10-20 12:42:45] [INFO] (get_recipe) Input: recipe_id=6
+[2024-10-20 12:42:45] [INFO] (get_recipe) Output:     Recipe name: Pollo Tikka Masala
+        Category: Principal
+        Tags: Oriental
+        Number of people: 4
+        Estimated time: 90
+
+        Ingredients: 
+                Semillas De Cilantro: 4.0 gr
+		Semillas De Comino: 2.0 gr
+		Ajo: 5.0 units
+		Jenjibre: 10.0 gr
+		Garam Masala: 7.0 gr
+		Cúrcuma: 3.0 gr
+		Agua: 60.0 ml
+		Aceite De Girasol: 40.0 ml
+		Contramuslo De Pollo: 4.0 units
+		Yogur: 250.0 gr
+		Sal: 6.0 gr
+		Cebolla: 1.0 units
+		Mantequilla: 55.0 gr
+		Pimenton: 7.0 gr
+		Tomate Triturado: 800.0 gr
+		Leche De Coco: 400.0 ml
+        
+[2024-10-20 12:42:57] [INFO] (get_all_aliments)
+[2024-10-20 12:42:57] [INFO] (get_all_aliments) Output: Sended 51 aliments: ['zanahoria', 'bicarbonato de sodio', 'cúrcuma', 'cacao', 'ajo', 'nuez', 'nuez', 'levadura química', 'leche', 'ñora', 'tomate triturado', 'contramuslo de pollo', 'azúcar glass', 'agua', 'bicarbonato de sodio', 'huevo l', 'ázucar avainillado', 'cebolla', 'pimenton', 'yogur', 'avellana', 'salsa de soja', 'col', 'huevo', 'mantequilla', 'azúcar', 'aceite de oliva', 'semillas de comino', 'chocolate', 'jenjibre', 'aceite de sesamo', 'canela', 'huevo', 'queso crema', 'limón', 'seitan', 'garam masala', 'maizena', 'harina', 'curry', 'vainilla', 'pimiento', 'semillas de cilantro', 'harina de fuerza', 'tofu', 'sal', 'aceite de girasol', 'azúcar moreno', 'harina de migas', 'leche de coco', 'levadura fresca']
+[2024-10-20 12:43:18] [INFO] (update_recipe) Input: recipe_id=6
+[2024-10-20 12:43:19] [INFO] (update_recipe) Output: Success

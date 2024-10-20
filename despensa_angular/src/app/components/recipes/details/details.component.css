@@ -36,3 +36,165 @@
 .accordion-custom{
   border: 0;
 }
+
+
+
+/* Estilos para la lista de ingredientes */
+.ingredient-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Estilos para cada ítem */
+.ingredient-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f9f9f9;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Efecto hover: levanta el elemento ligeramente */
+.ingredient-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Ícono personalizado para cada ingrediente */
+.ingredient-icon {
+  font-size: 20px;
+  margin-right: 10px;
+  color: #ff6b6b;
+}
+
+/* Estilos para el nombre del ingrediente */
+.ingredient-name {
+  font-weight: 600;
+  font-size: 16px;
+  flex-grow: 1;
+  color: #333;
+  text-transform: capitalize; /* Hace que la primera letra de cada palabra esté en mayúscula */
+}
+
+/* Estilos para la cantidad */
+.ingredient-quantity {
+  font-size: 14px;
+  color: #555;
+  background-color: #f1f3f5;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+/* Opcional: menos destacado */
+.optional .ingredient-name {
+  opacity: 0.7;
+  font-style: italic;
+}
+
+
+
+/* Estilos para la lista de pasos */
+.step-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Estilos para cada paso (item) */
+.step-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  border-radius: 12px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Efecto hover para los pasos */
+.step-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Ícono decorativo para cada paso */
+.step-icon {
+  font-size: 20px;
+  margin-right: 10px;
+  color: #6a9fb5;
+}
+
+/* Estilo para el texto del paso */
+.step-text {
+  font-size: 16px;
+  color: #333;
+  flex-grow: 1;
+  text-align: left;
+}
+
+/* Alternar colores de fondo para cada paso */
+.step-item:nth-child(even) {
+  background-color: #f1f3f5;
+}
+
+/* Fondo claro más suave */
+.step-item:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+
+
+
+/* Estilo para el subtítulo de la categoría */
+.category-text {
+  font-size: 16px;
+  color: #6c757d;  /* Gris neutro */
+  font-weight: 500;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+/* Estilo para los subtítulos de los tags */
+.tags-text {
+  font-size: 14px;
+  color: #888888;  /* Gris más claro */
+  margin-bottom: 10px;
+  font-weight: 400; /* Ligeramente más liviano */
+}
+
+/* Estilo básico para la lista */
+.info-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+/* Estilo para cada ítem de la lista */
+.info-list .list-group-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;  /* Línea divisoria sutil */
+  background-color: transparent;  /* Sin fondo */
+}
+
+/* Estilo para los títulos */
+.info-title {
+  font-size: 14px;
+  color: #555555;  /* Color gris más oscuro para los títulos */
+  font-weight: 500;
+}
+
+/* Estilo para los valores */
+.info-list span {
+  font-size: 14px;
+  color: #333333;  /* Color ligeramente más oscuro para los valores */
+  font-weight: 500;
+}
