@@ -15,7 +15,19 @@
         <img class="card-img-top" id="image" ngSrc="#" alt="Image" height="100" width="100">
         <div class="card-body">
           <!-- <h5 class="card-title" id="name">{{ recipe._name }}</h5> -->
-          <h6 class="card-subtitle mb-2 text-muted" id="category">{{ recipe._category }}</h6>
+          <h6 class="card-subtitle mb-2 text-muted category-text" id="category">{{ recipe._category }}</h6>
+          <h6 class="card-subtitle mb-2 text-muted tags-text" id="tags">{{ recipe._tags }}</h6>
+          <ul class="list-group list-group-flush info-list">
+            <li class="list-group-item">
+              <span class="info-title">Number of people:</span>
+              <span id="num_people">{{ recipe._num_people }}</span>
+            </li>
+            <li class="list-group-item">
+              <span class="info-title">Time:</span>
+              <span id="time">{{ recipe._time }} min</span>
+            </li>
+          </ul>
+                
           <div ngbAccordion>
             <div ngbAccordionItem class="accordion-custom">
               <div ngbAccordionHeader>
@@ -27,11 +39,11 @@
               <div ngbAccordionCollapse>
                 <div ngbAccordionBody>
                   <ng-template>
-                    <ul *ngFor="let ingredient of recipe._ingredients; let i = index"
-                        [ngClass]="{'optional': ingredient._optional,'bg-light': i % 2 === 0,
-                         'bg-secondary text-white': i % 2 !== 0}" class="list-group list-group-flush mb-3">
-                      <li class="list-group-item">Name: <span>{{ ingredient._aliment._name }}</span></li>
-                      <li class="list-group-item">Quantity: {{ ingredient._quantity }} {{ ingredient._quantity_type }}
+                    <ul *ngFor="let ingredient of recipe._ingredients;" [ngClass]="{'optional': ingredient._optional}" class="ingredient-list">
+                      <li class="ingredient-item d-flex align-items-center">
+                        <span class="ingredient-icon">🍴</span>
+                        <span class="ingredient-name">{{ ingredient._aliment._name }}</span>
+                        <span class="ingredient-quantity">{{ ingredient._quantity }} {{ ingredient._quantity_type }}</span>
                       </li>
                     </ul>
                   </ng-template>
@@ -50,22 +62,17 @@
               <div ngbAccordionCollapse>
                 <div ngbAccordionBody>
                   <ng-template>
-                    <ul *ngFor="let step of recipe._steps; let i = index"
-                        class="list-group list-group-flush mb-3">
-                      <li [ngClass]="{'bg-light': i % 2 === 0,
-                         'bg-secondary text-white': i % 2 !== 0}" class="list-group-item">Step {{ i + 1 }}:
-                        <span>{{ step }}</span></li>
+                    <ul *ngFor="let step of recipe._steps; let i = index" class="step-list list-group list-group-flush mb-3">
+                      <li class="step-item list-group-item d-flex justify-content-between align-items-center">
+                        <span class="step-icon">📝</span>
+                        <span class="step-text">{{ i + 1 }}.- {{ step }}</span>
+                      </li>
                     </ul>
-                  </ng-template>
+                  </ng-template>                  
                 </div>
               </div>
             </div>
           </div>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item">Number of people: <span id="num_people">{{ recipe._num_people }}</span></li>
-            <li class="list-group-item">Tags: <span id="tags">{{ recipe._tags }}</span></li>
-            <li class="list-group-item">Time: <span id="time">{{ recipe._time }} min</span></li>
-          </ul>
         </div>
       </div>
       <button class="button" (click)="deleteRecipe()">Delete</button>
