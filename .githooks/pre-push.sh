@@ -1,0 +1,25 @@
+#!/bin/bash
+
+
+set -e
+
+SECONDS=0
+
+if [ ! -d .venv ]; then
+    python3.12 -m venv .venv --prompt=dev
+fi
+
+if [ -z "$VIRTUAL_ENV" ]; then
+    source .venv/bin/activate
+fi
+
+echo "[ PRE-PUSH HOOK ]"
+echo "> Running linter..."
+flake8 . --count --show-source --statistics
+echo "> Running tests..." 
+docker compose -f docker/docker-compose.dev.yml up -d
+coverage run -m pytest --ignore=e2e --maxfail=5 --disable-warnings --junitxml=report.xml 2>/dev/null
+echo "> Checking minimum coverage..."
+coverage report --fail-under=70
+
+echo "> Pre-push hook passed in $SECONDS seconds. Proceeding..."
