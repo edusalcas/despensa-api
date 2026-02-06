@@ -1,0 +1,32 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Setup 🛠️",
+            "detail": "Set up the development environment",
+            "type": "shell",
+            "command": ". scripts/setup-env.sh",
+            "problemMatcher": [],
+        },
+        {
+            "label": "Coverage report 📊",
+            "detail": "Run unit and integration tests and generate an HTML coverage report",
+            "type": "shell",
+            "command": "docker-compose -f docker-compose-test.yml up -d && ${workspaceFolder}/.venv/bin/python -m coverage run -m pytest --maxfail=5 --disable-warnings --junitxml=coverage-tests-report.xml 2>/dev/null && ${workspaceFolder}/.venv/bin/python -m coverage html -d htmlcov && docker-compose -f docker-compose-test.yml down",
+            "group": "test",
+            "problemMatcher": [
+                "$python"
+            ],
+        },
+        {
+            "label": "Lint 🔦",
+            "detail": "Ensure code follows linting rules",
+            "type": "shell",
+            "command": "${workspaceFolder}/.venv/bin/python -m flake8 ${workspaceFolder}",
+            "group": "test",
+            "problemMatcher": [
+                "$python"
+            ],
+        }
+    ]
+}

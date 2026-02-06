@@ -1,12 +1,12 @@
 from despensa.abstract_connector import AbstractConnector
-from despensa.singleton_meta import WeakSingletonMeta
+from despensa.utils.singleton_meta import WeakSingletonMeta
 
 
 class ShoppingList(metaclass=WeakSingletonMeta):
     def __init__(self, db_connector: AbstractConnector):
         self.__db_connector: AbstractConnector = db_connector
         with self.__db_connector() as connector:
-                self.__shopping_list: list[str] = connector.get_shopping_list()
+            self.__shopping_list: list[str] = connector.get_shopping_list()
 
     def is_present(self, item: str) -> bool:
         return item in self.__shopping_list

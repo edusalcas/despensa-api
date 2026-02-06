@@ -2,8 +2,8 @@ from typing import Union, List
 
 from despensa.abstract_connector import AbstractConnector
 from despensa.catalogs.aliment_catalog import AlimentCatalog
-from despensa.classes import Aliment
-from despensa.singleton_meta import WeakSingletonMeta
+from despensa.objects.recipe import Aliment
+from despensa.utils.singleton_meta import WeakSingletonMeta
 
 
 class Pantry(metaclass=WeakSingletonMeta):
@@ -11,7 +11,9 @@ class Pantry(metaclass=WeakSingletonMeta):
         self.__db_connector: AbstractConnector = db_connector
         with self.__db_connector() as connector:
             self.__pantry_list: list[Aliment] = connector.get_pantry()
-        self.__aliment_name_map: dict[str, Aliment] = dict(zip([a.name for a in self.__pantry_list], self.__pantry_list))
+        self.__aliment_name_map: dict[str, Aliment] = dict(
+            zip([a.name for a in self.__pantry_list], self.__pantry_list)
+        )
 
     def is_present(self, aliment: Aliment) -> bool:
         return aliment in self.__pantry_list
@@ -25,7 +27,7 @@ class Pantry(metaclass=WeakSingletonMeta):
             self.__pantry_list.append(aliment)
             return self.__pantry_list
 
-        raise Exception('Aliment is already in pantry')
+        raise Exception("Aliment is already in pantry")
 
     def get_aliment(self, name: str) -> Union[Aliment, None]:
         return self.__aliment_name_map.get(name, None)
@@ -40,5 +42,3 @@ class Pantry(metaclass=WeakSingletonMeta):
 
     def get_all(self) -> list[Aliment]:
         return self.__pantry_list.copy()
-
-

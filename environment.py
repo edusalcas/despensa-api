@@ -1,7 +1,6 @@
-import os
 from dataclasses import dataclass
 
-from despensa.singleton_meta import SingletonMeta
+from despensa.utils.singleton_meta import SingletonMeta
 import definitions as d
 
 
@@ -24,23 +23,26 @@ class SQLiteConfig(object):
     drop_tables_sql_path: str = d.SQLITE_DROP_TABLES
     generate_samples_sql_path: str = d.SQLITE_SAMPLE_DATA
 
+
 DEV: int = 0
 TEST: int = 1
+
+
 class Environment(metaclass=SingletonMeta):
     __postgres_config_dev: PostgresConfig = PostgresConfig(
-        host='localhost',
+        host="localhost",
         port=5432,
-        user='postgres',
-        password='despensa_pass',
-        database='postgres',
+        user="postgres",
+        password="despensa_pass",
+        database="postgres",
     )
 
     __postgres_config_test: PostgresConfig = PostgresConfig(
-        host='localhost',
+        host="localhost",
         port=5432,
-        user='postgres',
-        password='despensa_pass',
-        database='test',
+        user="postgres",
+        password="despensa_pass",
+        database="test",
     )
 
     __sqlite_config_dev: SQLiteConfig = SQLiteConfig(

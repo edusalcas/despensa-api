@@ -1,8 +1,8 @@
 from typing import List, Union
 
 from despensa.abstract_connector import AbstractConnector
-from despensa.classes import Aliment
-from despensa.singleton_meta import WeakSingletonMeta
+from despensa.objects.recipe import Aliment
+from despensa.utils.singleton_meta import WeakSingletonMeta
 
 
 class AlimentCatalog(metaclass=WeakSingletonMeta):
@@ -10,8 +10,12 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
         self.db_connector: AbstractConnector = db_connector
         with self.db_connector() as connector:
             self.__aliment_list: list[Aliment] = connector.get_all_aliments()
-        self.__aliment_id_map: dict[int, Aliment] = dict(zip([a.db_id for a in self.__aliment_list], self.__aliment_list))
-        self.__aliment_name_map: dict[str, Aliment] = dict(zip([a.name for a in self.__aliment_list], self.__aliment_list))
+        self.__aliment_id_map: dict[int, Aliment] = dict(
+            zip([a.db_id for a in self.__aliment_list], self.__aliment_list)
+        )
+        self.__aliment_name_map: dict[str, Aliment] = dict(
+            zip([a.name for a in self.__aliment_list], self.__aliment_list)
+        )
 
     def is_present(self, aliment: Aliment) -> bool:
         return aliment in self.__aliment_list
@@ -25,7 +29,7 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
     def create_aliment(self, name: str, tags: List[str]) -> Aliment:
         aliment = Aliment(name.lower(), tags)
         if self.is_present(aliment):
-            raise Exception('Aliment already exists')
+            raise Exception("Aliment already exists")
         with self.db_connector() as connector:
             connector.add_aliment(aliment)
         self.__aliment_list.append(aliment)
@@ -35,7 +39,7 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
     def create_aliment_from_json(self, json: dict) -> Aliment:
         aliment: Aliment = Aliment.from_json(json)
         if self.is_present(aliment):
-            raise Exception('Aliment already exists')
+            raise Exception("Aliment already exists")
 
         with self.db_connector() as connector:
             connector.add_aliment(aliment)
@@ -67,5 +71,3 @@ class AlimentCatalog(metaclass=WeakSingletonMeta):
         self.__aliment_name_map.pop(aliment.name)
         with self.db_connector() as connector:
             connector.remove_aliment(aliment)
-
-

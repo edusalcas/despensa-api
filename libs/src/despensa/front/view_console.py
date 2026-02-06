@@ -3,18 +3,18 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable, List
 
-import despensa.controller as cnt
-from despensa.classes import Ingredient
+import despensa.controller.controller as cnt
+from despensa.objects.classes import Ingredient
 
 import os
 
 
 def clear_console():
-    os.system('cls')
+    os.system("cls")
 
 
 def bool_y_n(condition: str):
-    return condition == 'Y'
+    return condition == "Y"
 
 
 class ConsoleView:
@@ -30,13 +30,15 @@ class ConsoleView:
         tags_str = input("Aliment's tags: ")
 
         try:
-            tags = tags_str.strip().split(' ')
+            tags = tags_str.strip().split(" ")
         except Exception as e:
             print(e)
             return
 
         if not self.controller.create_aliment(name, tags):
-            override = input("An aliment with the same name already exists, do you want to override it? (Y/N): ")
+            override = input(
+                "An aliment with the same name already exists, do you want to override it? (Y/N): "
+            )
             if bool_y_n(override):
                 self.controller.update_aliment(name, tags)
 
@@ -48,14 +50,15 @@ class ConsoleView:
             quantity_type = input("\tQuantity's type: ")
             optional = bool_y_n(input("\tIs optional? (Y/N): "))
 
-            ingredient = self.controller.create_ingredient(aliments_name, quantity, quantity_type,
-                                                           optional)
+            ingredient = self.controller.create_ingredient(
+                aliments_name, quantity, quantity_type, optional
+            )
             if ingredient is None:
-                print(f'\tAliment does not exists, insert it first.')
+                print("\tAliment does not exists, insert it first.")
             else:
                 ingredients.append(ingredient)
 
-            condition = input('\n\tInsert another ingredient? (Y/N): ')
+            condition = input("\n\tInsert another ingredient? (Y/N): ")
             if not bool_y_n(condition):
                 break
         return ingredients
@@ -64,8 +67,8 @@ class ConsoleView:
         steps = []
         i = 1
         while True:
-            step = input(f'\t Step {i}: ')
-            if step == '':
+            step = input(f"\t Step {i}: ")
+            if step == "":
                 break
             steps.append(step)
             i += 1
@@ -80,13 +83,14 @@ class ConsoleView:
         print("5. Insert ingredients:")
         ingredients = self.create_ingredients()
 
-        tags = input("6. Insert tags: ").strip().split(' ')
+        tags = input("6. Insert tags: ").strip().split(" ")
 
         print("7. Insert steps:")
         steps = self.get_steps()
 
-        recipe = self.controller.create_recipe(recipe_name, num_people, ingredients, steps, category,
-                                               tags, time)
+        recipe = self.controller.create_recipe(
+            recipe_name, num_people, ingredients, steps, category, tags, time
+        )
 
         clear_console()
         print("Your recipe is:\n")
@@ -98,8 +102,10 @@ class ConsoleView:
     def insert_aliment_in_pantry(self):
         name = input("Aliment's name: ")
         if self.controller.insert_aliment_in_pantry(name) == -1:
-            input(f"Error: Aliment '{name}' does not exists. Please, create it before trying to insert it into the "
-                  f"pantry.")
+            input(
+                f"Error: Aliment '{name}' does not exists. Please, create it before trying to insert it into the "
+                f"pantry."
+            )
 
     def remove_aliment_in_pantry(self):
         name = input("Aliment's name: ")
@@ -108,38 +114,40 @@ class ConsoleView:
     def list_pantry(self):
         pantry = self.controller.get_pantry()
         if pantry:
-            print('\n'.join([a.simple_str() for a in pantry]))
+            print("\n".join([a.simple_str() for a in pantry]))
         else:
-            print('Empty pantry.')
+            print("Empty pantry.")
         input()
 
     def list_recipes_catalog(self):
         recipes = self.controller.get_recipes_catalog()
-        print('\n'.join([r.simple_str() for r in recipes]))
-        recipe_name = input('\nRecipe to inspect:')
+        print("\n".join([r.simple_str() for r in recipes]))
+        recipe_name = input("\nRecipe to inspect:")
 
         for recipe in recipes:
             if recipe.name.lower() == recipe_name.lower():
                 print(recipe)
-                print("""
+                print(
+                    """
     Press:
         1. Edit
         2. Remove
         3. Add aliments to shopping list
-        
+
         q. Exit
-                """)
+                """
+                )
 
                 input()  # TODO: Add options functionality
 
     def list_aliments_catalog(self):
         aliments = self.controller.get_all_aliments()
-        print('\n'.join([a.simple_str() for a in aliments]))
+        print("\n".join([a.simple_str() for a in aliments]))
         input()
 
     def get_recipes_from_pantry(self):
         recipes = self.controller.get_recipes_from_pantry()
-        print('\n'.join([str(r) for r in recipes]))
+        print("\n".join([str(r) for r in recipes]))
         input()
 
     def insert_item_in_shopping_list(self):
@@ -148,7 +156,7 @@ class ConsoleView:
 
     def get_shopping_list(self):
         shopping_list = self.controller.get_shopping_list()
-        print('\n'.join([str(r) for r in shopping_list]))
+        print("\n".join([str(r) for r in shopping_list]))
         input()
 
     __LIST_ALIMENT: int = 1
@@ -161,19 +169,27 @@ class ConsoleView:
     __GET_RECIPES_PANTRY: int = 8
     __INSERT_ALIMENT_SHOPPING_LIST: int = 9
     __GET_SHOPPING_LIST: int = 10
-    __EXIT: str = 'q'
+    __EXIT: str = "q"
 
     __DICT_OPTIONS: dict[int, Option] = {
-        __LIST_ALIMENT: Option('Create aliment', create_aliment),
-        __LIST_RECIPES: Option('Create recipe', create_recipe),
-        __CREATE_RECIPE: Option('List aliments', list_aliments_catalog),
-        __CREATE_ALIMENT: Option('List recipes', list_recipes_catalog),
-        __LIST_PANTRY: Option('Show pantry', list_pantry),
-        __INSERT_ALIMENT_PANTRY: Option('Insert aliment in pantry', insert_aliment_in_pantry),
-        __REMOVE_ALIMENT_PANTRY: Option('Remove aliment from pantry', remove_aliment_in_pantry),
-        __GET_RECIPES_PANTRY: Option('Get doable recipes with pantry', get_recipes_from_pantry),
-        __INSERT_ALIMENT_SHOPPING_LIST: Option('Insert aliment to the shopping list', insert_item_in_shopping_list),
-        __GET_SHOPPING_LIST: Option('Get shopping list', get_shopping_list),
+        __LIST_ALIMENT: Option("Create aliment", create_aliment),
+        __LIST_RECIPES: Option("Create recipe", create_recipe),
+        __CREATE_RECIPE: Option("List aliments", list_aliments_catalog),
+        __CREATE_ALIMENT: Option("List recipes", list_recipes_catalog),
+        __LIST_PANTRY: Option("Show pantry", list_pantry),
+        __INSERT_ALIMENT_PANTRY: Option(
+            "Insert aliment in pantry", insert_aliment_in_pantry
+        ),
+        __REMOVE_ALIMENT_PANTRY: Option(
+            "Remove aliment from pantry", remove_aliment_in_pantry
+        ),
+        __GET_RECIPES_PANTRY: Option(
+            "Get doable recipes with pantry", get_recipes_from_pantry
+        ),
+        __INSERT_ALIMENT_SHOPPING_LIST: Option(
+            "Insert aliment to the shopping list", insert_item_in_shopping_list
+        ),
+        __GET_SHOPPING_LIST: Option("Get shopping list", get_shopping_list),
     }
 
     def print_options(self):
@@ -196,5 +212,5 @@ class ConsoleView:
             elif key == self.__EXIT:
                 break
             else:
-                input('Input error, press enter to try again...')
+                input("Input error, press enter to try again...")
             clear_console()

@@ -1,4 +1,7 @@
-despensa~=0.0.0
-pytest~=7.1.2
-flask~=2.2.2
-setuptools~=63.4.1
+pytest
+pytest-cov
+psycopg2
+flask
+flask-cors
+setuptools
+flake8

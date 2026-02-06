@@ -1,7 +1,14 @@
 {
     "python.testing.pytestArgs": [
-        "despensa"
+        "-s"
     ],
     "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "python.analysis.extraPaths": [
+        "libs/src"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+    }
 }

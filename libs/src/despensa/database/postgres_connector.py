@@ -3,7 +3,7 @@ from typing import List
 import psycopg2
 
 from despensa.abstract_connector import AbstractConnector
-from despensa.classes import Aliment, Ingredient, Recipe
+from despensa.objects.classes import Aliment, Ingredient, Recipe
 from environment import PostgresConfig, Environment
 
 
@@ -50,7 +50,9 @@ class PostgresConnector(AbstractConnector):
     # region CRUD Aliment
     def add_aliment(self, aliment: Aliment):
         try:
-            sql = "INSERT INTO aliment (name, tags) VALUES (%s, %s) RETURNING aliment_id;"
+            sql = (
+                "INSERT INTO aliment (name, tags) VALUES (%s, %s) RETURNING aliment_id;"
+            )
             self.cursor.execute(sql, (aliment.name, aliment.tags))
             aliment.set_db_id(self.cursor.fetchone()[0])
             self.connection.commit()
@@ -93,9 +95,19 @@ class PostgresConnector(AbstractConnector):
     # region CRUD Ingredient
     def add_ingredient(self, ingredient: Ingredient):
         try:
-            sql = "INSERT INTO ingredient (aliment_id, quantity, quantity_type, optional) VALUES (%s, %s, %s, %s) RETURNING ingredient_id"
-            self.cursor.execute(sql, (
-                ingredient.aliment.db_id, ingredient.quantity, ingredient.quantity_type, ingredient.optional))
+            sql = (
+                "INSERT INTO ingredient (aliment_id, quantity, quantity_type, optional) VALUES (%s, %s, %s, %s) RETURNING "
+                "ingredient_id"
+            )
+            self.cursor.execute(
+                sql,
+                (
+                    ingredient.aliment.db_id,
+                    ingredient.quantity,
+                    ingredient.quantity_type,
+                    ingredient.optional,
+                ),
+            )
             ingredient.set_db_id(self.cursor.fetchone()[0])
             self.connection.commit()
             print("Ingredient added successfully")
@@ -111,8 +123,13 @@ class PostgresConnector(AbstractConnector):
             if row:
                 aliment_id, quantity, quantity_type, optional = row
                 aliment = self.get_aliment_by_id(aliment_id)
-                return Ingredient(aliment=aliment, quantity=quantity, quantity_type=quantity_type, optional=optional,
-                                  db_id=ingredient_id)
+                return Ingredient(
+                    aliment=aliment,
+                    quantity=quantity,
+                    quantity_type=quantity_type,
+                    optional=optional,
+                    db_id=ingredient_id,
+                )
             else:
                 print("Ingredient not found")
         except psycopg2.Error as e:
@@ -133,9 +150,16 @@ class PostgresConnector(AbstractConnector):
             self.update_aliment(ingredient.aliment)
 
             sql = "UPDATE ingredient SET aliment_id = %s, quantity = %s, quantity_type = %s, optional = %s WHERE ingredient_id = %s"
-            self.cursor.execute(sql, (
-                ingredient.aliment.db_id, ingredient.quantity, ingredient.quantity_type, ingredient.optional,
-                ingredient.db_id))
+            self.cursor.execute(
+                sql,
+                (
+                    ingredient.aliment.db_id,
+                    ingredient.quantity,
+                    ingredient.quantity_type,
+                    ingredient.optional,
+                    ingredient.db_id,
+                ),
+            )
             self.connection.commit()
             print("Ingredient updated successfully")
         except psycopg2.Error as e:
@@ -151,9 +175,21 @@ class PostgresConnector(AbstractConnector):
             for ingredient in recipe.ingredients:
                 self.add_ingredient(ingredient)
 
-            sql = "INSERT INTO recipe (name, num_people, steps, category, tags, time) VALUES (%s, %s, %s, %s, %s, %s) RETURNING recipe_id"
-            self.cursor.execute(sql, (
-                recipe.name, recipe.num_people, recipe.steps, recipe.category, recipe.tags, recipe.time))
+            sql = (
+                "INSERT INTO recipe (name, num_people, steps, category, tags, time) VALUES (%s, %s, %s, %s, %s, %s) RETURNING "
+                "recipe_id"
+            )
+            self.cursor.execute(
+                sql,
+                (
+                    recipe.name,
+                    recipe.num_people,
+                    recipe.steps,
+                    recipe.category,
+                    recipe.tags,
+                    recipe.time,
+                ),
+            )
             recipe_id = self.cursor.fetchone()[0]
             recipe.set_db_id(recipe_id)
 
@@ -175,13 +211,30 @@ class PostgresConnector(AbstractConnector):
             if row:
                 name, num_people, steps, category, tags, time = row
                 # Fetch ingredients of the recipe
-                sql = "SELECT aliment_id, quantity, quantity_type, optional FROM ingredient JOIN recipe_ingredient ON ingredient.ingredient_id = recipe_ingredient.ingredient_id WHERE recipe_ingredient.recipe_id = %s"
+                sql = (
+                    "SELECT aliment_id, quantity, quantity_type, optional FROM ingredient JOIN recipe_ingredient "
+                    "ON ingredient.ingredient_id = recipe_ingredient.ingredient_id WHERE recipe_ingredient.recipe_id = %s"
+                )
                 self.cursor.execute(sql, (recipe_id,))
-                ingredients = [Ingredient(aliment=self.get_aliment_by_id(aliment_id), quantity=quantity,
-                                          quantity_type=quantity_type, optional=optional) for
-                               aliment_id, quantity, quantity_type, optional in self.cursor.fetchall()]
-                return Recipe(name=name, num_people=num_people, ingredients=ingredients, steps=steps, category=category,
-                              tags=tags, time=time, db_id=recipe_id)
+                ingredients = [
+                    Ingredient(
+                        aliment=self.get_aliment_by_id(aliment_id),
+                        quantity=quantity,
+                        quantity_type=quantity_type,
+                        optional=optional,
+                    )
+                    for aliment_id, quantity, quantity_type, optional in self.cursor.fetchall()
+                ]
+                return Recipe(
+                    name=name,
+                    num_people=num_people,
+                    ingredients=ingredients,
+                    steps=steps,
+                    category=category,
+                    tags=tags,
+                    time=time,
+                    db_id=recipe_id,
+                )
             else:
                 print("Recipe not found")
         except psycopg2.Error as e:
@@ -198,7 +251,10 @@ class PostgresConnector(AbstractConnector):
 
     def update_recipe(self, recipe: Recipe):
         try:
-            sql = f"DELETE FROM ingredient WHERE ingredient_id IN (SELECT ingredient_id FROM recipe_ingredient WHERE recipe_id = {recipe.db_id})"
+            sql = (
+                f"DELETE FROM ingredient WHERE ingredient_id IN (SELECT ingredient_id FROM recipe_ingredient"
+                f"WHERE recipe_id = {recipe.db_id})"
+            )
             self.cursor.execute(sql)
 
             # Update recipe_ingredient relationships
@@ -208,9 +264,22 @@ class PostgresConnector(AbstractConnector):
             for ingredient in recipe.ingredients:
                 self.add_ingredient(ingredient)
 
-            sql = "UPDATE recipe SET name = %s, num_people = %s, steps = %s, category = %s, tags = %s, time = %s WHERE recipe_id = %s"
-            self.cursor.execute(sql, (
-                recipe.name, recipe.num_people, recipe.steps, recipe.category, recipe.tags, recipe.time, recipe.db_id))
+            sql = (
+                "UPDATE recipe SET name = %s, num_people = %s, steps = %s, category = %s, tags = %s, time = %s "
+                "WHERE recipe_id = %s"
+            )
+            self.cursor.execute(
+                sql,
+                (
+                    recipe.name,
+                    recipe.num_people,
+                    recipe.steps,
+                    recipe.category,
+                    recipe.tags,
+                    recipe.time,
+                    recipe.db_id,
+                ),
+            )
 
             for ingredient in recipe.ingredients:
                 sql = "INSERT INTO recipe_ingredient (recipe_id, ingredient_id) VALUES (%s, %s)"
@@ -249,10 +318,32 @@ class PostgresConnector(AbstractConnector):
             for row in rows:
                 recipe_id, name, num_people, steps, category, tags, time = row
                 # Fetch ingredients of the recipe
-                sql = "SELECT aliment_id, quantity, quantity_type, optional FROM ingredient JOIN recipe_ingredient ON ingredient.ingredient_id = recipe_ingredient.ingredient_id WHERE recipe_ingredient.recipe_id = %s"
+                sql = (
+                    "SELECT aliment_id, quantity, quantity_type, optional FROM ingredient JOIN recipe_ingredient "
+                    "ON ingredient.ingredient_id = recipe_ingredient.ingredient_id WHERE recipe_ingredient.recipe_id = %s"
+                )
                 self.cursor.execute(sql, (recipe_id,))
-                ingredients = [Ingredient(aliment=self.get_aliment_by_id(aliment_id), quantity=quantity, quantity_type=quantity_type, optional=optional) for aliment_id, quantity, quantity_type, optional in self.cursor.fetchall()]
-                recipes.append(Recipe(name=name, num_people=num_people, ingredients=ingredients, steps=steps, category=category, tags=tags, time=time, db_id=recipe_id))
+                ingredients = [
+                    Ingredient(
+                        aliment=self.get_aliment_by_id(aliment_id),
+                        quantity=quantity,
+                        quantity_type=quantity_type,
+                        optional=optional,
+                    )
+                    for aliment_id, quantity, quantity_type, optional in self.cursor.fetchall()
+                ]
+                recipes.append(
+                    Recipe(
+                        name=name,
+                        num_people=num_people,
+                        ingredients=ingredients,
+                        steps=steps,
+                        category=category,
+                        tags=tags,
+                        time=time,
+                        db_id=recipe_id,
+                    )
+                )
             return recipes
         except psycopg2.Error as e:
             print("Error getting all recipes:", e)
@@ -265,7 +356,7 @@ class PostgresConnector(AbstractConnector):
             self.cursor.execute(sql)
             rows = self.cursor.fetchall()
             for row in rows:
-                item, = row
+                (item,) = row
                 shopping_list.append(item)
             return shopping_list
         except psycopg2.Error as e:
@@ -279,7 +370,7 @@ class PostgresConnector(AbstractConnector):
             self.cursor.execute(sql)
             rows = self.cursor.fetchall()
             for row in rows:
-                aliment_id, = row
+                (aliment_id,) = row
                 pantry.append(self.get_aliment_by_id(aliment_id))
             return pantry
         except psycopg2.Error as e:
@@ -335,7 +426,7 @@ class PostgresConnector(AbstractConnector):
             self.cursor.execute(sql)
             self.connection.commit()
         except psycopg2.Error as e:
-            print("Error executing SQL query:", e, '\n', sql)
+            print("Error executing SQL query:", e, "\n", sql)
 
     def query(self, sql: str) -> List[str]:
         try:
@@ -344,5 +435,5 @@ class PostgresConnector(AbstractConnector):
             result = [str(row) for row in rows]
             return result
         except psycopg2.Error as e:
-            print("Error executing SQL query:", e, '\n', sql)
+            print("Error executing SQL query:", e, "\n", sql)
             return []

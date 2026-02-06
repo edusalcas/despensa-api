@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import Callable, List
+from typing import List
 
-from despensa.classes import Aliment, Ingredient, Recipe
+from despensa.objects.classes import Aliment, Ingredient, Recipe
 
 
 class AbstractConnector(ABC):
@@ -26,24 +26,32 @@ class AbstractConnector(ABC):
         pass
 
     def create_all_tables(self):
-        with open(self.config.create_tables_sql_path, 'r') as create_tables_sql_file:
-            create_tables_sql_commands = create_tables_sql_file.read().split(';')
-            for command in [c.strip() for c in create_tables_sql_commands if c.strip() != '']:
+        with open(self.config.create_tables_sql_path, "r") as create_tables_sql_file:
+            create_tables_sql_commands = create_tables_sql_file.read().split(";")
+            for command in [
+                c.strip() for c in create_tables_sql_commands if c.strip() != ""
+            ]:
                 self.execute(command)
         print("All tables created")
 
     def clear_all_tables(self):
-        with open(self.config.drop_tables_sql_path, 'r') as drop_tables_sql_file:
-            drop_tables_sql_commands = drop_tables_sql_file.read().split(';')
-            for command in [c.strip() for c in drop_tables_sql_commands if c.strip() != '']:
+        with open(self.config.drop_tables_sql_path, "r") as drop_tables_sql_file:
+            drop_tables_sql_commands = drop_tables_sql_file.read().split(";")
+            for command in [
+                c.strip() for c in drop_tables_sql_commands if c.strip() != ""
+            ]:
                 self.execute(command)
 
         print("All tables deleted")
 
     def generate_sample_data(self):
-        with open(self.config.generate_samples_sql_path, 'r') as generate_samples_sql_file:
-            generate_samples_sql_commands = generate_samples_sql_file.read().split(';')
-            for command in [c.strip() for c in generate_samples_sql_commands if c.strip() != '']:
+        with open(
+            self.config.generate_samples_sql_path, "r"
+        ) as generate_samples_sql_file:
+            generate_samples_sql_commands = generate_samples_sql_file.read().split(";")
+            for command in [
+                c.strip() for c in generate_samples_sql_commands if c.strip() != ""
+            ]:
                 self.execute(command)
         print("Sample data generated")
 
@@ -143,6 +151,7 @@ class AbstractConnector(ABC):
     @abstractmethod
     def remove_aliment_from_pantry(self, aliment: Aliment):
         pass
+
     # endregion
 
     @abstractmethod
