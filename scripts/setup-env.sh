@@ -20,3 +20,7 @@ export DEVENV=1
 pip install --upgrade pip
 pip install uv
 uv pip install -r requirements.txt
+
+echo "Setting up git hooks..."
+git config core.hooksPath .githooks
+chmod +x .githooks/pre-push
